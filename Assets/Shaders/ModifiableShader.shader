@@ -19,7 +19,7 @@
 		sampler2D _MainTex;
 		float _CustomSmoothness;
 		float _CustomMetallic;
-
+		fixed4 _CustomColor;
 
 		struct Input {
 			float2 uv_MainTex;
@@ -28,6 +28,7 @@
 		half _Glossiness;
 		half _Metallic;
 		fixed4 _Color;
+		
 
 		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
 		// See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
