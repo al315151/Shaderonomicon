@@ -505,6 +505,16 @@ Prefab:
       propertyPath: _CustomColor.b
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114899482583570094, guid: bb19f7c03a052304492dcb858af1ae5d,
+        type: 2}
+      propertyPath: backUpColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114899482583570094, guid: bb19f7c03a052304492dcb858af1ae5d,
+        type: 2}
+      propertyPath: backUpColor.b
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: bb19f7c03a052304492dcb858af1ae5d, type: 2}
   m_IsPrefabParent: 0

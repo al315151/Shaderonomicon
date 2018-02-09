@@ -74,7 +74,8 @@ Shader "Custom/ColorBSShader"
          float4 frag(vertexOutput input) : COLOR // fragment shader
          {
 			float3 HSVColor = RGBtoHSV(input.col.xyz);
-			float3 newRGB = float3 (HSVColor.x - 0.5,HSVColor.y -0.5, HSVColor.z - 0.5 );
+			float maxDifference = (input.pos.x >= input.pos.y) ? input.pos.x : input.pos.y ;			
+			float3 newRGB = float3 (HSVColor.x ,maxDifference, maxDifference);
 			input.col = float4(newRGB.x, newRGB.y, newRGB.z, input.col.w);
 
 
