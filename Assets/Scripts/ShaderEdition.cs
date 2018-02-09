@@ -13,8 +13,10 @@ public class ShaderEdition : MonoBehaviour {
 
     public Color backUpColor;
 
-
+    #region COLOR
     public Color _CustomColor;
+    public Color _HUESelected;
+
     [HideInInspector]
     public float _CustomR;
     [HideInInspector]
@@ -23,6 +25,7 @@ public class ShaderEdition : MonoBehaviour {
     public float _CustomB;
     [HideInInspector]
     public float _CustomA;
+    #endregion
 
 
     public Texture2D _CustomTexture;
@@ -45,6 +48,8 @@ public class ShaderEdition : MonoBehaviour {
 		Shader.SetGlobalFloat ("_CustomMetallic", metallicSlider.value);
         
         Shader.SetGlobalColor("_CustomColor", _CustomColor);
+        Shader.SetGlobalColor("_HUESelected", _CustomColor);
+        
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
 	}
 
@@ -59,7 +64,10 @@ public class ShaderEdition : MonoBehaviour {
 	{
 		Shader.SetGlobalFloat ("_CustomSmoothness", smoothSlider.value);
 		Shader.SetGlobalFloat ("_CustomMetallic", metallicSlider.value);
+
         Shader.SetGlobalColor("_CustomColor", _CustomColor);
+        Shader.SetGlobalColor("_HUESelected", _CustomColor);
+
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
     }
 

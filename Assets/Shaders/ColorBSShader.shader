@@ -3,6 +3,10 @@
 
 Shader "Custom/ColorBSShader"
 {
+	Properties
+	{
+		_MainTex ("Texture", 2D) = "white" {}
+	}
 	SubShader
 	{ 
       Pass { 
@@ -11,7 +15,7 @@ Shader "Custom/ColorBSShader"
          #pragma vertex vert // vert function is the vertex shader 
          #pragma fragment frag // frag function is the fragment shader
  
-		 fixed4 _CustomColor;
+		 fixed4 _HUESelected;
 		
 
 
@@ -60,7 +64,7 @@ Shader "Custom/ColorBSShader"
             output.pos =  UnityObjectToClipPos(vertexPos);
 			output.wPos = mul(unity_ObjectToWorld, vertexPos);
             //output.col = vertexPos + float4(0.5, 0.5, 0.5, 0.0); //RGB CUBE EN ESCENA 
-			output.col = _CustomColor;
+			output.col = _HUESelected;
 
 
                // Here the vertex shader writes output data
@@ -75,7 +79,7 @@ Shader "Custom/ColorBSShader"
          {
 			float3 HSVColor = RGBtoHSV(input.col.xyz);
 			float maxDifference = (input.pos.x >= input.pos.y) ? input.pos.x : input.pos.y ;			
-			float3 newRGB = float3 (HSVColor.x ,maxDifference, maxDifference);
+			float3 newRGB = float3 (HSVColor.x ,HSVColor.y * maxDifference, HSVColor.z * maxDifference);
 			input.col = float4(newRGB.x, newRGB.y, newRGB.z, input.col.w);
 
 
