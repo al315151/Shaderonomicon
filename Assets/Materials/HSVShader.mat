@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: RGBPlane
+  m_Name: HSVShader
   m_Shader: {fileID: 4800000, guid: 4aa81a2814aad414087a9bbb77af90b5, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4

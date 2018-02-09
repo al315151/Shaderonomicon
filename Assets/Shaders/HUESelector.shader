@@ -83,8 +83,6 @@
 				float4 K = float4 (1.0f, 2.0f / 3.0f, 1.0f / 3.0f, 3.0f);
 				float3 P = abs(frac(cec.xxx + K.xyz) * 6.0f - K.www);
 				return cec.z * lerp(K.xxx, clamp(P - K.xxx, 0.0f, 1.0f), cec.y);
-
-			
 			}
 
 			struct appdata
@@ -115,7 +113,6 @@
 				// sample the texture
 				float2 newUV = (i.uv);
 				fixed4 col = tex2D(_MainTex, i.uv);	
-				//float3 result = FromHSLToRGB(float3(newUV.x - 0.5f, 1.0f, newUV.y)); //AQUI TENEMOS ALGO DE CAMBIO!!!
 				float3 result = FromHSVToRGB (float3(newUV.y, 1.0f, 1.0f));
 
 				return float4(result, 1.0f);

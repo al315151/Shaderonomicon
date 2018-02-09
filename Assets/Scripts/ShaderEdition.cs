@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.EventSystems;
+using UnityEditor;
 
 public class ShaderEdition : MonoBehaviour {
 
@@ -11,6 +12,7 @@ public class ShaderEdition : MonoBehaviour {
 
     public Canvas PickColorCanvas;
 
+    [HideInInspector]
     public Color backUpColor;
 
     #region COLOR
@@ -27,7 +29,7 @@ public class ShaderEdition : MonoBehaviour {
     public float _CustomA;
     #endregion
 
-
+    string FilePath;
     public Texture2D _CustomTexture;
 
     #if UNITY_EDITOR
@@ -48,7 +50,7 @@ public class ShaderEdition : MonoBehaviour {
 		Shader.SetGlobalFloat ("_CustomMetallic", metallicSlider.value);
         
         Shader.SetGlobalColor("_CustomColor", _CustomColor);
-        Shader.SetGlobalColor("_HUESelected", _CustomColor);
+        Shader.SetGlobalColor("_HUESelected", _HUESelected);
         
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
 	}
@@ -66,9 +68,10 @@ public class ShaderEdition : MonoBehaviour {
 		Shader.SetGlobalFloat ("_CustomMetallic", metallicSlider.value);
 
         Shader.SetGlobalColor("_CustomColor", _CustomColor);
-        Shader.SetGlobalColor("_HUESelected", _CustomColor);
+        Shader.SetGlobalColor("_HUESelected", _HUESelected);
 
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
+
     }
 
     public void OpenPickColorCanvas()
@@ -89,22 +92,26 @@ public class ShaderEdition : MonoBehaviour {
 
     public void OpenFileMenu()
     {
+        /*
         #if UNITY_EDITOR
         openFile = ScriptableObject.CreateInstance<FileExplorerEditorVersion>();
         openFile.Show();
-        #endif
+        #endif*/
     }
 
-    public Color RGBtoHSVtoRGB(Color colorBase)
+    void GetImageFromFile()
     {
-        float auxH;
-        float auxS;
-        float auxV;
-        Color.RGBToHSV(colorBase,out auxH, out auxS, out auxV);
-        return colorBase;
+      
+
     }
 
+    private void OnMouseDrag()
+    {
+       
 
+
+
+    }
 
 
 }
