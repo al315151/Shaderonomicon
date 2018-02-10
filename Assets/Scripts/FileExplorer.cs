@@ -17,10 +17,12 @@ public class FileExplorer : MonoBehaviour {
     public GameObject scrollViewContent;
     public Text currentFolderCanvasReference;
     public GameObject ContentElementPrefab;
-
+    public Text fileChosenCanvasReference;
     #endregion
 
     List<GameObject> subDirectoryGOReference = new List<GameObject>();
+    
+
 
     private void Awake()
     {
@@ -99,13 +101,15 @@ public class FileExplorer : MonoBehaviour {
                 print("NEW: " + subDirectories[i]);
 
             }
-
+        }
             //DETECT THE NEW PREVIOUS FOLDER
             UpdateFolderReferences();
             CreateDirectoryList();
-        }
+        
            
     }
+
+    
 
     void CreateDirectoryList()
     {
@@ -114,7 +118,8 @@ public class FileExplorer : MonoBehaviour {
         for (int i = 0; i < subDirectories.Length; i++)
         {
             if (Path.GetExtension(subDirectories[i]).Length == 0
-                || Path.GetExtension(subDirectories[i]) == ".png" /*Esto ultimo por testear */)
+                || Path.GetExtension(subDirectories[i]) == ".png"
+                || Path.GetExtension(subDirectories[i]) == ".PNG")
             {
                 print("Encontramos carpeta o imagen png...");
                 if (subDirectoryGOReference.Count > ShownElementsCount)
@@ -132,9 +137,9 @@ public class FileExplorer : MonoBehaviour {
                       new Vector2(subDirectoryGOReference[ShownElementsCount].GetComponent<RectTransform>().anchoredPosition.x,
                                   subDirectoryGOReference[ShownElementsCount].GetComponent<RectTransform>().anchoredPosition.y - 30 * ShownElementsCount);
                 }
-               
-               
 
+
+                print(Path.GetExtension(subDirectories[i]));
                 //subDirectoryGOReference[ShownElementsCount].GetComponent<RectTransform>().localPosition= new Vector3(0f, 0f, 0f);
 
                 ShownElementsCount++;
@@ -143,7 +148,7 @@ public class FileExplorer : MonoBehaviour {
 
         if (ShownElementsCount < subDirectoryGOReference.Count)
         {
-            for (int j = subDirectoryGOReference.Count - 1; j > ShownElementsCount; j--)
+            for (int j = subDirectoryGOReference.Count - 1; j >= ShownElementsCount; j--)
             {
                 GameObject trash = subDirectoryGOReference[j];
                 subDirectoryGOReference.Remove(trash);
@@ -159,8 +164,10 @@ public class FileExplorer : MonoBehaviour {
 
     public void ChangeCurrentDirectory(Text buttonText)
     {
-        
-        currentPath = currentPath +'/' + buttonText.text + '/';
+        if (Directory.Exists(currentPath + '/' + buttonText.text))
+        {
+            currentPath = currentPath + '/' + buttonText.text;
+        }        
         if (Path.GetExtension(currentPath).Length == 0)
         {
             subDirectories = Directory.GetDirectories(currentPath);
@@ -171,16 +178,23 @@ public class FileExplorer : MonoBehaviour {
 
             }
         }
-        else
+        else //SPOILER: ES PNG
         {
-
-
-
+            if (fileChosenCanvasReference)
+            {
+                fileChosenCanvasReference.text = "Chosen File: " + buttonText.text;
+            }
+            
         }
 
         UpdateFolderReferences();
         CreateDirectoryList();
-
-
     }
+
+    public void ApplySelectedTexture()
+    { }
+
+
+
+
 }
