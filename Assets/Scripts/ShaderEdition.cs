@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using UnityEditor;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 public class ShaderEdition : MonoBehaviour {
 
     public Scrollbar smoothSlider;
