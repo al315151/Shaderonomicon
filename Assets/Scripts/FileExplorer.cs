@@ -124,14 +124,14 @@ public class FileExplorer : MonoBehaviour {
                 print("Encontramos carpeta o imagen png...");
                 if (subDirectoryGOReference.Count > ShownElementsCount)
                 {
-                    subDirectoryGOReference[ShownElementsCount].GetComponentInChildren<Text>().text = Path.GetFileName(subDirectories[i]);
+                    subDirectoryGOReference[ShownElementsCount].GetComponentInChildren<Text>().text = Path.GetFileName(subDirectories[i]) + Path.GetExtension(subDirectories[i]) + ' ';
                 }
                 else
                 {
                     GameObject newItem = Instantiate(ContentElementPrefab, scrollViewContent.transform);
                     newItem.SetActive(true);                 
 
-                    newItem.GetComponentInChildren<Text>().text = Path.GetFileName(subDirectories[i]);
+                    newItem.GetComponentInChildren<Text>().text = Path.GetFileName(subDirectories[i]) + Path.GetExtension(subDirectories[i]) + ' ';
                     subDirectoryGOReference.Add(newItem);
                     subDirectoryGOReference[ShownElementsCount].GetComponent<RectTransform>().anchoredPosition =
                       new Vector2(subDirectoryGOReference[ShownElementsCount].GetComponent<RectTransform>().anchoredPosition.x,
@@ -166,7 +166,7 @@ public class FileExplorer : MonoBehaviour {
     {
         if (Directory.Exists(currentPath + '/' + buttonText.text))
         {
-            currentPath = currentPath + '/' + buttonText.text;
+            currentPath = currentPath + '/' + buttonText.text.Substring(0, buttonText.text.Length - 1);
         }        
         if (Path.GetExtension(currentPath).Length == 0)
         {
