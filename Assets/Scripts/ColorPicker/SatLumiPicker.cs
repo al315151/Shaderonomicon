@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class SatLumiPicker : MonoBehaviour {
 
@@ -29,6 +30,9 @@ public class SatLumiPicker : MonoBehaviour {
      * 
      */
 
+    GraphicRaycaster raycaster;
+    PointerEventData eventData;
+    EventSystem eventSystem;
 
     private void Awake()
     {
@@ -39,10 +43,21 @@ public class SatLumiPicker : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
+        print("DEBUG TIME!!!!");
 
+        raycaster = gameObject.GetComponent<GraphicRaycaster>();
+
+        eventSystem = GetComponent<EventSystem>();
 
         SLTexture2DReference = new Texture2D(SLWidth(), SLHeight(), TextureFormat.ARGB32, false);
+
+        print("ANCHURA DE TEXTURA2D: " + SLTexture2DReference.width); //140
+        print("ALTURA DE TEXTURA2D: " + SLTexture2DReference.height); //140
+
         SLRenderTexture = new RenderTexture(SLWidth(), SLHeight(), 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
+
+        print("ANCHURA DE RENDER TEXTURE: " + SLRenderTexture.width);
+        print("ALTURA DE RENDER TEXTURE: " + SLRenderTexture.height);
 
         Physics.queriesHitTriggers = true;
         Graphics.Blit(dummyTexture, SLRenderTexture, SLMaterial, -1);
@@ -50,7 +65,10 @@ public class SatLumiPicker : MonoBehaviour {
         RenderTexture.active = SLRenderTexture;
 
         SLTexture2DReference.ReadPixels(new Rect(0,0,SLWidth(), SLHeight()), 0, 0, false);
+        SLTexture2DReference.Apply();
         SLTexture2DReference.GetPixels();
+
+        print("POSICION RECT TRANSFORM" + SLCanvasReference.position);
     }
 	
 	// Update is called once per frame
@@ -61,34 +79,62 @@ public class SatLumiPicker : MonoBehaviour {
         {
             //print("ESTAMOS DENTRO DE LA FUNCION DE CLICK");
 
-            mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePosition = Input.mousePosition;
             Vector2 screenPos = new Vector2(mousePosition.x, mousePosition.y);
 
-           // RectTransformUtility.ScreenPointToLocalPointInRectangle(SLCanvasReference, screenPos, Camera.main, out screenPos);
+            //print("Supuesto X y supuesto Y: " + screenPos.x + " , " + screenPos.y);
 
-            print("Supuesto X y supuesto Y: " + screenPos.x + " , " + screenPos.y);
+            //RaycastHit[] ray = Physics.RaycastAll(screenPos, Vector2.zero, 0.01f);
 
-            RaycastHit2D[] ray = Physics2D.RaycastAll(screenPos, Vector2.zero, 0.01f);
+            eventData = new PointerEventData(eventSystem);
+            eventData.position = mousePosition;
+            List<RaycastResult> results = new List<RaycastResult>();
+            raycaster.Raycast(eventData, results);
 
-            for (int i = 0; i < ray.Length; i++)
+            //print("Numero de raycast resultantes: " + results.Count);
+
+            //for (int i = 0; i < ray.Length; i++)
+            for (int i = 0; i < results.Count; i++)
             {
-                if (ray[i].collider.tag == "SLPicker")
+               // if (ray[i].collider.tag == "SLPicker")
+               if (results[i].gameObject.tag == "SLPicker")
                 {
-                    screenPos = screenPos - new Vector2(ray[i].collider.gameObject.transform.position.x,
-                                                          ray[i].collider.gameObject.transform.position.y);
-                    int x = (int)(screenPos.x * SLWidth());
-                    int y = (int)(screenPos.y * SLHeight()) + SLHeight();
-                   
+                    //print("Really collides??");
+                    //screenPos = screenPos - new Vector2(ray[i].collider.gameObject.transform.position.x,
+                    //                                     ray[i].collider.gameObject.transform.position.y);
+                    //int x = (int)(screenPos.x * SLWidth());
+                    //int y = (int)(screenPos.y * SLHeight()) + SLHeight();
 
-                    if (x > 0 && x < SLWidth() && y > 0 && y < SLHeight())
+                    int xMinCanvas = (int) (SLCanvasReference.position.x - (SLCanvasReference.rect.width / 2)) ;
+                    int yMinCanvas = (int) (SLCanvasReference.position.y - (SLCanvasReference.rect.height / 2));
+                    int xMaxCanvas = (int) (SLCanvasReference.position.x + (SLCanvasReference.rect.width / 2));
+                    int yMaxCanvas = (int) (SLCanvasReference.position.y + (SLCanvasReference.rect.height / 2));
+
+                    //print("Limites de rect canvas: " + "MinX: " + xMinCanvas + " , Max X: " + xMaxCanvas);
+                    //print("Limites de rect canvas: " + "MinY: " + yMinCanvas + " , Max Y: " + yMaxCanvas);
+
+                    int texture2Dx = Mathf.FloorToInt(screenPos.x / SLCanvasReference.rect.width * SLTexture2DReference.width);
+                    int texture2Dy = Mathf.FloorToInt(screenPos.y / SLCanvasReference.rect.height * SLTexture2DReference.height);
+
+                    print("Coordenada TEX2D X: " + texture2Dx + " , TEX2D Y: " + texture2Dy);
+
+                    if (screenPos.x > xMinCanvas && screenPos.x < xMaxCanvas && screenPos.y > yMinCanvas && screenPos.y < yMaxCanvas)
                     {
-                        print("ESTAMOS DENTRO DE LA FUNCION DE CLICK");
+                        //print("ESTAMOS DENTRO DE LA FUNCION DE CLICK");
 
                         Graphics.Blit(dummyTexture, SLRenderTexture, SLMaterial, -1);
-                        SLTexture2DReference.ReadPixels(new Rect(0, 0, SLWidth(), SLHeight()), 0, 0, false);
+                        SLTexture2DReference.ReadPixels(new Rect(0, 0, SLWidth(), SLHeight()), 0,0, false);
+                        SLTexture2DReference.Apply();
                         data = SLTexture2DReference.GetPixels();
+                        SLTexture2DReference.EncodeToPNG();
 
-                        colorPicked = data[y * SLWidth() + x];
+                        
+                        colorPicked = SLTexture2DReference.GetPixel(texture2Dx, texture2Dy) * SLTexture2DReference.height;
+                        print(colorPicked);
+
+                        //colorPicked = data[y * SLWidth() + x];
+                        //colorPicked = data[yMinCanvas * SLWidth() + xMinCanvas]; DA OUT OF RANGE, NO SIRVE.
                         ShaderEdition.currentInstance._CustomColor = colorPicked;
 
                     }
