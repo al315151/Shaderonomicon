@@ -21,6 +21,7 @@ public class SatLumiPicker : MonoBehaviour {
     Color colorPicked;
 
     public Material SLMaterial;
+    //public RawImage testTexture2DCanvasReference;
 
     /*
      * Página en la que he encontrado el código para que funcione la detección de ratón:
@@ -66,7 +67,9 @@ public class SatLumiPicker : MonoBehaviour {
 
         SLTexture2DReference.ReadPixels(new Rect(0,0,SLWidth(), SLHeight()), 0, 0, false);
         SLTexture2DReference.Apply();
-        SLTexture2DReference.GetPixels();
+        data = SLTexture2DReference.GetPixels();
+
+        //testTexture2DCanvasReference.texture = SLTexture2DReference;
 
         print("POSICION RECT TRANSFORM" + SLCanvasReference.position);
     }
@@ -106,18 +109,26 @@ public class SatLumiPicker : MonoBehaviour {
                     //int x = (int)(screenPos.x * SLWidth());
                     //int y = (int)(screenPos.y * SLHeight()) + SLHeight();
 
-                    int xMinCanvas = (int) (SLCanvasReference.position.x - (SLCanvasReference.rect.width / 2)) ;
-                    int yMinCanvas = (int) (SLCanvasReference.position.y - (SLCanvasReference.rect.height / 2));
-                    int xMaxCanvas = (int) (SLCanvasReference.position.x + (SLCanvasReference.rect.width / 2));
-                    int yMaxCanvas = (int) (SLCanvasReference.position.y + (SLCanvasReference.rect.height / 2));
+                    float xMinCanvas = SLCanvasReference.position.x - (SLCanvasReference.rect.width / 2);
+                    float yMinCanvas = SLCanvasReference.position.y - (SLCanvasReference.rect.height / 2);
+                    float xMaxCanvas = SLCanvasReference.position.x + (SLCanvasReference.rect.width / 2);
+                    float yMaxCanvas = SLCanvasReference.position.y + (SLCanvasReference.rect.height / 2);
 
                     //print("Limites de rect canvas: " + "MinX: " + xMinCanvas + " , Max X: " + xMaxCanvas);
                     //print("Limites de rect canvas: " + "MinY: " + yMinCanvas + " , Max Y: " + yMaxCanvas);
 
-                    int texture2Dx = Mathf.FloorToInt(screenPos.x / SLCanvasReference.rect.width * SLTexture2DReference.width);
-                    int texture2Dy = Mathf.FloorToInt(screenPos.y / SLCanvasReference.rect.height * SLTexture2DReference.height);
+                    //SO CLOSE
+                    //int texture2Dx = Mathf.RoundToInt(screenPos.x / SLCanvasReference.rect.width * SLTexture2DReference.width);
+                    //int texture2Dy = Mathf.RoundToInt(screenPos.y / SLCanvasReference.rect.height * SLTexture2DReference.height);
 
-                    print("Coordenada TEX2D X: " + texture2Dx + " , TEX2D Y: " + texture2Dy);
+                    int texture2Dx = Mathf.RoundToInt((screenPos.x) % SLTexture2DReference.width);
+                    int texture2Dy = Mathf.RoundToInt((screenPos.y) % SLTexture2DReference.height);
+
+                    //print("Coordenada TEX2D X: " + texture2Dx + " , TEX2D Y: " + texture2Dy);
+                    print("Coordenadas convertidas a 'textura': x: " + texture2Dx / SLWidth() + " , y: " + texture2Dy / SLHeight());
+                    print("Distancia a esquina inf izq, x: " + (screenPos.x - xMinCanvas) + " , x: " + (screenPos.y - yMinCanvas));
+
+                   
 
                     if (screenPos.x > xMinCanvas && screenPos.x < xMaxCanvas && screenPos.y > yMinCanvas && screenPos.y < yMaxCanvas)
                     {
@@ -130,9 +141,11 @@ public class SatLumiPicker : MonoBehaviour {
                         SLTexture2DReference.EncodeToPNG();
 
                         
-                        colorPicked = SLTexture2DReference.GetPixel(texture2Dx, texture2Dy) * SLTexture2DReference.height;
-                        print(colorPicked);
+                        colorPicked = SLTexture2DReference.GetPixel(texture2Dx ,texture2Dy) * SLTexture2DReference.height;
+                        colorPicked = new Color(colorPicked.r / 127.5f, colorPicked.g / 127.5f, colorPicked.b / 127.5f, 1.0f);
+                        //print(colorPicked);
 
+                        //testTexture2DCanvasReference.texture = SLTexture2DReference;
                         //colorPicked = data[y * SLWidth() + x];
                         //colorPicked = data[yMinCanvas * SLWidth() + xMinCanvas]; DA OUT OF RANGE, NO SIRVE.
                         ShaderEdition.currentInstance._CustomColor = colorPicked;
