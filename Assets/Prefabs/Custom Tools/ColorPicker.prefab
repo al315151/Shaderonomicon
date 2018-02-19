@@ -413,7 +413,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SLMaterial: {fileID: 2100000, guid: ec993d94d6f17054082de1a176845acf, type: 2}
-  testTexture2DCanvasReference: {fileID: 114304774403720996}
 --- !u!114 &114304774403720996
 MonoBehaviour:
   m_ObjectHideFlags: 1

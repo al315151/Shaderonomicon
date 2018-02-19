@@ -19,7 +19,7 @@ public class HUEPicker : MonoBehaviour {
         
         if (Input.GetMouseButtonDown(0))
         {
-            mousePosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+           // mousePosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
        
 
 

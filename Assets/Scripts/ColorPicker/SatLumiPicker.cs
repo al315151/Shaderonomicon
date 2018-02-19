@@ -11,7 +11,7 @@ public class SatLumiPicker : MonoBehaviour {
     RectTransform SLCanvasReference;
     RenderTexture SLRenderTexture;
     Texture2D SLTexture2DReference;
-    Texture dummyTexture = new Texture();
+    Texture dummyTexture;
 
     public int SLWidth() { return (int) SLCanvasReference.rect.width; }
     public int SLHeight() { return (int) SLCanvasReference.rect.height; }

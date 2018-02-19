@@ -3,12 +3,14 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using System;
+using System.Security.AccessControl;
 
 public class FileExplorer : MonoBehaviour {
 
-  
-    string[] subDirectories;
+
+    //string[] subDirectories;
+    List<string> subDirectories;
     string[] directoryFiles;
     string currentPath;
     string previousFolder;
@@ -28,7 +30,8 @@ public class FileExplorer : MonoBehaviour {
     private void Awake()
     {
         currentPath = Application.dataPath;
-        subDirectories = Directory.GetDirectories(currentPath);
+        // subDirectories = Directory.GetDirectories(currentPath);
+        subDirectories = CustomGetDirectories(currentPath);
         directoryFiles = Directory.GetFiles(currentPath);
         UpdateFolderReferences();
         CreateDirectoryList();
@@ -59,6 +62,67 @@ public class FileExplorer : MonoBehaviour {
 		
 	}
 
+    List<string> CustomGetDirectories(string path)
+    {
+        List<string> customFoundDirectories = new List<string>();
+
+        RecursiveGetDirectories(path, ref customFoundDirectories);
+
+        return customFoundDirectories;
+
+    }
+
+    void RecursiveGetDirectories(string path, ref List<string> directories)
+    {
+        //This code is a mix from two sources, in attempt to ignore protected files,
+        // And showing available elements.
+        // https://social.msdn.microsoft.com/Forums/vstudio/en-US/d1988cec-b74c-4375-9b1b-6929a8a724dd/how-to-avoid-systemunauthorizedaccessexception?forum=netfxbcl
+        // https://stackoverflow.com/questions/5290356/need-to-resume-try-after-catch-block/10728792#10728792
+        
+       
+        
+        try
+        {
+            foreach (string subPath in Directory.GetDirectories(path))
+            {
+                    directories.Add(subPath);
+                    //print("Added path to list: " + subPath); 
+            }
+        }
+        catch (UnauthorizedAccessException)
+        {
+            DirectoryInfo folderInfo = new DirectoryInfo(path);
+            Queue<DirectoryInfo> subDirectories = new Queue<DirectoryInfo>();
+            //IEnumerable<FileSystemInfo> entries;
+            try
+            {
+                /*foreach (FileSystemInfo info in folderInfo.GetFileSystemInfos())
+                {
+                    if (info.Attributes.CompareTo(FileAttributes.ReparsePoint) != 0 &&
+                        info.Attributes.CompareTo(FileAttributes.System) != 0)
+                    {
+                        subDirectories.Enqueue((DirectoryInfo)info);
+                    }
+                    
+                }
+                while (subDirectories.Count > 0)
+                {
+                    directories.Add(subDirectories.Peek().FullName);
+                    subDirectories.Dequeue();
+                }*/
+            }
+            catch (UnauthorizedAccessException)
+            {
+                while (subDirectories.Count > 0)
+                {
+                    directories.Add(subDirectories.Peek().FullName);
+                    subDirectories.Dequeue();
+                }
+                
+            }
+        }
+    }
+
     private void UpdateFolderReferences()
     {
         for (int i = currentPath.Length - 2; i >= 0; i--)
@@ -69,7 +133,7 @@ public class FileExplorer : MonoBehaviour {
                 if (currentFolderCanvasReference != null)
                 { currentFolderCanvasReference.text = "Current Folder: " + currentFolderName.Substring(1); }
 
-                previousFolder = currentPath.Substring(0, i) + '/';
+                previousFolder = currentPath.Substring(0, i);
                 //print("New previous Folder:  " + previousFolder);
 
                 break;                
@@ -85,7 +149,8 @@ public class FileExplorer : MonoBehaviour {
         if (previousFolder == "C:/")
         {
             currentPath = previousFolder;
-            subDirectories = Directory.GetDirectories(currentPath);
+            // subDirectories = Directory.GetDirectories(currentPath);
+            subDirectories = CustomGetDirectories(currentPath);
             directoryFiles = Directory.GetFiles(currentPath);
             /*
             print(currentPath);
@@ -107,7 +172,8 @@ public class FileExplorer : MonoBehaviour {
         else
         {
             currentPath = previousFolder;
-            subDirectories = Directory.GetDirectories(currentPath);
+            // subDirectories = Directory.GetDirectories(currentPath);
+            subDirectories = CustomGetDirectories(currentPath);
             directoryFiles = Directory.GetFiles(currentPath);
 
 
@@ -141,7 +207,7 @@ public class FileExplorer : MonoBehaviour {
         int ShownElementsCount = 0;
 
         //Current Folders!!!
-        for (int i = 0; i < subDirectories.Length; i++)
+        for (int i = 0; i < /*subDirectories.Length*/ subDirectories.Count; i++)
         {
             if (Path.GetExtension(subDirectories[i]).Length == 0)
             {
@@ -209,6 +275,7 @@ public class FileExplorer : MonoBehaviour {
                 GameObject trash = subDirectoryGOReference[j];
                 subDirectoryGOReference.Remove(trash);
                 DestroyObject(trash);
+
             }
         }
 
@@ -224,8 +291,10 @@ public class FileExplorer : MonoBehaviour {
             {
                 currentPath = currentPath + '/' + buttonText.text;
             }
-            subDirectories = Directory.GetDirectories(currentPath);
-            directoryFiles = Directory.GetFiles(currentPath);
+            // subDirectories = Directory.GetDirectories(currentPath);
+            subDirectories = CustomGetDirectories(currentPath);
+            
+            //directoryFiles = Directory.GetFiles(currentPath);
 
            /* for (int i = 0; i < subDirectories.Length; i++)
             {

@@ -31,13 +31,25 @@ public class ShaderEdition : MonoBehaviour {
     public float _CustomA;
     #endregion
 
-    string FilePath;
+    public Shader modifiableShaderReference;
+    TextAsset shaderTextAsset;
+    string shaderCurrentText;
+   
     public Texture2D _CustomTexture;
 
     #if UNITY_EDITOR
     ColorPickerEditorVersion chooseColor;
     FileExplorerEditorVersion openFile;
     #endif
+
+
+    #region SHADER_SAVE
+    [HideInInspector]
+    public string FilePath;
+    [HideInInspector]
+    public string shaderName;
+    #endregion
+
 
     public static ShaderEdition currentInstance;
 
@@ -59,8 +71,10 @@ public class ShaderEdition : MonoBehaviour {
 
 
 	// Use this for initialization
-	void Start () {
-		
+	void Start ()
+    {
+        
+       
 	}
 	
 	// Update is called once per frame
@@ -73,6 +87,8 @@ public class ShaderEdition : MonoBehaviour {
         Shader.SetGlobalColor("_HUESelected", _HUESelected);
 
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
+
+        
 
     }
 
