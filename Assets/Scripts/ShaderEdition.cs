@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using SFB;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,7 +13,7 @@ public class ShaderEdition : MonoBehaviour {
     public Scrollbar smoothSlider;
     public Scrollbar metallicSlider;
 
-    public Canvas PickColorCanvas;
+    public RectTransform PickColorCanvas;
 
     [HideInInspector]
     public Color backUpColor;
@@ -49,6 +50,12 @@ public class ShaderEdition : MonoBehaviour {
     [HideInInspector]
     public string shaderName;
     #endregion
+
+    #region COLOR_PICKER
+    public Image newChosenColorCanvasReference;
+    public Image previousChosenColorCanvasReference;
+    #endregion
+
 
 
     public static ShaderEdition currentInstance;
@@ -88,39 +95,43 @@ public class ShaderEdition : MonoBehaviour {
 
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
 
-        
 
+        newChosenColorCanvasReference.color = ShaderEdition.currentInstance._CustomColor;
     }
 
     public void OpenPickColorCanvas()
     {
         #if UNITY_EDITOR
-        chooseColor = ScriptableObject.CreateInstance<ColorPickerEditorVersion>();
-        chooseColor.Show();
+        // chooseColor = ScriptableObject.CreateInstance<ColorPickerEditorVersion>();
+        // chooseColor.Show();
         #endif
+
+        PickColorCanvas.gameObject.SetActive(true);
+
 
     }
 
     public void ClosePickColorCanvas()
     {
-        #if UNITY_EDITOR
-        chooseColor.Close();
-        #endif
+#if UNITY_EDITOR
+        //chooseColor.Close();
+#endif
+
+        PickColorCanvas.gameObject.SetActive(false);
+
     }
 
-    public void OpenFileMenu()
-    {
-        /*
-        #if UNITY_EDITOR
-        openFile = ScriptableObject.CreateInstance<FileExplorerEditorVersion>();
-        openFile.Show();
-        #endif*/
-    }
 
-    void GetImageFromFile()
+   
+   public void GetImageFromFile()
     {
-      
-
+        var extensions = new[] {
+                new ExtensionFilter("Image Files", "png", "jpg", "jpeg" ),
+                new ExtensionFilter("Sound Files", "mp3", "wav" ),
+                new ExtensionFilter("All Files", "*" ),
+            };
+       FilePath = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensions, false)[0];
+        print(FilePath);
     }
 
     private void OnMouseDrag()
