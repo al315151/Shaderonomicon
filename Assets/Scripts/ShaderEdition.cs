@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using SFB;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -96,7 +95,7 @@ public class ShaderEdition : MonoBehaviour {
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
 
 
-        newChosenColorCanvasReference.color = ShaderEdition.currentInstance._CustomColor;
+        newChosenColorCanvasReference.color = _CustomColor;
     }
 
     public void OpenPickColorCanvas()
@@ -125,13 +124,7 @@ public class ShaderEdition : MonoBehaviour {
    
    public void GetImageFromFile()
     {
-        var extensions = new[] {
-                new ExtensionFilter("Image Files", "png", "jpg", "jpeg" ),
-                new ExtensionFilter("Sound Files", "mp3", "wav" ),
-                new ExtensionFilter("All Files", "*" ),
-            };
-       FilePath = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensions, false)[0];
-        print(FilePath);
+      
     }
 
     private void OnMouseDrag()

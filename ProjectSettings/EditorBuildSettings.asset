@@ -5,6 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MainScene.unity
     guid: b2f20d8820fe53044a1a993ab685ab37
+  - enabled: 1
+    path: Assets/Plugins/crosstales/FileBrowser/Demo/ExamplesSync.unity
+    guid: a0e9763785724fa8958b272e72b0f172
+  m_configObjects: {}
