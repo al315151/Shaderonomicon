@@ -6,22 +6,34 @@ using UnityEngine.EventSystems;
 
 public class SatLumiPicker : MonoBehaviour {
 
-    Color[] data;
+    
+    #region CLICK_VARIABLES
 
     RectTransform SLCanvasReference;
     RenderTexture SLRenderTexture;
     Texture2D SLTexture2DReference;
+    Color[] data;
     Texture dummyTexture;
 
     public int SLWidth() { return (int) SLCanvasReference.rect.width; }
-    public int SLHeight() { return (int) SLCanvasReference.rect.height; }
+    public int SLHeight() { return (int)SLCanvasReference.rect.height; }
 
     Vector3 mousePosition;
+
+    GraphicRaycaster raycaster;
+    PointerEventData eventData;
+    EventSystem eventSystem;
+
+    #endregion
+
+    #region COLOR_VARIABLES
 
     Color colorPicked;
 
     public Material SLMaterial;
     //public RawImage testTexture2DCanvasReference;
+
+    #endregion
 
     /*
      * Página en la que he encontrado el código para que funcione la detección de ratón:
@@ -31,18 +43,18 @@ public class SatLumiPicker : MonoBehaviour {
      * 
      */
 
-    GraphicRaycaster raycaster;
-    PointerEventData eventData;
-    EventSystem eventSystem;
+    bool settersComplete = false;
+
 
     private void Awake()
     {
-        SLCanvasReference = gameObject.GetComponent<RectTransform>();
+        SLCanvasReference = gameObject.GetComponentInParent<RectTransform>();
+        print(SLCanvasReference.rect.width);
+        print(SLCanvasReference.rect.height);
+
     }
 
-
-    // Use this for initialization
-    void Start ()
+    void ScriptSetters()
     {
         print("DEBUG TIME!!!!");
 
@@ -65,20 +77,30 @@ public class SatLumiPicker : MonoBehaviour {
 
         RenderTexture.active = SLRenderTexture;
 
-        SLTexture2DReference.ReadPixels(new Rect(0,0,SLWidth(), SLHeight()), 0, 0, false);
+        SLTexture2DReference.ReadPixels(new Rect(0, 0, SLWidth(), SLHeight()), 0, 0, false);
         SLTexture2DReference.Apply();
         data = SLTexture2DReference.GetPixels();
 
         //testTexture2DCanvasReference.texture = SLTexture2DReference;
 
         print("POSICION RECT TRANSFORM" + SLCanvasReference.position);
+
+        settersComplete = true;
+
+    }
+
+
+    // Use this for initialization
+    void Start ()
+    {
+        Invoke("ScriptSetters", 0.01f);
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
 
-        if (Input.GetMouseButton(0) || Input.GetMouseButtonDown(0))
+        if (settersComplete && (Input.GetMouseButton(0) || Input.GetMouseButtonDown(0)))
         {
             //print("ESTAMOS DENTRO DE LA FUNCION DE CLICK");
 
@@ -109,10 +131,10 @@ public class SatLumiPicker : MonoBehaviour {
                     //int x = (int)(screenPos.x * SLWidth());
                     //int y = (int)(screenPos.y * SLHeight()) + SLHeight();
 
-                    float xMinCanvas = SLCanvasReference.position.x - (SLCanvasReference.rect.width / 2);
-                    float yMinCanvas = SLCanvasReference.position.y - (SLCanvasReference.rect.height / 2);
-                    float xMaxCanvas = SLCanvasReference.position.x + (SLCanvasReference.rect.width / 2);
-                    float yMaxCanvas = SLCanvasReference.position.y + (SLCanvasReference.rect.height / 2);
+                    float xMinCanvas = SLCanvasReference.position.x - (SLWidth() / 2);
+                    float yMinCanvas = SLCanvasReference.position.y - (SLHeight() / 2);
+                    float xMaxCanvas = SLCanvasReference.position.x + (SLWidth() / 2);
+                    float yMaxCanvas = SLCanvasReference.position.y + (SLHeight() / 2);
 
                     //print("Limites de rect canvas: " + "MinX: " + xMinCanvas + " , Max X: " + xMaxCanvas);
                     //print("Limites de rect canvas: " + "MinY: " + yMinCanvas + " , Max Y: " + yMaxCanvas);
