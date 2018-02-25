@@ -17,6 +17,7 @@
 		#pragma target 3.0
 
 		sampler2D _MainTex;
+		
 		float _CustomSmoothness;
 		float _CustomMetallic;
 		fixed4 _CustomColor;
@@ -24,6 +25,7 @@
 		float _CustomG;
 		float _CustomB;
 		float _CustomA;
+		sampler2D _CustomTexture;
 
 		struct Input {
 			float2 uv_MainTex;
@@ -42,6 +44,9 @@
 		UNITY_INSTANCING_BUFFER_END(Props)
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
+			
+			
+			_MainTex = _CustomTexture;
 			// Albedo comes from a texture tinted by color
 			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _CustomColor;
 			o.Albedo = c.rgb;

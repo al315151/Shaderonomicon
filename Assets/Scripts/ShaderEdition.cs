@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using Crosstales.FB;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -92,7 +93,7 @@ public class ShaderEdition : MonoBehaviour {
         Shader.SetGlobalColor("_CustomColor", _CustomColor);
         Shader.SetGlobalColor("_HUESelected", _HUESelected);
 
-        Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
+        //Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
 
 
         newChosenColorCanvasReference.color = _CustomColor;
@@ -124,7 +125,12 @@ public class ShaderEdition : MonoBehaviour {
    
    public void GetImageFromFile()
     {
-      
+        FilePath = FileBrowser.OpenSingleFile("Choose a PNG...", Application.dataPath, "png");
+        print(FilePath);
+        StartCoroutine(GetTextureFromPNG());
+
+
+
     }
 
     private void OnMouseDrag()
@@ -134,6 +140,28 @@ public class ShaderEdition : MonoBehaviour {
 
 
     }
+
+    IEnumerator GetTextureFromPNG()
+    {
+        WWW webObject = new WWW("file:///"+FilePath);
+        while (!webObject.isDone)
+        {
+            yield return null;
+        }
+        _CustomTexture = webObject.texture;
+        Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 }
