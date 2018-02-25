@@ -43,15 +43,16 @@ public class SatLumiPicker : MonoBehaviour {
      * 
      */
 
+    public Image cursorPositionImage;
+
+
     bool settersComplete = false;
 
 
     private void Awake()
     {
         SLCanvasReference = gameObject.GetComponentInParent<RectTransform>();
-        print(SLCanvasReference.rect.width);
-        print(SLCanvasReference.rect.height);
-
+        
     }
 
     void ScriptSetters()
@@ -63,6 +64,8 @@ public class SatLumiPicker : MonoBehaviour {
         eventSystem = GetComponent<EventSystem>();
 
         SLTexture2DReference = new Texture2D(SLWidth(), SLHeight(), TextureFormat.ARGB32, false);
+
+        //dummyTexture = (Texture) SLTexture2DReference;
 
         print("ANCHURA DE TEXTURA2D: " + SLTexture2DReference.width); //140
         print("ALTURA DE TEXTURA2D: " + SLTexture2DReference.height); //140
@@ -147,14 +150,16 @@ public class SatLumiPicker : MonoBehaviour {
                     int texture2Dy = Mathf.RoundToInt((screenPos.y) % SLTexture2DReference.height);
 
                     //print("Coordenada TEX2D X: " + texture2Dx + " , TEX2D Y: " + texture2Dy);
-                    print("Coordenadas convertidas a 'textura': x: " + texture2Dx / SLWidth() + " , y: " + texture2Dy / SLHeight());
-                    print("Distancia a esquina inf izq, x: " + (screenPos.x - xMinCanvas) + " , x: " + (screenPos.y - yMinCanvas));
+                    //print("Coordenadas convertidas a 'textura': x: " + texture2Dx /*/ SLWidth()*/ + " , y: " + texture2Dy /*/ SLHeight()*/);
+                    //print("Distancia a esquina inf izq, x: " + (screenPos.x - xMinCanvas) + " , x: " + (screenPos.y - yMinCanvas));
 
                    
 
                     if (screenPos.x > xMinCanvas && screenPos.x < xMaxCanvas && screenPos.y > yMinCanvas && screenPos.y < yMaxCanvas)
                     {
                         //print("ESTAMOS DENTRO DE LA FUNCION DE CLICK");
+
+                        cursorPositionImage.rectTransform.position = new Vector3(screenPos.x, screenPos.y, -0.02f);
 
                         Graphics.Blit(dummyTexture, SLRenderTexture, SLMaterial, -1);
                         SLTexture2DReference.ReadPixels(new Rect(0, 0, SLWidth(), SLHeight()), 0,0, false);
@@ -164,8 +169,9 @@ public class SatLumiPicker : MonoBehaviour {
 
                         
                         colorPicked = SLTexture2DReference.GetPixel(texture2Dx ,texture2Dy) * SLTexture2DReference.height;
+                        print(colorPicked);
                         colorPicked = new Color(colorPicked.r / 127.5f, colorPicked.g / 127.5f, colorPicked.b / 127.5f, 1.0f);
-                        //print(colorPicked);
+                        print(colorPicked);
 
                         //testTexture2DCanvasReference.texture = SLTexture2DReference;
                         //colorPicked = data[y * SLWidth() + x];
