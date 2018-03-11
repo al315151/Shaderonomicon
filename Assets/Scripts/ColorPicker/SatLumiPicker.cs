@@ -176,7 +176,7 @@ public class SatLumiPicker : MonoBehaviour {
                         //testTexture2DCanvasReference.texture = SLTexture2DReference;
                         //colorPicked = data[y * SLWidth() + x];
                         //colorPicked = data[yMinCanvas * SLWidth() + xMinCanvas]; DA OUT OF RANGE, NO SIRVE.
-                        ShaderEdition.currentInstance._CustomColor = colorPicked;
+                       // ShaderEdition.currentInstance._CustomColor = colorPicked;
 
                     }
                     break;
