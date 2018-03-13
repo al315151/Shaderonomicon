@@ -15,12 +15,27 @@ public class ShaderEdition : MonoBehaviour {
     TextAsset shaderTextAsset;
     string shaderCurrentText;
    
-    public Texture2D _CustomTexture;
+    
 
     #region OBJECTIVE_SHADER_MESH
     public GameObject displayObject;
     #endregion
 
+    #region SHADER_PROPERTIES_REFERENCE
+
+    #region BASE_TEXTURE
+    public Texture2D _CustomTexture;
+    float _RTextureTint = 1.0f;
+    float _GTextureTint = 1.0f;
+    float _BTextureTint = 1.0f;
+    float _ATextureTint = 1.0f;
+    Color _TextureTint = Color.white;
+    #endregion
+
+
+
+
+    #endregion
 
     #region SHADER_SAVE
     [HideInInspector]
@@ -48,16 +63,19 @@ public class ShaderEdition : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
-        
-       
-	}
+        _TextureTint = new Color(_RTextureTint, _GTextureTint, _BTextureTint, _ATextureTint);
+
+
+    }
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		
 
-        //Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
+        #region UPDATE_GLOBAL_SHADER_VARIABLES
+        Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
+        Shader.SetGlobalColor("_TextureTint", _TextureTint);
+        #endregion
     }
 
     #region OBTAIN_IMAGE_FUNCTIONS
@@ -83,9 +101,57 @@ public class ShaderEdition : MonoBehaviour {
 
     #endregion
 
+    #region CANVAS_RELATED_FUNCTIONS
+
+    public void OpenCloseSubCanvas(CanvasGroup subCanvas)
+    {
+        if (subCanvas.gameObject.activeInHierarchy)
+        { subCanvas.gameObject.SetActive(false); }
+        else
+        { subCanvas.gameObject.SetActive(true); }
+
+    }
+
+    public void ChangeValueInputField(GameObject reference)
+    {
+        switch (reference.name)
+        {
+            case ("RTextureBase"):
+                {
+
+                    break;
+                }
+            case ("GTextureBase"):
+                {
+
+                    break;
+                }
+            case ("BTextureBase"):
+                {
+
+                    break;
+                }
+            case ("ATextureBase"):
+                {
+
+                    break;
+                }
+            default:
+                {
+                    print("YOU SHOULD NOT BE HERE");
+                    break;
+                }
+
+        }
 
 
 
+    }
+
+
+
+
+    #endregion
 
 
 
