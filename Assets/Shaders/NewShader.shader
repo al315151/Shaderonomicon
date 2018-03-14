@@ -32,7 +32,8 @@ Shader "Custom/NewShader"
 			};
  
 		uniform sampler2D _MainTex;
-
+		sampler2D _CustomTexture;
+		fixed4 _TextureTint;
 
          vertexOutput vert(vertexInput input) 
          {
@@ -48,7 +49,8 @@ Shader "Custom/NewShader"
          }
          float4 frag(vertexOutput input) : COLOR
          {
-            return tex2D(_MainTex, input.tex.xy);	
+			_MainTex = _CustomTexture;
+            return tex2D(_MainTex, input.tex.xy) * _TextureTint;	
                // look up the color of the texture image specified by 
                // the uniform "_MainTex" at the position specified by 
                // "input.tex.x" and "input.tex.y" and return it

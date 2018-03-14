@@ -63,7 +63,7 @@ public class ShaderEdition : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
-        _TextureTint = new Color(_RTextureTint, _GTextureTint, _BTextureTint, _ATextureTint);
+        
 
 
     }
@@ -118,22 +118,30 @@ public class ShaderEdition : MonoBehaviour {
         {
             case ("RTextureBase"):
                 {
-
+                    float value = float.Parse(reference.GetComponent<InputField>().text);
+                    print("Value Obtained: " + value);
+                    if (value >= 0f && value <= 1f) { _RTextureTint = value; }
                     break;
                 }
             case ("GTextureBase"):
                 {
-
+                    float value = float.Parse(reference.GetComponent<InputField>().text);
+                    print("Value Obtained: " + value);
+                    if (value >= 0f && value <= 1f) { _GTextureTint = value; }
                     break;
                 }
             case ("BTextureBase"):
                 {
-
+                    float value = float.Parse(reference.GetComponent<InputField>().text);
+                    print("Value Obtained: " + value);
+                    if (value >= 0f && value <= 1f) { _BTextureTint = value; }
                     break;
                 }
             case ("ATextureBase"):
                 {
-
+                    float value = float.Parse(reference.GetComponent<InputField>().text);
+                    print("Value Obtained: " + value);
+                    if (value >= 0f && value <= 1f) { _ATextureTint = value; }
                     break;
                 }
             default:
@@ -143,7 +151,7 @@ public class ShaderEdition : MonoBehaviour {
                 }
 
         }
-
+        _TextureTint = new Color(_RTextureTint, _GTextureTint, _BTextureTint, _ATextureTint);
 
 
     }
