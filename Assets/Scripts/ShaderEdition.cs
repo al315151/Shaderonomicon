@@ -32,7 +32,11 @@ public class ShaderEdition : MonoBehaviour {
     Color _TextureTint = Color.white;
     #endregion
 
+    #region AUXILIAR_MAPS
+    Texture2D _CustomNormalMap;
+    float _CustomNormalMapScale;
 
+    #endregion
 
 
     #endregion
@@ -57,6 +61,8 @@ public class ShaderEdition : MonoBehaviour {
 		
         
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
+        Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
+        Shader.SetGlobalFloat("_NormalMapScale", _CustomNormalMapScale );
 	}
 
 
