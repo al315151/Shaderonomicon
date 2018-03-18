@@ -24,6 +24,27 @@ Shader "Custom/NewShader"
 			#include "UnityCG.cginc"
 			#include "UnityLightingCommon.cginc"
 
+			//variables
+
+		uniform sampler2D _MainTex;
+
+
+		uniform sampler2D _CustomTexture;
+		uniform fixed4 _TextureTint = fixed4(1.0, 1.0, 1.0, 1.0);
+		
+		uniform sampler2D _NormalMap;
+		uniform float4 _NormalMap_ST;
+		uniform half _NormalMapScale = 1.0f;
+
+		uniform sampler2D _BumpMap;
+		uniform float4 _BumpMap_ST;
+		uniform float _MaxHeightBumpMap = 5.0f;
+		uniform float _MaxTexCoordOffset = 3.0f;
+
+		uniform float _CustomAmbientLightForce = 0.75f;
+		uniform fixed4 _CustomSpecularColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+		uniform float _CustomShininess = 1.0f;
+		
 			struct vertexInput 
 			{
             float4 vertex : POSITION;
@@ -39,25 +60,10 @@ Shader "Custom/NewShader"
 			float3 NormalWorld : TEXCOORD2;
 			float3 TangentWorld : TEXCOORD3;
 			float3 BitangentWorld : TEXCOORD4;
+			float3 viewDirWorld : TEXCOORD5;
+			float3 viewDirInScaledSurfaceCoords : TEXCOORD6;
 
-
-			};
- 
-		//variables
-
-		uniform sampler2D _MainTex;
-		
-		sampler2D _CustomTexture;
-		fixed4 _TextureTint = fixed4(1.0, 1.0, 1.0, 1.0);
-		
-		sampler2D _NormalMap;
-		uniform float4 _NormalMap_ST;
-		half _NormalMapScale = 1.0f;
-
-		uniform float _CustomAmbientLightForce = 0.75f;
-		uniform fixed4 _CustomSpecularColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-		uniform float _CustomShininess = 1.0f;
-		
+			};	
 
 
 		//Quick normal maths
@@ -74,7 +80,21 @@ Shader "Custom/NewShader"
 			output.NormalWorld = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz);
 			output.BitangentWorld = normalize(cross(output.NormalWorld, output.TangentWorld) * input.tangent.w);
 
+			float3 biNormal = cross (input.normal, input.tangent.xyz) * input.tangent.w;
+			//scaled tangent and biNormal aprroximations
+			//to map distances from object space to Texture space.
+
+			float3 viewDirInObjectCoords = mul (modelMatrixInverse, float4(_WorldSpaceCameraPos, 1.0).xyz) - 
+												input.vertex.xyz;
+			float3x3 localSurface2ScaledObjectT = float3x3(input.tangent.xyz, biNormal, input.normal);
+			//VECTORS ARE ORTHOGONAL.
+
+			output.viewDirInScaledSurfaceCoords = mul (localSurface2ScaledObjectT, viewDirInObjectCoords);
+			//we multiply with the ptranspose to multiply with the "inverse"
+			
 			output.worldPosition = mul(modelMatrix, input.vertex);
+			output.viewDirWorld = normalize(_WorldSpaceCameraPos - output.worldPosition.xyz);
+
 			output.tex = input.texcoord;
 			output.pos = UnityObjectToClipPos(input.vertex);
 
@@ -87,10 +107,14 @@ Shader "Custom/NewShader"
 			//Overwritting deffault Values with custom Values
 			_MainTex = _CustomTexture;
 			
+			//Parallax time!
+			
+			float height = _MaxHeightBumpMap * (-0.5 + tex2D(_BumpMap, _BumpMap_ST.xy * input.tex.xy + _BumpMap_ST.zw).x);
+			float2 texCoordOffsets = clamp (height * input.viewDirInScaledSurfaceCoords.xy / 
+											input.viewDirInScaledSurfaceCoords.z, - _MaxTexCoordOffset, +_MaxTexCoordOffset);
 
-
-			// doing actual work
-			float4 encodedNormal = tex2D(_NormalMap, _NormalMap_ST.xy * input.tex.xy + _NormalMap_ST.zw);
+			// doing actual work (to remove bump map: remove texCoordOffsets from encodedNormal)
+			float4 encodedNormal = tex2D(_NormalMap, _NormalMap_ST.xy * (input.tex.xy + texCoordOffsets) + _NormalMap_ST.zw);
 			float3 localCoords = float3(2.0 * encodedNormal.a - 1.0, 2.0 * encodedNormal.g - 1.0, 0.0);
 			
 			//Con uso de sqrt: mas preciso pero mas costoso

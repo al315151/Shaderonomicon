@@ -36,6 +36,9 @@ public class ShaderEdition : MonoBehaviour {
     Texture2D _CustomNormalMap;
     float _CustomNormalMapScale;
 
+    Texture2D _CustomBumpMap;
+    float _CustomBumpMapScale;
+
     #endregion
 
 
@@ -82,6 +85,7 @@ public class ShaderEdition : MonoBehaviour {
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
         Shader.SetGlobalColor("_TextureTint", _TextureTint);
         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
+        Shader.SetGlobalTexture("_BumpMap", _CustomBumpMap);
         #endregion
     }
 
@@ -114,6 +118,12 @@ public class ShaderEdition : MonoBehaviour {
                 {
                     _CustomNormalMap = webObject.texture;
                     Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
+                    break;
+                }
+            case "BumpMap":
+                {
+                    _CustomBumpMap = webObject.texture;
+                    Shader.SetGlobalTexture("_BumpMap", _CustomBumpMap);
                     break;
                 }
             default:
