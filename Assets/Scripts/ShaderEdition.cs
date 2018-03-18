@@ -81,28 +81,50 @@ public class ShaderEdition : MonoBehaviour {
         #region UPDATE_GLOBAL_SHADER_VARIABLES
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
         Shader.SetGlobalColor("_TextureTint", _TextureTint);
+        Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
         #endregion
     }
 
     #region OBTAIN_IMAGE_FUNCTIONS
 
-    public void GetImageFromFile()
+    public void GetImageFromFile(string imageType)
     {
         FilePath = FileBrowser.OpenSingleFile("Choose a PNG...", Application.dataPath, "png");
         print(FilePath);
-        StartCoroutine(GetTextureFromPNG());
+        StartCoroutine(GetTextureFromPNG(imageType));
         
     }
 
-    IEnumerator GetTextureFromPNG()
+    IEnumerator GetTextureFromPNG(string imageType)
     {
         WWW webObject = new WWW("file:///"+FilePath);
         while (!webObject.isDone)
         {
             yield return null;
         }
-        _CustomTexture = webObject.texture;
-        Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
+        switch (imageType)
+        {
+            case "DiffuseTexture":
+                {
+                    _CustomTexture = webObject.texture;
+                    Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
+                    break;
+                }
+            case "NormalMap":
+                {
+                    _CustomNormalMap = webObject.texture;
+                    Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
+                    break;
+                }
+            default:
+                {
+                    print("You should not be here, revisa string de llamada a función");
+                    break;
+                }
+
+        }
+       
+        
     }
 
     #endregion
