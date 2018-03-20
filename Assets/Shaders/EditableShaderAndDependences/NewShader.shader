@@ -10,8 +10,8 @@ Shader "Custom/NewShader"
 		_MainTex ("Texture", 2D) = "white" {}
 		_CustomTexture ("Custom Texture", 2D) = "white"{}
 		_TextureTint("Custom Texture Tint", Color) = (1.0, 1.0, 1.0, 1.0)
-		_NormalMap("Normal Map", 2D) = "white"{}
-		_BumpMap("Bump Map", 2D) = "white"{}
+		_NormalMap("Normal Map", 2D) = "bump"{}
+		_BumpMap("Bump Map", 2D) = "bump"{}
 		_NormalMapScale("Normal Map Scale", float) = 1.0
 		_MaxHeightBumpMap("Bump Map Max Height", float) = 0.5
 		_MaxTexCoordOffset ("Bump Map Max Texture Coordinate offset", float) = 0.5
@@ -32,6 +32,8 @@ Shader "Custom/NewShader"
 	{
 		Tags { "LightMode" = "ForwardBase" "RenderType" = "Opaque" }
 		LOD 100
+
+		Blend One Zero
 
 		Pass
 		{
@@ -298,12 +300,8 @@ Shader "Custom/NewShader"
 
 			// doing actual work (to remove bump map: remove texCoordOffsets from encodedNormal)
 			float4 encodedNormal = tex2D(_NormalMap, _NormalMap_ST.xy * (input.tex.xy + texCoordOffsets) + _NormalMap_ST.zw);
-			float3 localCoords = float3(2.0 * encodedNormal.a - 1.0, 2.0 * encodedNormal.g - 1.0, 0.0);
-			
-			//Con uso de sqrt: mas preciso pero mas costoso
-			localCoords.z = sqrt(1.0 - dot(localCoords, localCoords));
-			//Sin uso de sqrt: aproximacion de valor, pero mas barata
-			//localCoords.z = 1-0 - 0.5 * dot (localCoords, localCoords);
+			float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0);
+			localCoords.z = 1.0 - 0.5 * dot (localCoords, localCoords);
 
 			float3x3 local2WorldTranspose = float3x3(input.TangentWorld, input.BitangentWorld, input.NormalWorld);
 			float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
@@ -312,7 +310,7 @@ Shader "Custom/NewShader"
 			
 			 float4 lightingModelCalculation = LightingModelsResult(_LightingModel, input, normalDirection);
 
-			 float4 finalColor = tex2D(_CustomTexture, input.tex.xy)
+			 float4 finalColor = tex2D(_CustomTexture, (input.tex.xy + texCoordOffsets) * _CustomTexture_ST.xy + _CustomTexture_ST.zw)
 								 * lightingModelCalculation;
 			 return finalColor;
 

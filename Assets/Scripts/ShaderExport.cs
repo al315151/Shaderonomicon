@@ -36,7 +36,7 @@ public class ShaderExport : MonoBehaviour {
         "_MainTex(" + '"' + "Texture"+ '"' + ", 2D) = "+ '"' + "white"+ '"' + "{} " +
         "_CustomTexture("+ '"' + "Custom Texture"+ '"' + ", 2D) = " + '"' + "white" + '"' + "{} " +
         "_TextureTint(" + '"' + "Custom Texture Tint"+ '"' + ", Color) = (1.0, 1.0, 1.0, 1.0) " +
-        "_NormalMap(" + '"'+ "Normal Map"+ '"' + ", 2D) = "+ '"' + "white"+ '"' + "{} " +
+        "_NormalMap(" + '"'+ "Normal Map"+ '"' + ", 2D) = "+ '"' + "bump"+ '"' + "{} " +
         "_BumpMap(" + '"' + "Bump Map"+ '"' + ", 2D) = " + '"' + "white" + '"' + "{} " +
         "_NormalMapScale(" + '"' + "Normal Map Scale"+ '"' + ", float) = 1.0 " + 
         "_MaxHeightBumpMap(" + '"' + "Bump Map Max Height"+ '"' + ", float) = 0.5 " +
