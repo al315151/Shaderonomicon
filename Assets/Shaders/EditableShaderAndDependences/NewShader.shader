@@ -8,6 +8,25 @@ Shader "Custom/NewShader"
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
+		_CustomTexture ("Custom Texture", 2D) = "white"{}
+		_TextureTint("Custom Texture Tint", Color) = (1.0, 1.0, 1.0, 1.0)
+		_NormalMap("Normal Map", 2D) = "white"{}
+		_BumpMap("Bump Map", 2D) = "white"{}
+		_NormalMapScale("Normal Map Scale", float) = 1.0
+		_MaxHeightBumpMap("Bump Map Max Height", float) = 0.5
+		_MaxTexCoordOffset ("Bump Map Max Texture Coordinate offset", float) = 0.5
+		_CustomAmbientLightForce("Ambient Light Force", float) = 0.75
+		_CustomSpecularColor ("Specular Color", Color) = (1.0, 1.0, 1.0, 1.0)
+		_CustomShininess("Shininess", Range(0.0, 1.0)) = 0.5
+		_PhongDiffuseColor("Phong Diffuse Color", Color) = (1.0, 1.0, 1.0, 1.0)
+		_PhongSpecularColor("Phong Specular Color", Color) = (1.0, 1.0, 1.0, 1.0)
+		_PhongSpecularGlossiness("Phong Specular Glossiness", Range(0.0, 1.0)) = 0.5
+		_PhongSpecularPower("Phong Specular Power", float) = 1.0
+		_TextureTileX("Texture Tiling X", float) = 1.0
+		_TextureTileY("Texture Tiling Y", float) = 1.0
+		_OffsetTileX("Offset Tiling X", float) = 0.0
+		_OffsetTileY("Offset Tiling Y", float) = 0.0
+		_LightingModel("Lighting Model", int) = 0
 	}
 	SubShader
 	{
@@ -23,14 +42,14 @@ Shader "Custom/NewShader"
 			//#include "ShaderonomiconLibrary.cginc"
 			#include "UnityCG.cginc"
 			#include "UnityLightingCommon.cginc"
-
 			//variables
 
 		uniform sampler2D _MainTex;
-
+		uniform float4 _MainTex_ST;
 
 		uniform sampler2D _CustomTexture;
-		uniform fixed4 _TextureTint = fixed4(1.0, 1.0, 1.0, 1.0);
+		uniform float4 _CustomTexture_ST;
+		uniform fixed4 _TextureTint;
 		
 		uniform sampler2D _NormalMap;
 		uniform float4 _NormalMap_ST;
@@ -42,22 +61,29 @@ Shader "Custom/NewShader"
 		uniform float _MaxTexCoordOffset = 3.0f;
 
 		uniform float _CustomAmbientLightForce = 0.75f;
-		uniform fixed4 _CustomSpecularColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+		uniform fixed4 _CustomSpecularColor;
 		uniform float _CustomShininess = 1.0f;
 		
 		uniform float _PhongSpecularPower = 0.5f;
 		uniform float _PhongSpecularGlossiness = 0.5f;
-		uniform fixed4 _PhongDiffuseColor = fixed4(1.0f, 1.0f, 1.0f, 1.0f);
-		uniform fixed4 _PhongSpecularColor = fixed4(1.0f, 1.0f, 1.0f, 1.0f);
+		uniform fixed4 _PhongDiffuseColor;
+		uniform fixed4 _PhongSpecularColor;
 
 		uniform float _MinnaertRoughness = 0.5f;
-		uniform fixed4 _MinnaertDiffuseColor = fixed4(1.0f, 1.0f, 1.0f, 1.0f);
+		uniform fixed4 _MinnaertDiffuseColor;
+		
+		uniform float _TextureTileX;
+		uniform float _TextureTileY;
 
+		uniform float _OffsetTileX;
+		uniform float _OffsetTileY;
+		
+		uniform int _LightingModel;
 
-			struct vertexInput 
+		struct vertexInput 
 			{
             float4 vertex : POSITION;
-            float4 texcoord : TEXCOORD0;
+            float2 texcoord : TEXCOORD0;
 			float3 normal : NORMAL;
 			float4 tangent : TANGENT;
 			};
@@ -65,7 +91,7 @@ Shader "Custom/NewShader"
 			{
             float4 pos : SV_POSITION;
 			float4 worldPosition : TEXCOORD0;
-            float4 tex : TEXCOORD1;
+            float2 tex : TEXCOORD1;
 			float3 NormalWorld : TEXCOORD2;
 			float3 TangentWorld : TEXCOORD3;
 			float3 BitangentWorld : TEXCOORD4;
@@ -82,7 +108,15 @@ Shader "Custom/NewShader"
          vertexOutput vert(vertexInput input) 
          {
             vertexOutput output;
- 
+			
+			fixed2 tileVector = fixed2 (_TextureTileX, _TextureTileY);
+			fixed2 offsetVector = fixed2 (_OffsetTileX, _OffsetTileY);
+			_NormalMap_ST = float4 (tileVector, offsetVector ); 
+			_MainTex_ST = float4 (tileVector, offsetVector );
+			_BumpMap_ST = float4 (tileVector, offsetVector );
+			_CustomTexture_ST = float4 (tileVector, offsetVector );
+
+		
 			float4x4 modelMatrix = unity_ObjectToWorld;
 			float4x4 modelMatrixInverse = unity_WorldToObject;
 
@@ -105,6 +139,7 @@ Shader "Custom/NewShader"
 			output.worldPosition = mul(modelMatrix, input.vertex);
 			output.viewDirWorld = normalize(_WorldSpaceCameraPos - output.worldPosition.xyz);
 
+			//output.tex = TRANSFORM_TEX(input.texcoord, _CustomTexture);
 			output.tex = input.texcoord;
 			output.pos = UnityObjectToClipPos(input.vertex);
 
@@ -206,6 +241,42 @@ Shader "Custom/NewShader"
 					return float4 (finalColor, 1.0);
 					
 				}
+				else if (LightModel == 4) //Phong Lighting Model, based on code from: http://www.jordanstevenstechart.com/lighting-models
+				{
+					float3 viewDirection = normalize(_WorldSpaceCameraPos - input.worldPosition.xyz);
+			
+					float3 lightDirection;
+					float attenuation;
+			
+					//light type consideration
+
+					if (0.0 == _WorldSpaceLightPos0.w)
+					{
+						attenuation = 1.0f;
+						lightDirection = normalize(_WorldSpaceLightPos0.xyz);			
+					}
+					else
+					{
+						float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - input.worldPosition.xyz;
+						float distance = length(vertexToLightSource);
+						attenuation = 1.0 / pow(distance + 1, 2);
+						lightDirection = normalize(vertexToLightSource);
+					}
+					
+					float3 lightReflectDirection = reflect (-lightDirection, normalDirection);
+					float NDotL = max (0.0, dot (normalDirection, lightDirection));
+					float RDotV = max (0.0, dot (lightReflectDirection, viewDirection));
+					//Specular Calculations
+					float3 specularity = pow (RDotV, _PhongSpecularGlossiness / 4) 
+										 * _PhongSpecularPower * _PhongSpecularColor.rgb;
+
+					float3 lightingModel = NDotL * _PhongDiffuseColor + specularity;
+					float3 attenColor = attenuation * _LightColor0.rgb;
+					float4 finalDiffuse = float4 (lightingModel * attenColor, 1.0f);
+					
+					return finalDiffuse;
+
+				}
 				else
 				{	return float4(1.0f, 1.0f, 1.0f, 1.0f);	}
 		}
@@ -213,9 +284,12 @@ Shader "Custom/NewShader"
          float4 frag(vertexOutput input) : COLOR
          {
 			//Overwritting deffault Values with custom Values
-			//Also, depending on the lighting model, we need to update the necessary variables...
-			_MainTex = _CustomTexture;
+			//Also, depending on the lighting model, we need to update the necessary variables...					
+			_MainTex = _CustomTexture;		
 			
+			//Recuerda, los floats de cada textura apodados textura_ST significa (Scale Translate)
+			//para procesar el tileado y offset de las texturas.
+
 			//Parallax time!
 			
 			float height = _MaxHeightBumpMap * (-0.5 + tex2D(_BumpMap, _BumpMap_ST.xy * input.tex.xy + _BumpMap_ST.zw).x);
@@ -236,9 +310,10 @@ Shader "Custom/NewShader"
 
 
 			
-			 float4 lightingModelCalculation = LightingModelsResult(2, input, normalDirection);
+			 float4 lightingModelCalculation = LightingModelsResult(_LightingModel, input, normalDirection);
 
-			 float4 finalColor = tex2D(_MainTex, input.tex.xy) * lightingModelCalculation;
+			 float4 finalColor = tex2D(_CustomTexture, input.tex.xy)
+								 * lightingModelCalculation;
 			 return finalColor;
 
          }

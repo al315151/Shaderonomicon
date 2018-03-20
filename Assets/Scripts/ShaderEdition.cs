@@ -48,6 +48,8 @@ public class ShaderEdition : MonoBehaviour {
     [HideInInspector]
     public string FilePath;
     [HideInInspector]
+    public string saveFilePath;
+    [HideInInspector]
     public string shaderName;
     #endregion
 
@@ -72,9 +74,7 @@ public class ShaderEdition : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
-        
-
-
+ 
     }
 	
 	// Update is called once per frame
