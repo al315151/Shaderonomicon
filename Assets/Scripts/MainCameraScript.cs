@@ -24,7 +24,7 @@ public class MainCameraScript : MonoBehaviour {
         if (cameraReference != null && cameraObjectiveReference != null)
         {
             cameraReference.transform.LookAt(cameraObjectiveReference.transform);
-            transform.rotation *= Quaternion.Euler( 0, -21.25f, 0);
+           
         }
       
 	}
