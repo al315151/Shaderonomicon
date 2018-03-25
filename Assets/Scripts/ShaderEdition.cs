@@ -53,6 +53,13 @@ public class ShaderEdition : MonoBehaviour {
     public string shaderName;
     #endregion
 
+    #region CHANGE_MESH_VARIABLES
+    [HideInInspector]
+    public Camera ActiveCamera;
+    public Mesh[] availableMeshes;
+    public Dropdown optionDropDown_CR;
+    #endregion
+
     public static ShaderEdition currentInstance;
 
     private void Awake()
@@ -199,9 +206,57 @@ public class ShaderEdition : MonoBehaviour {
 
     #endregion
 
+    #region CHANGE_MESH_FUNCTIONS
+    public void ChangeMeshFromDropDown()
+    {
+        switch (optionDropDown_CR.captionText.text)
+        {
+            case "Sphere":
+                {
+                    if (availableMeshes[0] != null)
+                    {
+                        displayObject.GetComponent<MeshFilter>().mesh = availableMeshes[0];
+                    }                    
+                    break;
+                }
+            case "Cube":
+                {
+                    if (availableMeshes[1] != null)
+                    {
+                        displayObject.GetComponent<MeshFilter>().mesh = availableMeshes[1];
+                    }
+                    break;
+                }
+            case "Capsule":
+                {
+                    if (availableMeshes[2] != null)
+                    {
+                        displayObject.GetComponent<MeshFilter>().mesh = availableMeshes[2];
+                    }
+                    break;
+                }
+            case "Cylinder":
+                {
+                    if (availableMeshes[3] != null)
+                    {
+                        displayObject.GetComponent<MeshFilter>().mesh = availableMeshes[3];
+                    }
+                    break;
+                }
+            default:
+                {
+                    Debug.Log("Selected option not valid. Revisa codigo y DropDown.");
+                    break;
+                }
+        }
 
 
 
+    }
+
+
+
+    #endregion
 
 
 

@@ -8,13 +8,18 @@ public class MainCameraScript : MonoBehaviour {
 
     public GameObject cameraObjectiveReference;
 
+   
 
-	// Use this for initialization
-	void Start ()
+
+    // Use this for initialization
+    void Start ()
     {
         cameraReference = GetComponent<Camera>();
         if (ShaderEdition.currentInstance != null)
-        {   cameraObjectiveReference = ShaderEdition.currentInstance.displayObject;  }
+        {
+            cameraObjectiveReference = ShaderEdition.currentInstance.displayObject;
+            ShaderEdition.currentInstance.ActiveCamera = cameraReference;
+        }
         
 	}
 	
@@ -24,8 +29,8 @@ public class MainCameraScript : MonoBehaviour {
         if (cameraReference != null && cameraObjectiveReference != null)
         {
             cameraReference.transform.LookAt(cameraObjectiveReference.transform);
-           
         }
       
 	}
+
 }
