@@ -5,27 +5,40 @@ using UnityEngine.UI;
 
 public class RotateObject : MonoBehaviour {
 
-    Camera MeshCamera;
-    GameObject MeshReference;
+    
+    GameObject MeshReference = null;
 
     #region ROTATE_AROUND_VARIABLES
     float distanceFromObjectToCamera;
     Vector3 lastFrameMousePosition;
     #endregion
 
-    #region MOUSE_DETECTION_VARIABLES
-  
+    #region CAMERA_VARIABLES
+    Camera MeshCamera = null;
     #endregion
+
 
 
     // Use this for initialization
     void Start ()
     {       
-        if (ShaderEdition.currentInstance != null)
+        if (ShaderEdition.currentInstance != null && (MeshCamera == null || MeshReference == null))
         {
+            print("Llegamos a entrar aqui?");
             MeshCamera = ShaderEdition.currentInstance.ActiveCamera;
             MeshReference = ShaderEdition.currentInstance.displayObject;
-        }		
+        }
+        if (Input.GetAxis("Mouse ScrollWheel") != 0 && MeshCamera != null)
+        {
+            MeshCamera.transform.localPosition = new Vector3(MeshCamera.transform.localPosition.x,
+                                                             MeshCamera.transform.localPosition.y, 
+                                                             MeshCamera.transform.localPosition.z + Input.GetAxis("Mouse ScrollWheel"));
+
+        }
+
+
+
+
 	}
 	
 	// Update is called once per frame
@@ -52,9 +65,30 @@ public class RotateObject : MonoBehaviour {
         /*print(Input.mousePosition + " --> Mouse Position");
         print((selfDetectionImage.transform.position) + " --> Image Position");*/
         Vector3 AxisMovement;
-        AxisMovement.x = Input.mousePosition.x - lastFrameMousePosition.x;
-        AxisMovement.y = Input.mousePosition.y - lastFrameMousePosition.y;
-        AxisMovement.z = Input.mousePosition.z - lastFrameMousePosition.z;
+
+        float differenceX = Mathf.Abs(Input.mousePosition.x - lastFrameMousePosition.x);
+        float differenceY = Mathf.Abs(Input.mousePosition.y - lastFrameMousePosition.y); 
+        float differenceZ = Mathf.Abs(Input.mousePosition.z - lastFrameMousePosition.z);
+
+        if (differenceX >= differenceY && differenceX >= differenceZ)
+        {
+            AxisMovement.x = 0;
+            AxisMovement.y = differenceZ;
+            AxisMovement.z = differenceY;
+        }
+        else if (differenceY >= differenceX && differenceY >= differenceZ)
+        {
+            AxisMovement.x = differenceX;
+            AxisMovement.y = 0;
+            AxisMovement.z = differenceY;
+        }
+        else
+        {
+            AxisMovement.x = differenceX;
+            AxisMovement.y = differenceZ;
+            AxisMovement.z = 0;
+        }
+
 
         RotateCameraOnMesh(AxisMovement);
 
@@ -62,7 +96,92 @@ public class RotateObject : MonoBehaviour {
     }
 
 
+    /* Copia de cube wars, camara: revisa y rapiñea lo que veas
+     * 
+     *  private float EDGE_PANNING_MAX_X = 290;
+    private float EDGE_PANNING_MIN_X = -20;
+    private float EDGE_PANNING_MAX_Y = 290;
+    private float EDGE_PANNING_MIN_Y = -20;
 
+    private float EDGE_PANNING_LIMIT_ABSOLUTE_Y = 30;
+    private const float EDGE_PANNING_SPEED = 210f /*90f*/                           // Velocidad del edge panning
+   /* private const float RIGHT_CLICK_TURN_SPEED = 100f;                      // Velocidad de giro de la camara
+    private const float EDGE_PANNING_THS_HORIZONTAL = 0.4f/*0.475f*/               // Posicion del raton necesaria para mover la pantalla en X (de 0 a 0.5)
+   /* private const float EDGE_PANNING_THS_VERTICAL = 0.375f/*0.45f*/                  // Posicion del raton necesaria para mover la pantalla en Y (de 0 a 0.5)
+   /* private const float ZOOM_SPEED = 2f;                                    // Velocidad de zoom
+    private const float ZOOM_MIN_HEIGHT = 3.5f;                                // Altura minima del zoom
+    private const float ZOOM_HEIGHT_SCALING = 25f;                          // Escalado de altura del zoom (el zoom maximo sera, posicion minima + escalado)
+    private const float ZOOM_MIN_ANGLE = 30f;                               // Angulo minimo de la camara de zoom
+    private const float ZOOM_ANGLE_SCALING = 30f;                           // Escalado de angulo del zoom (el angulo maximo sera, angulo minimo + escalado)
+
+    private float zoomTarget_T = 0.5f;
+    private float zoomCurrent_T = 0.5f;
+
+    private float mousePositionPercentX;
+    private float mousePositionPercentY;
+
+    public Transform zoomTransform;
+
+    // Use this for initialization
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetMouseButton(1))
+        {
+            UpdateRightClickTurning();
+        }
+        else
+        {
+            UpdateEdgePanning();
+        }
+        UpdateZoom();
+
+    }
+    void UpdateZoom()
+    {
+        zoomTarget_T -= Input.GetAxis("Mouse ScrollWheel");
+        zoomTarget_T = Mathf.Clamp01(zoomTarget_T);
+        zoomCurrent_T = Mathf.MoveTowards(zoomCurrent_T, zoomTarget_T, Time.deltaTime * ZOOM_SPEED);
+        zoomTransform.localPosition = new Vector3(0, ZOOM_MIN_HEIGHT + (zoomCurrent_T * ZOOM_HEIGHT_SCALING), 0);
+        zoomTransform.localRotation = Quaternion.Euler(ZOOM_MIN_ANGLE + zoomCurrent_T * ZOOM_ANGLE_SCALING, 0, 0);
+    }
+    void UpdateRightClickTurning()
+    {
+        transform.Rotate(0, RIGHT_CLICK_TURN_SPEED * Input.GetAxis("Mouse X") * Time.deltaTime, 0);
+    }
+    void UpdateEdgePanning()
+    {
+        mousePositionPercentX = (Input.mousePosition.x / Screen.width) - 0.5f;
+        mousePositionPercentY = (Input.mousePosition.y / Screen.height) - 0.5f;
+        if (Mathf.Abs(mousePositionPercentX) > EDGE_PANNING_THS_HORIZONTAL)
+        {
+            mousePositionPercentX = Mathf.MoveTowards(mousePositionPercentX, 0, EDGE_PANNING_THS_HORIZONTAL);
+            transform.Translate(Vector3.right * mousePositionPercentX * EDGE_PANNING_SPEED * Time.deltaTime);
+        }
+        if (Mathf.Abs(mousePositionPercentY) > EDGE_PANNING_THS_VERTICAL)
+        {
+            mousePositionPercentY = Mathf.MoveTowards(mousePositionPercentY, 0, EDGE_PANNING_THS_VERTICAL);
+            transform.Translate(Vector3.forward * mousePositionPercentY * EDGE_PANNING_SPEED * Time.deltaTime);
+        }
+        transform.position = new Vector3(Mathf.Clamp(transform.position.x, EDGE_PANNING_MIN_X, EDGE_PANNING_MAX_X), 0, Mathf.Clamp(transform.position.z, EDGE_PANNING_MIN_Y, EDGE_PANNING_MAX_Y));
+    }
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * */
 
 
 

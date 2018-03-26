@@ -17,8 +17,8 @@ public class MainCameraScript : MonoBehaviour {
         cameraReference = GetComponent<Camera>();
         if (ShaderEdition.currentInstance != null)
         {
-            cameraObjectiveReference = ShaderEdition.currentInstance.displayObject;
             ShaderEdition.currentInstance.ActiveCamera = cameraReference;
+            cameraObjectiveReference = ShaderEdition.currentInstance.displayObject;            
         }
         
 	}
