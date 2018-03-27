@@ -24,7 +24,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _CustomTexture:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 3, y: 1}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
@@ -35,9 +35,9 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _CustomAmbientLightForce: 0.75
+    - _CustomAmbientLightForce: 0
     - _CustomShininess: 0.5
-    - _LightingModel: 2
+    - _LightingModel: 1
     - _MaxHeightBumpMap: 0.5
     - _MaxTexCoordOffset: 0.5
     - _NormalMapScale: 1
