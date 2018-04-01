@@ -22,18 +22,18 @@ Shader "Custom/NewShader"
 		_PhongSpecularColor("Phong Specular Color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_PhongSpecularGlossiness("Phong Specular Glossiness", Range(0.0, 1.0)) = 0.5
 		_PhongSpecularPower("Phong Specular Power", float) = 1.0
-		_TextureTileX("Texture Tiling X", float) = 1.0
-		_TextureTileY("Texture Tiling Y", float) = 1.0
-		_OffsetTileX("Offset Tiling X", float) = 0.0
-		_OffsetTileY("Offset Tiling Y", float) = 0.0
-		_LightingModel("Lighting Model", int) = 0
+		//_TextureTileX("Texture Tiling X", float) = 1.0
+		//_TextureTileY("Texture Tiling Y", float) = 1.0
+		//_OffsetTileX("Offset Tiling X", float) = 0.0
+		//_OffsetTileY("Offset Tiling Y", float) = 0.0
+		//_LightingModel("Lighting Model", int) = 0
 	}
 	SubShader
 	{
 		Tags { "LightMode" = "ForwardBase" "RenderType" = "Opaque" }
 		LOD 100
 
-		Blend One Zero
+		Blend One One
 
 		Pass
 		{

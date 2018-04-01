@@ -41,6 +41,25 @@ public class ShaderEdition : MonoBehaviour {
 
     #endregion
 
+    #region CHANGE_LIGHTING_MODEL
+    [Header("Lighting Model References")]
+    public Slider lighting_Model_Slider_CR;
+    public Text lighting_Model_Text_CR;
+    private int _Current_Lighting_Model;
+    #endregion
+
+    #region CHANGE_SCALE_OFFSET_BASE_TEXTURE
+    public InputField Base_Texture_Scale_X;
+    public InputField Base_Texture_Scale_Y;
+    public InputField Base_Texture_Offset_X;
+    public InputField Base_Texture_Offset_Y;
+
+    private float _Base_Texture_Scale_X = 1.0f;
+    private float _Base_Texture_Scale_Y = 1.0f;
+    private float _Base_Texture_Offset_X = 0.0f;
+    private float _Base_Texture_Offset_Y = 0.0f;
+
+    #endregion
 
     #endregion
 
@@ -87,12 +106,16 @@ public class ShaderEdition : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
+        UpdateScaleOffsetBaseTexture();
+        UpdateLightingModel();
+        
 
         #region UPDATE_GLOBAL_SHADER_VARIABLES
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
         Shader.SetGlobalColor("_TextureTint", _TextureTint);
         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
         Shader.SetGlobalTexture("_BumpMap", _CustomBumpMap);
+        Shader.SetGlobalInt("_LightingModel", _Current_Lighting_Model);
         #endregion
     }
 
@@ -253,8 +276,61 @@ public class ShaderEdition : MonoBehaviour {
 
 
     }
+    
+    #endregion
 
+    #region CHANGE_LIGHTING_MODEL_FUNCTIONS
+    public void UpdateLightingModel()
+    {
+        _Current_Lighting_Model = (int)lighting_Model_Slider_CR.value;
+        switch (_Current_Lighting_Model)
+        {
+            case 0:
+                {
+                    lighting_Model_Text_CR.text = "No Lighting";
+                    break;
+                }
+            case 1:
+                {
+                    lighting_Model_Text_CR.text = "Phong Lighting";
+                    break;
+                }
+            case 2:
+                {
+                    lighting_Model_Text_CR.text = "Lambert Lighting";
+                    break;
+                }
+            case 3:
+                {
+                    lighting_Model_Text_CR.text = "Half-Lambert Lighting";
+                    break;
+                }
+            case 4:
+                {
+                    lighting_Model_Text_CR.text = "Phong (No Ambient Lighting)";
+                    break;
+                }
+        }
+    }
+    #endregion
 
+    #region UPDATE_SCALE_OFFSET_BASE_TEXTURE_FUNCTIONS
+    public void UpdateScaleOffsetBaseTexture()
+    {
+        if (Base_Texture_Scale_X.text != "")
+        { _Base_Texture_Scale_X = float.Parse(Base_Texture_Scale_X.text); }
+        if (Base_Texture_Scale_Y.text != "")
+        { _Base_Texture_Scale_Y = float.Parse(Base_Texture_Scale_Y.text); }
+        if (Base_Texture_Offset_X.text != "")
+        { _Base_Texture_Offset_X = float.Parse(Base_Texture_Offset_X.text); }
+        if (Base_Texture_Offset_Y.text != "")
+        { _Base_Texture_Offset_Y = float.Parse(Base_Texture_Offset_Y.text); }        
+
+        Shader.SetGlobalFloat("_TextureTileX", _Base_Texture_Scale_X);
+        Shader.SetGlobalFloat("_TextureTileY", _Base_Texture_Scale_Y);
+        Shader.SetGlobalFloat("_OffsetTileX", _Base_Texture_Offset_X);
+        Shader.SetGlobalFloat("_OffsetTileY", _Base_Texture_Offset_Y);
+    }
 
     #endregion
 
