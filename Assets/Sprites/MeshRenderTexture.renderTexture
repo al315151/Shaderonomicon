@@ -11,10 +11,10 @@ RenderTexture:
     Hash: 00000000000000000000000000000000
   m_ForcedFallbackFormat: 4
   m_DownscaleFallback: 0
-  m_Width: 1920
-  m_Height: 1080
-  m_AntiAliasing: 4
-  m_DepthFormat: 2
+  m_Width: 1280
+  m_Height: 720
+  m_AntiAliasing: 2
+  m_DepthFormat: 0
   m_ColorFormat: 0
   m_MipMap: 0
   m_GenerateMips: 1
@@ -24,10 +24,10 @@ RenderTexture:
   m_TextureSettings:
     serializedVersion: 2
     m_FilterMode: 2
-    m_Aniso: 0
+    m_Aniso: 3
     m_MipBias: 0
-    m_WrapU: 0
-    m_WrapV: 0
-    m_WrapW: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
   m_Dimension: 2
   m_VolumeDepth: 256

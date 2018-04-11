@@ -36,7 +36,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _CustomAmbientLightForce: 1
-    - _CustomShininess: 0.587
+    - _CustomShininess: 1
     - _LightingModel: 4
     - _MaxHeightBumpMap: 0.5
     - _MaxTexCoordOffset: 0.5

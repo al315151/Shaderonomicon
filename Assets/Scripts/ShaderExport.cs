@@ -6,6 +6,11 @@ using Crosstales.FB;
 
 public class ShaderExport : MonoBehaviour {
 
+    [Header("Editable Shader Files References")]
+    public Shader editableShaderReferences;
+    public TextAsset[] neededReferencesForEditableShader;
+
+
     public static string RenderType = "Opaque";
     public static string LightModeType = "ForwardBase";
     public static string shaderName = "TestExport";
@@ -20,6 +25,15 @@ public class ShaderExport : MonoBehaviour {
     void Update() {
 
     }
+
+    public void ReadFile()
+    {
+        //StreamReader shaderFound = new StreamReader(Application.dataPath, System.Text.Encoding.UTF8);
+        //string textFound = shaderFound.ReadToEnd();
+
+    }
+
+
 
     public void SaveFile()
     {

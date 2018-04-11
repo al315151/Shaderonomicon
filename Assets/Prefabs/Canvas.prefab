@@ -6918,6 +6918,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f92e57d967fabce418e8adbca0d1a9d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  editableShaderReferences: {fileID: 4800000, guid: 258ae2575d9266a45870b1d4f6151b8b,
+    type: 3}
+  neededReferencesForEditableShader:
+  - {fileID: 10900000, guid: a1edfb0f41998c84e8456635d63564e4, type: 3}
+  - {fileID: 10900000, guid: 797bfe0461426bf47a85673722062a33, type: 3}
 --- !u!114 &114866830993777866
 MonoBehaviour:
   m_ObjectHideFlags: 1
