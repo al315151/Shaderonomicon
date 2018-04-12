@@ -17,7 +17,7 @@ Shader "Custom/NewShader"
 		_MaxTexCoordOffset ("Bump Map Max Texture Coordinate offset", float) = 0.5
 		_CustomAmbientLightForce("Ambient Light Force", float) = 0.75
 		_CustomSpecularColor ("Specular Color", Color) = (1.0, 1.0, 1.0, 1.0)
-		_CustomShininess("Shininess", Range(0.0, 1.0)) = 0.5
+		_CustomShininess("Shininess", Range(0.0, 10.0)) = 10
 		_PhongDiffuseColor("Phong Diffuse Color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_PhongSpecularColor("Phong Specular Color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_PhongSpecularGlossiness("Phong Specular Glossiness", Range(0.0, 1.0)) = 0.5
@@ -27,24 +27,43 @@ Shader "Custom/NewShader"
 		//_OffsetTileX("Offset Tiling X", float) = 0.0
 		//_OffsetTileY("Offset Tiling Y", float) = 0.0
 		//_LightingModel("Lighting Model", int) = 0
+		_Color("Main Color (Diffuse Reflection)", Color) = (1.0, 1.0, 1.0, 1.0)
 	}
 	SubShader
 	{
-		Tags { "LightMode" = "ForwardBase" "RenderType" = "Opaque" }
-		LOD 100
+		
 
-		Blend One OneMinusSrcAlpha
+		//Blend One OneMinusSrcAlpha
 
 		Pass
 		{
+			Tags { "LightMode" = "ForwardBase"}
+			LOD 100
+			
 			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
+			#pragma vertex vert_PerPixelLighting
+			#pragma fragment frag_PerPixelLighting
 			
-			#include "SpellBook.cginc"
-			
+			#include "SpellBook.cginc"			
  
          ENDCG
 		}
+		/*Pass
+		{
+			Tags { "LightMode" = "ForwardAdd"}
+			LOD 100
+			
+			CGPROGRAM
+			#pragma vertex 
+			#pragma fragment 
+			
+			#include "SpellBook.cginc"			
+ 
+         ENDCG
+		}*/
+
+
+
+
 	}
 }

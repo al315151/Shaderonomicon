@@ -1,7 +1,9 @@
 #include "UnityCG.cginc"
 #include "UnityLightingCommon.cginc"
-			//variables
 
+//variables
+
+		//=================================
 		uniform sampler2D _MainTex;
 		uniform float4 _MainTex_ST;
 
@@ -37,6 +39,12 @@
 		uniform float _OffsetTileY;
 		
 		uniform int _LightingModel = 2;
+		//===========================================
+		//=======SPECULAR_HIGHLIGHTS, from: https://en.wikibooks.org/wiki/Cg_Programming/Unity/Specular_Highlights =================
+		uniform float4 _Color;		
+		uniform float _Shininess;
+		uniform float4 _SpecularColor;
+		//===========================================
 
 		struct vertexInput 
 			{
@@ -45,7 +53,7 @@
 			float3 normal : NORMAL;
 			float4 tangent : TANGENT;
 			};
-			struct vertexOutput 
+		struct vertexOutput 
 			{
             float4 pos : SV_POSITION;
 			float4 worldPosition : TEXCOORD0;
@@ -58,12 +66,185 @@
 
 			};	
 
+		struct vertexInput_DiffuseReflection
+		{
+			float4 vertex : POSITION;
+			float3 normal : NORMAL;
+		};		
 
-		//Quick normal maths
-		
-		
+		struct vertexOutput_DiffuseReflection
+		{
+			float4 pos : SV_POSITION;
+			float4 col : COLOR;	
+		};
 
-         vertexOutput vert(vertexInput input) 
+		struct vertexOutput_PerPixelLighting
+		{
+			float4 pos : SV_POSITION;
+			float3 posWorld : TEXCOORD0;
+			float3 normalDir : TEXCOORD1;
+		};
+
+		vertexOutput_DiffuseReflection vert_DiffuseReflection_ForwardBase (vertexInput_DiffuseReflection input)
+		{
+			_Shininess = _CustomShininess;
+			_SpecularColor = _CustomSpecularColor;
+
+			vertexOutput_DiffuseReflection output;
+			
+			float4x4 modelMatrix = unity_ObjectToWorld;
+			float3x3 modelMatrixInverse = unity_WorldToObject;
+			float3 normalDirection = normalize(mul(input.normal, modelMatrixInverse));
+			float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(modelMatrix, input.vertex).xyz);
+			
+			float3 lightDirection;
+			float attenuation;
+
+			if (0.0 == _WorldSpaceLightPos0.w) // directional light
+			{
+				attenuation = 1.0;
+				lightDirection = normalize(_WorldSpaceLightPos0.xyz);
+			}
+			else
+			{
+				float3 vertexToLightSource = _WorldSpaceLightPos0.xyz -	
+											 mul(modelMatrix, input.vertex).xyz;
+				float3 distance = length(vertexToLightSource);
+				attenuation = 1.0 / distance;
+				lightDirection = normalize(vertexToLightSource);
+			}
+
+			float3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT.rgb * _Color.rgb;
+			float3 diffuseReflection = attenuation * _LightColor0.rgb * _Color.rgb * 
+									   max(0.0, dot(normalDirection, lightDirection));
+
+			float3 specularReflection;
+
+			if (dot(normalDirection, lightDirection) < 0.0)
+			{	specularReflection = float3 (0.0, 0.0, 0.0);	}
+			else
+			{		specularReflection = attenuation * _LightColor0.rgb * _SpecularColor.rgb * 
+										 pow(max(0.0, dot(reflect(-lightDirection, normalDirection),
+														  viewDirection)), _Shininess);
+			}
+
+			output.col = float4(ambientLighting + diffuseReflection + specularReflection, 1.0);
+			output.pos = UnityObjectToClipPos(input.vertex);
+
+			return output;
+		}
+
+		vertexOutput_DiffuseReflection vert_DiffuseReflection_ForwardAdd (vertexInput_DiffuseReflection input)
+		{
+			_Shininess = _CustomShininess;
+			_SpecularColor = _CustomSpecularColor;
+
+			vertexOutput_DiffuseReflection output;
+			
+			float4x4 modelMatrix = unity_ObjectToWorld;
+			float3x3 modelMatrixInverse = unity_WorldToObject;
+			float3 normalDirection = normalize(mul(input.normal, modelMatrixInverse));
+			float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(modelMatrix, input.vertex).xyz);
+			
+			float3 lightDirection;
+			float attenuation;
+
+			if (0.0 == _WorldSpaceLightPos0.w) // directional light
+			{
+				attenuation = 1.0;
+				lightDirection = normalize(_WorldSpaceLightPos0.xyz);
+			}
+			else
+			{
+				float3 vertexToLightSource = _WorldSpaceLightPos0.xyz -	
+											 mul(modelMatrix, input.vertex).xyz;
+				float3 distance = length(vertexToLightSource);
+				attenuation = 1.0 / distance;
+				lightDirection = normalize(vertexToLightSource);
+			}
+
+			float3 diffuseReflection = attenuation * _LightColor0.rgb * _Color.rgb * 
+									   max(0.0, dot(normalDirection, lightDirection));
+
+			float3 specularReflection;
+
+			if (dot(normalDirection, lightDirection) < 0.0)
+			{	specularReflection = float3 (0.0, 0.0, 0.0);	}
+			else
+			{		specularReflection = attenuation * _LightColor0.rgb * _SpecularColor.rgb * 
+										 pow(max(0.0, dot(reflect(-lightDirection, normalDirection),
+														  viewDirection)), _Shininess);
+			}
+
+			output.col = float4(diffuseReflection + specularReflection, 1.0);
+			output.pos = UnityObjectToClipPos(input.vertex);
+
+			return output;
+		}
+
+		vertexOutput_PerPixelLighting vert_PerPixelLighting (vertexInput_DiffuseReflection input)
+		{
+			vertexOutput_PerPixelLighting output;
+		
+			float4x4 modelMatrix = unity_ObjectToWorld;
+			float4x4 modelMatrixInverse = unity_WorldToObject;
+
+			output.posWorld = mul(modelMatrix, input.vertex);
+			output.normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz);
+			output.pos = UnityObjectToClipPos(input.vertex);
+			return output;
+		}
+
+		float4 frag_DiffuseReflection_ForwardBase(vertexOutput_DiffuseReflection input) : COLOR
+		{	return input.col;	}
+
+		float4 frag_PerPixelLighting (vertexOutput_PerPixelLighting input) : COLOR
+		{
+			_Shininess = _CustomShininess;
+			_SpecularColor = _CustomSpecularColor;
+
+			float3 normalDirection = normalize(input.normalDir);
+
+			float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz);
+
+			float3 lightDirection;
+			float attenuation;
+		
+			if (0.0 == _WorldSpaceLightPos0.w)
+			{
+				attenuation = 1.0f;
+				lightDirection = normalize(_WorldSpaceLightPos0.xyz);
+			}
+			else
+			{
+				float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - input.posWorld.xyz;
+				float distance = length(vertexToLightSource);
+				attenuation = 1.0 / distance;
+				lightDirection = normalize(vertexToLightSource);				
+			}
+			
+			float3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT.rgb * _Color.rgb;
+
+			float3 diffuseReflection = attenuation * _LightColor0.rgb * _Color.rgb * 
+										   max(0.0, dot(normalDirection, lightDirection));
+				
+			float3 specularReflection;
+			if (dot(normalDirection, lightDirection) < 0.0)
+			{	specularReflection = float3(0.0, 0.0, 0.0);		}
+			else 
+			{
+				specularReflection = attenuation * _LightColor0.rgb * _SpecColor.rgb * 
+									 pow(max(0.0, dot(reflect(-lightDirection, normalDirection),
+													  viewDirection)), _Shininess);				
+			}			
+
+
+			return float4(ambientLighting + diffuseReflection + specularReflection, 1.0);
+		
+		}
+
+		
+		vertexOutput vert(vertexInput input) 
          {
             vertexOutput output;
 			
