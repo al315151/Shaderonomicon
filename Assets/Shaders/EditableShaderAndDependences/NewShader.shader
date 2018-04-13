@@ -41,8 +41,8 @@ Shader "Custom/NewShader"
 			LOD 100
 			
 			CGPROGRAM
-			#pragma vertex vert_PerPixelLighting
-			#pragma fragment frag_PerPixelLighting
+			#pragma vertex vert_PerVertexLighting_HalfLambert
+			#pragma fragment frag_PerVertexLighting
 			
 			#include "SpellBook.cginc"			
  

@@ -96,24 +96,24 @@ public class SatLumiPicker : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
-        Invoke("ScriptSetters", 0.01f);
+        //Invoke("ScriptSetters", 0.01f);
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
 
+
+
+
+        #region BULLSHIT
+        /*
         if (settersComplete && (Input.GetMouseButton(0) || Input.GetMouseButtonDown(0)))
         {
-            //print("ESTAMOS DENTRO DE LA FUNCION DE CLICK");
-
-            //mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mousePosition = Input.mousePosition;
             Vector2 screenPos = new Vector2(mousePosition.x, mousePosition.y);
 
-            //print("Supuesto X y supuesto Y: " + screenPos.x + " , " + screenPos.y);
-
-            //RaycastHit[] ray = Physics.RaycastAll(screenPos, Vector2.zero, 0.01f);
+           
 
             eventData = new PointerEventData(eventSystem);
             eventData.position = mousePosition;
@@ -128,32 +128,16 @@ public class SatLumiPicker : MonoBehaviour {
                // if (ray[i].collider.tag == "SLPicker")
                if (results[i].gameObject.tag == "SLPicker")
                 {
-                    //print("Really collides??");
-                    //screenPos = screenPos - new Vector2(ray[i].collider.gameObject.transform.position.x,
-                    //                                     ray[i].collider.gameObject.transform.position.y);
-                    //int x = (int)(screenPos.x * SLWidth());
-                    //int y = (int)(screenPos.y * SLHeight()) + SLHeight();
-
+                
                     float xMinCanvas = SLCanvasReference.position.x - (SLWidth() / 2);
                     float yMinCanvas = SLCanvasReference.position.y - (SLHeight() / 2);
                     float xMaxCanvas = SLCanvasReference.position.x + (SLWidth() / 2);
                     float yMaxCanvas = SLCanvasReference.position.y + (SLHeight() / 2);
 
-                    //print("Limites de rect canvas: " + "MinX: " + xMinCanvas + " , Max X: " + xMaxCanvas);
-                    //print("Limites de rect canvas: " + "MinY: " + yMinCanvas + " , Max Y: " + yMaxCanvas);
-
-                    //SO CLOSE
-                    //int texture2Dx = Mathf.RoundToInt(screenPos.x / SLCanvasReference.rect.width * SLTexture2DReference.width);
-                    //int texture2Dy = Mathf.RoundToInt(screenPos.y / SLCanvasReference.rect.height * SLTexture2DReference.height);
-
                     int texture2Dx = Mathf.RoundToInt((screenPos.x) % SLTexture2DReference.width);
                     int texture2Dy = Mathf.RoundToInt((screenPos.y) % SLTexture2DReference.height);
 
-                    //print("Coordenada TEX2D X: " + texture2Dx + " , TEX2D Y: " + texture2Dy);
-                    //print("Coordenadas convertidas a 'textura': x: " + texture2Dx /*/ SLWidth()*/ + " , y: " + texture2Dy /*/ SLHeight()*/);
-                    //print("Distancia a esquina inf izq, x: " + (screenPos.x - xMinCanvas) + " , x: " + (screenPos.y - yMinCanvas));
-
-                   
+                                     
 
                     if (screenPos.x > xMinCanvas && screenPos.x < xMaxCanvas && screenPos.y > yMinCanvas && screenPos.y < yMaxCanvas)
                     {
@@ -183,8 +167,16 @@ public class SatLumiPicker : MonoBehaviour {
                 }   
                 
             }
-
-        } 
-        
+        */
+        #endregion
     }
+
+    public void DoSomething()
+    {
+        
+
+
+        print("AAAAAAAAAAAAAH"); }
+
 }
+

@@ -66,13 +66,13 @@
 
 			};	
 
-		struct vertexInput_DiffuseReflection
+		struct vertexInput_PosAndGNormal
 		{
 			float4 vertex : POSITION;
 			float3 normal : NORMAL;
-		};		
+		};			
 
-		struct vertexOutput_DiffuseReflection
+		struct vertexOutput_PerVertexLighting
 		{
 			float4 pos : SV_POSITION;
 			float4 col : COLOR;	
@@ -85,12 +85,12 @@
 			float3 normalDir : TEXCOORD1;
 		};
 
-		vertexOutput_DiffuseReflection vert_DiffuseReflection_ForwardBase (vertexInput_DiffuseReflection input)
+		vertexOutput_PerVertexLighting vert_PerVertexLighting_PhongBase (vertexInput_PosAndGNormal input)
 		{
 			_Shininess = _CustomShininess;
 			_SpecularColor = _CustomSpecularColor;
 
-			vertexOutput_DiffuseReflection output;
+			vertexOutput_PerVertexLighting output;
 			
 			float4x4 modelMatrix = unity_ObjectToWorld;
 			float3x3 modelMatrixInverse = unity_WorldToObject;
@@ -134,12 +134,96 @@
 			return output;
 		}
 
-		vertexOutput_DiffuseReflection vert_DiffuseReflection_ForwardAdd (vertexInput_DiffuseReflection input)
+		vertexOutput_PerVertexLighting vert_PerVertexLighting_Lambert(vertexInput_PosAndGNormal input)
+		{
+			vertexOutput_PerVertexLighting output;
+
+			float4x4 modelMatrix = unity_ObjectToWorld;
+			float4x4 modelMatrixInverse = unity_WorldToObject;
+
+			float3 posWorld = mul(modelMatrix, input.vertex);
+			float3 normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz);
+
+			float3 normalDirection = normalize(normalDir);
+			float3 viewDirection = normalize(_WorldSpaceCameraPos - posWorld.xyz);
+
+			float3 lightDirection;
+			float attenuation;
+			
+			//light type consideration
+
+			if (0.0 == _WorldSpaceLightPos0.w)
+			{
+				attenuation = 1.0f;
+				lightDirection = normalize(_WorldSpaceLightPos0.xyz);			
+			}
+			else
+			{
+				float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - posWorld.xyz;
+				float distance = length(vertexToLightSource);
+				attenuation = 1.0 / distance;
+				lightDirection = normalize(vertexToLightSource);
+			}
+
+			float NDotL = max (0.0, dot(normalDirection, lightDirection));
+			float LambertDiffuse = NDotL * _TextureTint.rgb;	
+			float3 finalColor = LambertDiffuse * attenuation * _LightColor0.rgb;
+
+			output.col = float4(finalColor, 1.0);
+			output.pos = UnityObjectToClipPos(input.vertex);
+		
+			return output;
+
+		}
+
+		vertexOutput_PerVertexLighting vert_PerVertexLighting_HalfLambert(vertexInput_PosAndGNormal input)
+		{
+			vertexOutput_PerVertexLighting output;
+
+			float4x4 modelMatrix = unity_ObjectToWorld;
+			float4x4 modelMatrixInverse = unity_WorldToObject;
+
+			float3 posWorld = mul(modelMatrix, input.vertex);
+			float3 normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz);
+
+			float3 normalDirection = normalize(normalDir);
+			float3 viewDirection = normalize(_WorldSpaceCameraPos - posWorld.xyz);
+		
+			float3 lightDirection;
+			float attenuation;
+			
+			//light type consideration
+
+			if (0.0 == _WorldSpaceLightPos0.w)
+			{
+				attenuation = 1.0f;
+				lightDirection = normalize(_WorldSpaceLightPos0.xyz);			
+			}
+			else
+			{
+				float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - posWorld.xyz;
+				float distance = length(vertexToLightSource);
+				attenuation = 1.0 / distance;
+				lightDirection = normalize(vertexToLightSource);
+			}
+
+			float3 NDotL = max (0.0, dot(normalDirection, lightDirection));
+			float HalfLambertDiffuse = pow(NDotL * 0.5 + 0.5, 2.0) * _TextureTint.rgb;
+			float3 finalColor = HalfLambertDiffuse * attenuation * _LightColor0.rgb;
+
+			output.col = float4(finalColor, 1.0);
+			output.pos = UnityObjectToClipPos(input.vertex);
+		
+			return output;
+		
+		}
+
+		vertexOutput_PerVertexLighting vert_PerVertexLighting_PhongAdd (vertexInput_PosAndGNormal input)
 		{
 			_Shininess = _CustomShininess;
 			_SpecularColor = _CustomSpecularColor;
 
-			vertexOutput_DiffuseReflection output;
+			vertexOutput_PerVertexLighting output;
 			
 			float4x4 modelMatrix = unity_ObjectToWorld;
 			float3x3 modelMatrixInverse = unity_WorldToObject;
@@ -182,7 +266,7 @@
 			return output;
 		}
 
-		vertexOutput_PerPixelLighting vert_PerPixelLighting (vertexInput_DiffuseReflection input)
+		vertexOutput_PerPixelLighting vert_PerPixelLighting (vertexInput_PosAndGNormal input)
 		{
 			vertexOutput_PerPixelLighting output;
 		
@@ -195,11 +279,12 @@
 			return output;
 		}
 
-		float4 frag_DiffuseReflection_ForwardBase(vertexOutput_DiffuseReflection input) : COLOR
+		float4 frag_PerVertexLighting(vertexOutput_PerVertexLighting input) : COLOR
 		{	return input.col;	}
 
-		float4 frag_PerPixelLighting (vertexOutput_PerPixelLighting input) : COLOR
-		{
+		//PhongModel
+		float4 frag_PerPixelLighting_Phong (vertexOutput_PerPixelLighting input) : COLOR
+		{	
 			_Shininess = _CustomShininess;
 			_SpecularColor = _CustomSpecularColor;
 
@@ -236,13 +321,78 @@
 				specularReflection = attenuation * _LightColor0.rgb * _SpecColor.rgb * 
 									 pow(max(0.0, dot(reflect(-lightDirection, normalDirection),
 													  viewDirection)), _Shininess);				
-			}			
+			}	
 
-
-			return float4(ambientLighting + diffuseReflection + specularReflection, 1.0);
-		
+			return float4(ambientLighting + diffuseReflection + specularReflection, 1.0);		
 		}
 
+		float4 frag_PerPixelLighting_Lambert(vertexOutput_PerPixelLighting input) : COLOR
+		{
+
+			float3 normalDirection = normalize(input.normalDir);
+			float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz);
+
+			float3 lightDirection;
+			float attenuation;
+			
+			//light type consideration
+
+			if (0.0 == _WorldSpaceLightPos0.w)
+			{
+				attenuation = 1.0f;
+				lightDirection = normalize(_WorldSpaceLightPos0.xyz);			
+			}
+			else
+			{
+				float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - input.posWorld.xyz;
+				float distance = length(vertexToLightSource);
+				attenuation = 1.0 / distance;
+				lightDirection = normalize(vertexToLightSource);
+			}
+
+			float NDotL = max (0.0, dot(normalDirection, lightDirection));
+			float LambertDiffuse = NDotL * _TextureTint.rgb;	
+			float3 finalColor = LambertDiffuse * attenuation * _LightColor0.rgb;
+
+			return float4 (finalColor, 1.0f);		
+		}
+
+		float4 frag_PerPixelLighting_HalfLambert(vertexOutput_PerPixelLighting input) : COLOR
+		{
+			float3 normalDirection = normalize(input.normalDir);
+			float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz);
+		
+			float3 lightDirection;
+			float attenuation;
+			
+			//light type consideration
+
+			if (0.0 == _WorldSpaceLightPos0.w)
+			{
+				attenuation = 1.0f;
+				lightDirection = normalize(_WorldSpaceLightPos0.xyz);			
+			}
+			else
+			{
+				float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - input.posWorld.xyz;
+				float distance = length(vertexToLightSource);
+				attenuation = 1.0 / distance;
+				lightDirection = normalize(vertexToLightSource);
+			}
+
+			float3 NDotL = max (0.0, dot(normalDirection, lightDirection));
+			float HalfLambertDiffuse = pow(NDotL * 0.5 + 0.5, 2.0) * _TextureTint.rgb;
+			float3 finalColor = HalfLambertDiffuse * attenuation * _LightColor0.rgb;
+
+			return float4 (finalColor, 1.0);		
+		}
+
+		float4 frag_PerPixelLighting_NoLight(vertexOutput_PerPixelLighting input) : COLOR
+		{
+			_SpecularColor = _CustomSpecularColor;
+			return (_SpecularColor);
+		
+		}
 		
 		vertexOutput vert(vertexInput input) 
          {
@@ -285,7 +435,7 @@
             return output;
          }
 		 
-		 float4 LightingModelsResult(int LightModel, vertexOutput input, float3 normalDirection)
+		  float4 LightingModelsResult(int LightModel, vertexOutput input, float3 normalDirection)
 		{
 				if (LightModel == 1) // Phong Lighting Model
 				{
@@ -419,8 +569,11 @@
 				else
 				{	return float4(1.0f, 1.0f, 1.0f, 1.0f);	}
 		}
-		
-         float4 frag(vertexOutput input) : COLOR
+
+
+
+		 
+		 float4 frag(vertexOutput input) : COLOR
          {
 			//Overwritting deffault Values with custom Values
 			//Also, depending on the lighting model, we need to update the necessary variables...					
@@ -452,3 +605,18 @@
 			 return finalColor;
 
          }
+		
+		
+		//=====================================================================================================
+		//=====================================================================================================
+		//=====================================================================================================
+		//=================obsolete functions, review code for total destruction without making errors ===========
+		//=======================================================================================================
+		//=======================================================================================================
+		//=====================================================================================================
+
+		// LIGHTINGMODELSRESULT
+		
+		
+
+        
