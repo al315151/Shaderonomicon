@@ -176,7 +176,18 @@ public class ShaderEdition : MonoBehaviour {
         if (subCanvas.gameObject.activeInHierarchy)
         { subCanvas.gameObject.SetActive(false); }
         else
-        { subCanvas.gameObject.SetActive(true); }
+        {
+            subCanvas.gameObject.SetActive(true);
+            if (subCanvas.name == "ColorPicker")
+            {
+                print("BOOM");
+
+
+
+            }
+
+
+        }
 
     }
 

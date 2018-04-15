@@ -90,6 +90,27 @@ Shader "Custom/ColorBSShader"
 				return cec.z * lerp(K.xxx, clamp(P - K.xxx, 0.0f, 1.0f), cec.y);		
 			}
 
+			//Code extracted from: https://gamedev.stackexchange.com/questions/59797/glsl-shader-change-hue-saturation-brightness/59808#59808
+			
+
+			float3 rgb2hsv(float3 c)
+			{
+				float4 K = float4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+				float4 p = lerp(float4(c.bg, K.wz), float4(c.gb, K.xy), step(c.b, c.g));
+				float4 q = lerp(float4(p.xyw, c.r), float4(c.r, p.yzx), step(p.x, c.r));
+
+				float d = q.x - min(q.w, q.y);
+				float e = 1.0e-10;
+				return float3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+			}
+
+			float3 hsv2rgb(float3 c)
+			{
+				float4 K = float4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+				float3 p = abs(frac(c.xxx + K.xyz) * 6.0 - K.www);
+				return c.z * lerp(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+			}
+			
 			struct appdata
 			{
 				float4 vertex : POSITION;
@@ -115,12 +136,14 @@ Shader "Custom/ColorBSShader"
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
+			    
 				// sample the texture
 				float2 newUV = (i.uv);
 				fixed4 col = tex2D(_MainTex, i.uv);	
-				float3 HUEConverted = FromRGBToHSV (_HUESelected.rgb);
-				float3 result = FromHSVToRGB(float3(HUEConverted.x, (newUV.x), (newUV.y)));
-				
+				//float3 HUEConverted = FromRGBToHSV (_HUESelected.rgb);
+				//float3 result = FromHSVToRGB(float3(HUEConverted.x, (newUV.x), (newUV.y)));
+				float3 HUEConverted = rgb2hsv(_HUESelected.rgb);
+				float3 result = hsv2rgb(float3(HUEConverted.x, (newUV.x), (newUV.y)));
 
 				return float4(result, 1.0f);
 			}
