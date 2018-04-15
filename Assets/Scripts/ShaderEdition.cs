@@ -185,9 +185,6 @@ public class ShaderEdition : MonoBehaviour {
             if (subCanvas.name == "ColorPicker")
             {
                 SetActiveChangeColor("TextureColor");
-
-
-
             }
 
             subCanvas.gameObject.SetActive(true);  

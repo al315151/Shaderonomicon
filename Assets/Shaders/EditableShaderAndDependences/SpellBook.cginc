@@ -89,6 +89,7 @@
 		{
 			_Shininess = _CustomShininess;
 			_SpecularColor = _CustomSpecularColor;
+			_Color = _TextureTint;
 
 			vertexOutput_PerVertexLighting output;
 			
@@ -166,10 +167,10 @@
 			}
 
 			float NDotL = max (0.0, dot(normalDirection, lightDirection));
-			float LambertDiffuse = NDotL * _TextureTint.rgb;	
+			float LambertDiffuse = NDotL;	
 			float3 finalColor = LambertDiffuse * attenuation * _LightColor0.rgb;
 
-			output.col = float4(finalColor, 1.0);
+			output.col = float4(finalColor * _TextureTint.rgb, 1.0);
 			output.pos = UnityObjectToClipPos(input.vertex);
 		
 			return output;
@@ -208,10 +209,10 @@
 			}
 
 			float3 NDotL = max (0.0, dot(normalDirection, lightDirection));
-			float HalfLambertDiffuse = pow(NDotL * 0.5 + 0.5, 2.0) * _TextureTint.rgb;
+			float HalfLambertDiffuse = pow(NDotL * 0.5 + 0.5, 2.0);
 			float3 finalColor = HalfLambertDiffuse * attenuation * _LightColor0.rgb;
 
-			output.col = float4(finalColor, 1.0);
+			output.col = float4(finalColor * _TextureTint.rgb, 1.0);
 			output.pos = UnityObjectToClipPos(input.vertex);
 		
 			return output;
@@ -222,6 +223,7 @@
 		{
 			_Shininess = _CustomShininess;
 			_SpecularColor = _CustomSpecularColor;
+			_Color = _TextureTint;
 
 			vertexOutput_PerVertexLighting output;
 			
@@ -265,6 +267,9 @@
 
 			return output;
 		}
+		
+		float4 frag_PerVertexLighting(vertexOutput_PerVertexLighting input) : COLOR
+		{	return input.col;	}
 
 		vertexOutput_PerPixelLighting vert_PerPixelLighting (vertexInput_PosAndGNormal input)
 		{
@@ -277,16 +282,14 @@
 			output.normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz);
 			output.pos = UnityObjectToClipPos(input.vertex);
 			return output;
-		}
-
-		float4 frag_PerVertexLighting(vertexOutput_PerVertexLighting input) : COLOR
-		{	return input.col;	}
+		}		
 
 		//PhongModel
 		float4 frag_PerPixelLighting_Phong (vertexOutput_PerPixelLighting input) : COLOR
 		{	
 			_Shininess = _CustomShininess;
 			_SpecularColor = _CustomSpecularColor;
+			_Color = _TextureTint;
 
 			float3 normalDirection = normalize(input.normalDir);
 
@@ -351,10 +354,10 @@
 			}
 
 			float NDotL = max (0.0, dot(normalDirection, lightDirection));
-			float LambertDiffuse = NDotL * _TextureTint.rgb;	
+			float LambertDiffuse = NDotL;	
 			float3 finalColor = LambertDiffuse * attenuation * _LightColor0.rgb;
 
-			return float4 (finalColor, 1.0f);		
+			return float4 (finalColor * _TextureTint.rgb, 1.0f);		
 		}
 
 		float4 frag_PerPixelLighting_HalfLambert(vertexOutput_PerPixelLighting input) : COLOR
@@ -381,16 +384,16 @@
 			}
 
 			float3 NDotL = max (0.0, dot(normalDirection, lightDirection));
-			float HalfLambertDiffuse = pow(NDotL * 0.5 + 0.5, 2.0) * _TextureTint.rgb;
+			float HalfLambertDiffuse = pow(NDotL * 0.5 + 0.5, 2.0);
 			float3 finalColor = HalfLambertDiffuse * attenuation * _LightColor0.rgb;
 
-			return float4 (finalColor, 1.0);		
+			return float4 (finalColor  * _TextureTint.rgb, 1.0);		
 		}
 
 		float4 frag_PerPixelLighting_NoLight(vertexOutput_PerPixelLighting input) : COLOR
 		{
-			_SpecularColor = _CustomSpecularColor;
-			return (_SpecularColor);
+			_Color = _TextureTint;
+			return (_Color);
 		
 		}
 		
