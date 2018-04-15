@@ -61,6 +61,11 @@ public class ShaderEdition : MonoBehaviour {
 
     #endregion
 
+    [Header("Canvas Tools References")]
+    public ColorPicker colorPicker_CanvasReference_Script;
+
+
+
     #endregion
 
     #region SHADER_SAVE
@@ -177,16 +182,15 @@ public class ShaderEdition : MonoBehaviour {
         { subCanvas.gameObject.SetActive(false); }
         else
         {
-            subCanvas.gameObject.SetActive(true);
             if (subCanvas.name == "ColorPicker")
             {
-                print("BOOM");
+                SetActiveChangeColor("TextureColor");
 
 
 
             }
 
-
+            subCanvas.gameObject.SetActive(true);  
         }
 
     }
@@ -345,6 +349,29 @@ public class ShaderEdition : MonoBehaviour {
 
     #endregion
 
+    #region CHANGE_ACTIVE_COLOR_PICKER
+    public void SetActiveChangeColor(string colorName)
+    {
+        if (colorName == "TextureColor")
+        {
+            if (colorPicker_CanvasReference_Script.gameObject.activeInHierarchy == false)
+            {
+                colorPicker_CanvasReference_Script.CurrentColorSelected_Image.color = _TextureTint;
+            }
+            else
+            {
+                _TextureTint = colorPicker_CanvasReference_Script.CurrentColorSelected;
+                OpenCloseSubCanvas(colorPicker_CanvasReference_Script.gameObject.GetComponent<CanvasGroup>());
+            }           
+        }
 
+
+
+    }
+
+
+
+
+    #endregion
 
 }

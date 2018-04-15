@@ -7602,6 +7602,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1584862170464664}
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114842800450240398
@@ -7968,6 +7979,7 @@ MonoBehaviour:
   Base_Texture_Scale_Y: {fileID: 114181217624024100}
   Base_Texture_Offset_X: {fileID: 114554863505752120}
   Base_Texture_Offset_Y: {fileID: 114201382813345102}
+  colorPicker_CanvasReference_Script: {fileID: 114946815751818734}
   FilePath: 
   saveFilePath: 
   shaderName: 

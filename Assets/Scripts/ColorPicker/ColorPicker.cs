@@ -19,11 +19,14 @@ public class ColorPicker : MonoBehaviour {
 
     private float Width_ColorSelection_Image_Float;
     private float Height_ColorSelection_Image_Float;
-    private Color CurrentColorSelected;
+    [HideInInspector]
+    public Color CurrentColorSelected;
 
     [Header("Update Colors and HUE Canvas References")]
     public Slider HUESlider;
     private Color HUESelected;
+
+
     public Image NewColorSelected_Image;
     public Image CurrentColorSelected_Image;
 
@@ -191,7 +194,7 @@ public class ColorPicker : MonoBehaviour {
         float Value = ColorVertical_Slider.value; HSVColor.Add(Value);
 
         CurrentColorSelected = HSVToRGB(HSVColor);
-        CurrentColorSelected_Image.color = CurrentColorSelected;
+        NewColorSelected_Image.color = CurrentColorSelected;
 
     }
 
