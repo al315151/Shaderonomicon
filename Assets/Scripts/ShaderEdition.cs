@@ -78,7 +78,7 @@ public class ShaderEdition : MonoBehaviour {
     #endregion
 
     #region CHANGE_MESH_VARIABLES
-    [HideInInspector]
+
     public Camera ActiveCamera;
     public Mesh[] availableMeshes;
     public Dropdown optionDropDown_CR;
