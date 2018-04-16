@@ -17,12 +17,28 @@ public class RotateObject : MonoBehaviour {
     Camera MeshCamera = null;
     #endregion
 
+    #region VARIABLES_MOVEMENT_CAMERA
+    // Mira a ver si se puede hacer  https://answers.unity.com/questions/1257281/how-to-rotate-camera-orbit-around-a-game-object-on.html
 
+    public float distance;
+    public float xSpeed = 3.0f;
+    public float ySpeed = 3.0f;
+    public float yMinLimit = -90f;
+    public float yMaxLimit = 90f;
+    public float distanceMin = 10f;
+    public float distanceMax = 10f;
+    public float smoothTime = 2f;
+    private float rotationYAxis = 0.0f;
+    private float rotationXAxis = 0.0f;
+    private float velocityX = 0.0f;
+    private float velocityY = 0.0f;
+
+    #endregion
 
     // Use this for initialization
     void Start ()
     {       
-        if (ShaderEdition.currentInstance != null && (MeshCamera == null || MeshReference == null))
+        /*if (ShaderEdition.currentInstance != null && (MeshCamera == null || MeshReference == null))
         {
             print("Llegamos a entrar aqui?");
             MeshCamera = ShaderEdition.currentInstance.ActiveCamera;
@@ -35,12 +51,27 @@ public class RotateObject : MonoBehaviour {
                                                              MeshCamera.transform.localPosition.z + Input.GetAxis("Mouse ScrollWheel"));
 
         }
+		*/
 
-
-
+        Vector3 angles = transform.eulerAngles;
+        rotationYAxis = angles.y;
+        rotationXAxis = angles.x;
 
 	}
 	
+	void LateUpdate()
+	{
+		if (Input.GetMouseButton(0))
+		{
+			
+
+
+		}
+
+	}
+
+
+
 	// Update is called once per frame
 	void Update ()
     {
