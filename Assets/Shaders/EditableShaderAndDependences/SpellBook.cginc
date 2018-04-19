@@ -397,6 +397,64 @@
 		
 		}
 		
+		// =============SUB-FUNCTIONS FOR TEXTURE HANDLING, NORMAL MAP AND BUMP MAP HANDLING ==================
+
+		float4 Texture_Handling(vertexInput input)
+		{
+			
+		
+		}
+
+
+		float3 Normal_Direction_With_Normal_Map_Handling(vertexInput input)
+		{
+			
+			float4x4 modelMatrix = unity_ObjectToWorld;
+			float4x4 modelMatrixInverse = unity_WorldToObject;
+
+			float3 tangentWorld = normalize(mul(modelMatrix, float4(input.tangent.xyz, 0.0)).xyz);
+			float3 normalWorld = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz);
+			float3 BitangentWorld = normalize(cross(normalWorld, tangentWorld) * input.tangent.w);
+			
+			float3 biNormal = cross (input.normal, input.tangent.xyz) * input.tangent.w;
+			//scaled tangent and biNormal aprroximations
+			//to map distances from object space to Texture space.
+
+			float3 viewDirInObjectCoords = mul (modelMatrixInverse, float4(_WorldSpaceCameraPos, 1.0).xyz) - 
+												input.vertex.xyz;
+			float3x3 localSurface2ScaledObjectT = float3x3(input.tangent.xyz, biNormal, input.normal);
+			//VECTORS ARE ORTHOGONAL.
+
+			float3 viewDirInScaledSurfaceCoords = mul (localSurface2ScaledObjectT, viewDirInObjectCoords);
+			
+			//we multiply with the ptranspose to multiply with the "inverse"
+
+			float2 tex = input.texcoord;
+
+			
+
+			//Parallax time!
+			
+			float height = _MaxHeightBumpMap * (-0.5 + tex2D(_BumpMap, _BumpMap_ST.xy * tex.xy + _BumpMap_ST.zw).x);
+			float2 texCoordOffsets = clamp (height * viewDirInScaledSurfaceCoords.xy / 
+											viewDirInScaledSurfaceCoords.z, - _MaxTexCoordOffset, +_MaxTexCoordOffset);
+
+			// doing actual work (to remove bump map: remove texCoordOffsets from encodedNormal)
+			float4 encodedNormal = tex2D(_NormalMap, _NormalMap_ST.xy * (tex.xy + texCoordOffsets) + _NormalMap_ST.zw);
+			float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0);
+			localCoords.z = 1.0 - 0.5 * dot (localCoords, localCoords);
+
+			float3x3 local2WorldTranspose = float3x3(tangentWorld, BitangentWorld, normalWorld);
+			float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
+
+
+
+			return normalDirection;
+		
+		}
+
+		//======================================================================================================
+
 		vertexOutput vert(vertexInput input) 
          {
             vertexOutput output;
