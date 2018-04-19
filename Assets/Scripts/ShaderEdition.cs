@@ -42,6 +42,7 @@ public class ShaderEdition : MonoBehaviour {
     #endregion
 
     #region CHANGE_LIGHTING_MODEL
+    
     [Header("Lighting Model References")]
     public Slider lighting_Model_Slider_CR;
     public Text lighting_Model_Text_CR;
@@ -64,8 +65,6 @@ public class ShaderEdition : MonoBehaviour {
     [Header("Canvas Tools References")]
     public ColorPicker colorPicker_CanvasReference_Script;
 
-
-
     #endregion
 
     #region SHADER_SAVE
@@ -84,6 +83,16 @@ public class ShaderEdition : MonoBehaviour {
     public Dropdown optionDropDown_CR;
     #endregion
 
+    #region SHADER_INTERNAL_MANAGEMENT
+
+    public Color ShaderManagement_Color = Color.white; 
+    // r = textureHandling+
+    // g = normalMapHandling
+    // b = BumpMapHandling
+    // a = LightingForce
+
+    #endregion
+
     public static ShaderEdition currentInstance;
 
     private void Awake()
@@ -99,6 +108,7 @@ public class ShaderEdition : MonoBehaviour {
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
         Shader.SetGlobalFloat("_NormalMapScale", _CustomNormalMapScale );
+        Shader.SetGlobalColor("_ShaderManagement_Color", ShaderManagement_Color);
 	}
 
 
@@ -121,6 +131,7 @@ public class ShaderEdition : MonoBehaviour {
         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
         Shader.SetGlobalTexture("_BumpMap", _CustomBumpMap);
         Shader.SetGlobalInt("_LightingModel", _Current_Lighting_Model);
+        Shader.SetGlobalColor("_ShaderManagement_Color", ShaderManagement_Color);
         #endregion
     }
 
