@@ -103,7 +103,8 @@
 		float4 Texture_Handling(vertexInput_AllVariables input)
 		{
 			float2 tex = input.texcoord;
-			float4 textureColor  = tex2D(_CustomTexture, ((tex.xy + _CurrentTexCoordOffset) * _CustomTexture_ST.xy + _CustomTexture_ST.zw));
+			float4 textureColor  = tex2D(_CustomTexture, ((tex.xy + _CurrentTexCoordOffset) * _CustomTexture_ST.xy + _CustomTexture_ST.zw)) * 
+								   _TextureTint;
 			return textureColor;
 		}
 
@@ -390,7 +391,9 @@
 		float3 Lambert_Lighting_Pixel(vertexOutput_PerPixelLighting input, float3 normalDirection)
 		{
 
-			normalDirection = normalize(input.normalDir);
+			if (_ShaderManagement_Color.g == 1.0) // if there is no normal map, green will stay 1.0f
+			{	normalDirection = normalize(input.normalDir);		}
+			
 			float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz);
 
 			float3 lightDirection;
@@ -419,7 +422,9 @@
 
 		float3 HalfLambert_Lighting_Pixel(vertexOutput_PerPixelLighting input, float3 normalDirection)
 		{
-			//float3 normalDirection = normalize(input.normalDir);
+			if (_ShaderManagement_Color.g == 1.0) // if there is no normal map, green will stay 1.0f
+			{float3 normalDirection = normalize(input.normalDir);}
+		
 			float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz);
 		
 			float3 lightDirection;
@@ -474,7 +479,7 @@
 
 			float3 normalDirection = Normal_Direction_With_Normal_And_Bump_Map_Handling_Vertex(input) * _ShaderManagement_Color.g;
 
-			output.col = float4(Lambert_Lighting_Vertex(input, normalDirection) * _TextureTint.rgb, 1.0);
+			output.col = float4(Lambert_Lighting_Vertex(input, normalDirection) * _ShaderManagement_Color.a, 1.0);
 			output.pos = UnityObjectToClipPos(input.vertex);
 		
 			return output;
@@ -488,7 +493,7 @@
 
 			float3 normalDirection = Normal_Direction_With_Normal_And_Bump_Map_Handling_Vertex(input) * _ShaderManagement_Color.g;
 
-			output.col = float4(HalfLambert_Lighting_Vertex(input, normalDirection) * _TextureTint.rgb, 1.0);
+			output.col = float4(HalfLambert_Lighting_Vertex(input, normalDirection) * _ShaderManagement_Color.a, 1.0);
 			output.pos = UnityObjectToClipPos(input.vertex);
 		
 			return output;
@@ -506,7 +511,7 @@
 
 			float normalDirection = Normal_Direction_With_Normal_And_Bump_Map_Handling_Vertex(input) * _ShaderManagement_Color.g;
 
-			output.col = PhongAdd_Lighting_Vertex(input, normalDirection);
+			output.col = PhongAdd_Lighting_Vertex(input, normalDirection) * _ShaderManagement_Color.a;
 			output.pos = UnityObjectToClipPos(input.vertex);
 
 			return output;
@@ -540,7 +545,7 @@
 
 			float3 normalDirection = Normal_Direction_With_Normal_And_Bump_Map_Handling_Pixel(input) * _ShaderManagement_Color.g;
 
-			return float4(Phong_Lighting_Pixel(input, normalDirection), 1.0f);		
+			return float4(Phong_Lighting_Pixel(input, normalDirection) * _ShaderManagement_Color.a, 1.0f);		
 		}
 
 		float4 frag_PerPixelLighting_Lambert(vertexOutput_PerPixelLighting input) : COLOR
@@ -548,14 +553,14 @@
 
 			float3 normalDirection = Normal_Direction_With_Normal_And_Bump_Map_Handling_Pixel(input) * _ShaderManagement_Color.g;
 
-			return float4 (Lambert_Lighting_Pixel(input, normalDirection) * _TextureTint.rgb, 1.0f);		
+			return float4 (Lambert_Lighting_Pixel(input, normalDirection) * _ShaderManagement_Color.a, 1.0f);		
 		}
 
 		float4 frag_PerPixelLighting_HalfLambert(vertexOutput_PerPixelLighting input) : COLOR
 		{
 			float3 normalDirection = Normal_Direction_With_Normal_And_Bump_Map_Handling_Pixel(input) * _ShaderManagement_Color.g;
 
-			return float4 (HalfLambert_Lighting_Pixel(input, normalDirection)  * _TextureTint.rgb, 1.0);		
+			return float4 (HalfLambert_Lighting_Pixel(input, normalDirection)  * _ShaderManagement_Color.a, 1.0);		
 		}
 
 		float4 frag_PerPixelLighting_NoLight(vertexOutput_PerPixelLighting input) : COLOR
