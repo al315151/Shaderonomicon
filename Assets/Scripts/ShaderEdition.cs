@@ -85,6 +85,9 @@ public class ShaderEdition : MonoBehaviour {
 
     #region SHADER_INTERNAL_MANAGEMENT
 
+    public Sprite BaseTexture_Sprite;
+    public Sprite BaseNormalMap_Sprite;
+
     public Color ShaderManagement_Color = Color.white; 
     // r = textureHandling+
     // g = normalMapHandling
@@ -102,9 +105,11 @@ public class ShaderEdition : MonoBehaviour {
 
     private void OnPreRender()
 	{
-		//Shader.SetGlobalFloat ("_CustomSmoothness", smoothSlider.value);
-		
-        
+        //Shader.SetGlobalFloat ("_CustomSmoothness", smoothSlider.value);
+        _CustomTexture = BaseTexture_Sprite.texture;
+        _CustomBumpMap = BaseTexture_Sprite.texture;
+        _CustomNormalMap = BaseNormalMap_Sprite.texture;
+
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
         Shader.SetGlobalFloat("_NormalMapScale", _CustomNormalMapScale );
@@ -147,40 +152,70 @@ public class ShaderEdition : MonoBehaviour {
 
     IEnumerator GetTextureFromPNG(string imageType)
     {
-        WWW webObject = new WWW("file:///"+FilePath);
-        while (!webObject.isDone)
+        if (FilePath == "")
         {
-            yield return null;
-        }
-        switch (imageType)
-        {
-            case "DiffuseTexture":
-                {
-                    _CustomTexture = webObject.texture;
-                    Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
-                    break;
-                }
-            case "NormalMap":
-                {
-                    _CustomNormalMap = webObject.texture;
-                    Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
-                    break;
-                }
-            case "BumpMap":
-                {
-                    _CustomBumpMap = webObject.texture;
-                    Shader.SetGlobalTexture("_BumpMap", _CustomBumpMap);
-                    break;
-                }
-            default:
-                {
-                    print("You should not be here, revisa string de llamada a función");
-                    break;
-                }
+            switch (imageType)
+            {
+                case "DiffuseTexture":
+                    {
+                        _CustomTexture = BaseTexture_Sprite.texture;
+                        Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
+                        break;
+                    }
+                case "NormalMap":
+                    {
+                        _CustomNormalMap = BaseNormalMap_Sprite.texture;
+                        Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
+                        break;
+                    }
+                case "BumpMap":
+                    {
+                        _CustomBumpMap = BaseTexture_Sprite.texture;
+                        Shader.SetGlobalTexture("_BumpMap", _CustomBumpMap);
+                        break;
+                    }
+                default:
+                    {
+                        print("You should not be here, revisa string de llamada a función");
+                        break;
+                    }
 
+            }
         }
-       
-        
+        else
+        {
+            WWW webObject = new WWW("file:///" + FilePath);
+            while (!webObject.isDone)
+            {
+                yield return null;
+            }
+            switch (imageType)
+            {
+                case "DiffuseTexture":
+                    {
+                        _CustomTexture = webObject.texture;
+                        Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
+                        break;
+                    }
+                case "NormalMap":
+                    {
+                        _CustomNormalMap = webObject.texture;
+                        Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
+                        break;
+                    }
+                case "BumpMap":
+                    {
+                        _CustomBumpMap = webObject.texture;
+                        Shader.SetGlobalTexture("_BumpMap", _CustomBumpMap);
+                        break;
+                    }
+                default:
+                    {
+                        print("You should not be here, revisa string de llamada a función");
+                        break;
+                    }
+            }
+        }        
     }
 
     #endregion
