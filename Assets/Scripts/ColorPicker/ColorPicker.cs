@@ -40,6 +40,11 @@ public class ColorPicker : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0))
+        {
+            SetSliderValueFromMousePosition();
+        }
+        
         UpdateHUEColor();
         CheckSliderColorStatus();
         UpdateColorFromSliders();
@@ -207,7 +212,27 @@ public class ColorPicker : MonoBehaviour {
         HUESelected = HSVToRGB(HSVColor);
         //print(HUESlider.value);
         Shader.SetGlobalColor("_HUESelected", HUESelected);
-    }  
+    }
+
+    private void SetSliderValueFromMousePosition()
+    {
+        if (Input.mousePosition.x > ColorSelection_BottomLeft_Corner.transform.position.x &&
+            Input.mousePosition.x < ColorSelection_BottomRight_Corner.transform.position.x &&
+            Input.mousePosition.y > ColorSelection_BottomLeft_Corner.transform.position.y &&
+            Input.mousePosition.y < ColorSelection_TopLeft_Corner.transform.position.y)
+        {
+            print("ITS IN!!");
+            // Valor between 0 and 1
+            float DifferenceX = (Input.mousePosition.x - ColorSelection_BottomLeft_Corner.transform.position.x) / Width_ColorSelection_Image_Float;
+            float DifferenceY = (Input.mousePosition.y - ColorSelection_BottomLeft_Corner.transform.position.y) / Height_ColorSelection_Image_Float;
+
+            ColorHorizontal_Slider.value = DifferenceX;
+            ColorVertical_Slider.value = DifferenceY;
+        }      
+
+    }
+
+
 
 
 }
