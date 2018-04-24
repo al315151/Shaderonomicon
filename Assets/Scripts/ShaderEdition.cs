@@ -107,7 +107,8 @@ public class ShaderEdition : MonoBehaviour {
 	{
         //Shader.SetGlobalFloat ("_CustomSmoothness", smoothSlider.value);
         _CustomTexture = BaseTexture_Sprite.texture;
-        _CustomBumpMap = BaseTexture_Sprite.texture;
+        //Bump maps have to be imported as normal maps!!!!! https://docs.unity3d.com/Manual/StandardShaderMaterialParameterNormalMap.html
+        _CustomBumpMap = BaseNormalMap_Sprite.texture;
         _CustomNormalMap = BaseNormalMap_Sprite.texture;
 
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);

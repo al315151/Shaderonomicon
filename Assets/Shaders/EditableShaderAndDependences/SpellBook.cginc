@@ -385,7 +385,7 @@
 		float3 Lambert_Lighting_Pixel(vertexOutput_PerPixelLighting input, float3 normalDirection)
 		{
 
-			//normalDirection = normalize(input.normalDir);
+			normalDirection += normalize(input.normalDir);
 			
 			float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz);
 
