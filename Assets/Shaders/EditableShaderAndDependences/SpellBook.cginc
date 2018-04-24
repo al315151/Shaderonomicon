@@ -103,7 +103,7 @@
 
 
 
-		float3 Normal_Direction_With_Normal_And_Bump_Map_Handling_Vertex(vertexInput_AllVariables input)
+		float3 Normal_Direction_With_Normal_Map_Handling_Vertex(vertexInput_AllVariables input)
 		{
 			
 			float4x4 modelMatrix = unity_ObjectToWorld;
@@ -146,7 +146,7 @@
 		
 		}
 
-		float3 Normal_Direction_With_Normal_And_Bump_Map_Handling_Pixel(vertexOutput_PerPixelLighting input)
+		float3 Normal_Direction_With_Normal_Map_Handling_Pixel(vertexOutput_PerPixelLighting input)
 		{
 			
 			float4x4 modelMatrix = unity_ObjectToWorld;
@@ -160,25 +160,7 @@
 			//scaled tangent and biNormal aprroximations
 			//to map distances from object space to Texture space.
 
-			float3 viewDirInObjectCoords = mul (modelMatrixInverse, float4(_WorldSpaceCameraPos, 1.0).xyz) - 
-												input.pos.xyz;
-			float3x3 localSurface2ScaledObjectT = float3x3(input.tangent.xyz, biNormal, input.normal);
-			//VECTORS ARE ORTHOGONAL.
-
-			float3 viewDirInScaledSurfaceCoords = mul (localSurface2ScaledObjectT, viewDirInObjectCoords);
-			
-			//we multiply with the ptranspose to multiply with the "inverse"
-
-			
-
-			//Parallax time!
-			
-			float height = _MaxHeightBumpMap * (-0.5 + tex2D(_BumpMap, _BumpMap_ST.xy * input.tex.xy + _BumpMap_ST.zw).x);
-			float2 texCoordOffsets = clamp (height * viewDirInScaledSurfaceCoords.xy / 
-											viewDirInScaledSurfaceCoords.z, - _MaxTexCoordOffset, +_MaxTexCoordOffset);
-
-			// doing actual work (to remove bump map: remove texCoordOffsets from encodedNormal)
-			float4 encodedNormal = tex2D(_NormalMap, _NormalMap_ST.xy * (input.tex.xy + texCoordOffsets) + _NormalMap_ST.zw);
+			float4 encodedNormal = tex2D(_NormalMap, _NormalMap_ST.xy * (input.tex.xy) + _NormalMap_ST.zw);
 			float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0);
 			localCoords.z = 1.0 - 0.5 * dot (localCoords, localCoords);
 
@@ -458,7 +440,7 @@
 			vertexOutput_PerVertexLighting output;
 			
 			
-			float3 normalDirection = Normal_Direction_With_Normal_And_Bump_Map_Handling_Vertex(input);
+			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
 			output.col = PhongBase_Lighting_Vertex(input, normalDirection);
 			output.pos = UnityObjectToClipPos(input.vertex);
 
@@ -470,7 +452,7 @@
 			vertexOutput_PerVertexLighting output;
 
 
-			float3 normalDirection = Normal_Direction_With_Normal_And_Bump_Map_Handling_Vertex(input);
+			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
 
 			output.col = float4(Lambert_Lighting_Vertex(input, normalDirection), 1.0);
 			output.pos = UnityObjectToClipPos(input.vertex);
@@ -484,7 +466,7 @@
 			vertexOutput_PerVertexLighting output;
 
 
-			float3 normalDirection = Normal_Direction_With_Normal_And_Bump_Map_Handling_Vertex(input);
+			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
 
 			output.col = float4(HalfLambert_Lighting_Vertex(input, normalDirection), 1.0);
 			output.pos = UnityObjectToClipPos(input.vertex);
@@ -502,7 +484,7 @@
 			vertexOutput_PerVertexLighting output;			
 
 
-			float normalDirection = Normal_Direction_With_Normal_And_Bump_Map_Handling_Vertex(input);
+			float normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
 
 			output.col = PhongAdd_Lighting_Vertex(input, normalDirection);
 			output.pos = UnityObjectToClipPos(input.vertex);
@@ -538,7 +520,7 @@
 			_SpecularColor = _CustomSpecularColor;
 			_Color = _TextureTint;
 
-			float3 normalDirection = Normal_Direction_With_Normal_And_Bump_Map_Handling_Pixel(input);
+			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input);
 
 			return float4(Phong_Lighting_Pixel(input, normalDirection), 1.0f);		
 		}
@@ -546,14 +528,14 @@
 		float4 frag_PerPixelLighting_Lambert(vertexOutput_PerPixelLighting input) : COLOR
 		{
 
-			float3 normalDirection = Normal_Direction_With_Normal_And_Bump_Map_Handling_Pixel(input);
+			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input);
 
 			return float4 (Texture_Handling_Pixel(input) * Lambert_Lighting_Pixel(input, normalDirection), 1.0f);		
 		}
 
 		float4 frag_PerPixelLighting_HalfLambert(vertexOutput_PerPixelLighting input) : COLOR
 		{
-			float3 normalDirection = Normal_Direction_With_Normal_And_Bump_Map_Handling_Pixel(input);
+			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input);
 
 			return float4 (HalfLambert_Lighting_Pixel(input, normalDirection), 1.0);		
 		}

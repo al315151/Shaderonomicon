@@ -35,10 +35,6 @@ public class ShaderEdition : MonoBehaviour {
     #region AUXILIAR_MAPS
     Texture2D _CustomNormalMap;
     float _CustomNormalMapScale;
-
-    Texture2D _CustomBumpMap;
-    float _CustomBumpMapScale;
-
     #endregion
 
     #region CHANGE_LIGHTING_MODEL
@@ -88,12 +84,6 @@ public class ShaderEdition : MonoBehaviour {
     public Sprite BaseTexture_Sprite;
     public Sprite BaseNormalMap_Sprite;
 
-    public Color ShaderManagement_Color = Color.white; 
-    // r = textureHandling+
-    // g = normalMapHandling
-    // b = BumpMapHandling
-    // a = LightingForce
-
     #endregion
 
     public static ShaderEdition currentInstance;
@@ -107,14 +97,12 @@ public class ShaderEdition : MonoBehaviour {
 	{
         //Shader.SetGlobalFloat ("_CustomSmoothness", smoothSlider.value);
         _CustomTexture = BaseTexture_Sprite.texture;
-        //Bump maps have to be imported as normal maps!!!!! https://docs.unity3d.com/Manual/StandardShaderMaterialParameterNormalMap.html
-        _CustomBumpMap = BaseNormalMap_Sprite.texture;
+       
         _CustomNormalMap = BaseNormalMap_Sprite.texture;
 
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
         Shader.SetGlobalFloat("_NormalMapScale", _CustomNormalMapScale );
-        Shader.SetGlobalColor("_ShaderManagement_Color", ShaderManagement_Color);
 	}
 
 
@@ -135,9 +123,7 @@ public class ShaderEdition : MonoBehaviour {
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
         Shader.SetGlobalColor("_TextureTint", _TextureTint);
         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
-        Shader.SetGlobalTexture("_BumpMap", _CustomBumpMap);
         Shader.SetGlobalInt("_LightingModel", _Current_Lighting_Model);
-        Shader.SetGlobalColor("_ShaderManagement_Color", ShaderManagement_Color);
         #endregion
     }
 
@@ -169,12 +155,6 @@ public class ShaderEdition : MonoBehaviour {
                         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
                         break;
                     }
-                case "BumpMap":
-                    {
-                        _CustomBumpMap = BaseTexture_Sprite.texture;
-                        Shader.SetGlobalTexture("_BumpMap", _CustomBumpMap);
-                        break;
-                    }
                 default:
                     {
                         print("You should not be here, revisa string de llamada a función");
@@ -202,12 +182,6 @@ public class ShaderEdition : MonoBehaviour {
                     {
                         _CustomNormalMap = webObject.texture;
                         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
-                        break;
-                    }
-                case "BumpMap":
-                    {
-                        _CustomBumpMap = webObject.texture;
-                        Shader.SetGlobalTexture("_BumpMap", _CustomBumpMap);
                         break;
                     }
                 default:
