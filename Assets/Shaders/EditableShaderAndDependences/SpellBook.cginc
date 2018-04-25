@@ -101,8 +101,13 @@
 			return textureColor;
 		}
 
-
-
+		float4 Texture_Handling_Vertex(vertexOutput_PerVertexLighting input)
+		{
+			float4 textureColor  = tex2D(_CustomTexture, ((input.tex.xy + _CurrentTexCoordOffset) * _CustomTexture_ST.xy + _CustomTexture_ST.zw));
+			textureColor = textureColor + _TextureTint;
+			return textureColor;
+		}
+		
 		float3 Normal_Direction_With_Normal_Map_Handling_Vertex(vertexInput_AllVariables input)
 		{
 			
@@ -117,25 +122,9 @@
 			//scaled tangent and biNormal aprroximations
 			//to map distances from object space to Texture space.
 
-			float3 viewDirInObjectCoords = mul (modelMatrixInverse, float4(_WorldSpaceCameraPos, 1.0).xyz) - 
-												input.vertex.xyz;
-			float3x3 localSurface2ScaledObjectT = float3x3(input.tangent.xyz, biNormal, input.normal);
-			//VECTORS ARE ORTHOGONAL.
-
-			float3 viewDirInScaledSurfaceCoords = mul (localSurface2ScaledObjectT, viewDirInObjectCoords);
+			float2 tex = input.texcoord;			
 			
-			//we multiply with the ptranspose to multiply with the "inverse"
-
-			float2 tex = input.texcoord;
-
-			//Parallax time!
-			
-			float height = _MaxHeightBumpMap * (-0.5 + tex2D(_BumpMap, _BumpMap_ST.xy * tex.xy + _BumpMap_ST.zw).x);
-			float2 texCoordOffsets = clamp (height * viewDirInScaledSurfaceCoords.xy / 
-											viewDirInScaledSurfaceCoords.z, - _MaxTexCoordOffset, +_MaxTexCoordOffset);
-
-			// doing actual work (to remove bump map: remove texCoordOffsets from encodedNormal)
-			float4 encodedNormal = tex2D(_NormalMap, _NormalMap_ST.xy * (tex.xy + texCoordOffsets) + _NormalMap_ST.zw);
+			float4 encodedNormal = tex2D(_NormalMap, _NormalMap_ST.xy * (tex.xy) + _NormalMap_ST.zw);
 			float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0);
 			localCoords.z = 1.0 - 0.5 * dot (localCoords, localCoords);
 
@@ -493,7 +482,11 @@
 		}
 		
 		float4 frag_PerVertexLighting(vertexOutput_PerVertexLighting input) : COLOR
-		{	return input.col;	}
+		{	
+			float4 TextureColor = Texture_Handling_Vertex(input);
+		
+			return input.col * TextureColor;		
+		}
 
 		//=============================================================================================================
 
@@ -522,7 +515,7 @@
 
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input);
 
-			return float4(Phong_Lighting_Pixel(input, normalDirection), 1.0f);		
+			return float4(Texture_Handling_Pixel(input) * Phong_Lighting_Pixel(input, normalDirection), 1.0f);		
 		}
 
 		float4 frag_PerPixelLighting_Lambert(vertexOutput_PerPixelLighting input) : COLOR
@@ -537,13 +530,13 @@
 		{
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input);
 
-			return float4 (HalfLambert_Lighting_Pixel(input, normalDirection), 1.0);		
+			return float4 (Texture_Handling_Pixel(input) * HalfLambert_Lighting_Pixel(input, normalDirection), 1.0);		
 		}
 
 		float4 frag_PerPixelLighting_NoLight(vertexOutput_PerPixelLighting input) : COLOR
 		{
-			_Color = _TextureTint;
-			return (_Color);		
+			float4 TextureColor = Texture_Handling_Pixel(input);
+			return (TextureColor);		
 		}
 		
 		
