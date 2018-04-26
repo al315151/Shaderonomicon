@@ -8180,10 +8180,9 @@ MonoBehaviour:
   - {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
   - {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
   optionDropDown_CR: {fileID: 114926020628115316}
-  BaseTexture_Sprite: {fileID: 21300000, guid: 43bdcb623eb17a04891135b5eaaefb46, type: 3}
+  BaseTexture_Sprite: {fileID: 21300000, guid: 8073eacf2362ea040bd3521475791722, type: 3}
   BaseNormalMap_Sprite: {fileID: 21300000, guid: 9c240b1ba449ada4eba71c3b71d264ad,
     type: 3}
-  ShaderManagement_Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &114899969913425634
 MonoBehaviour:
   m_ObjectHideFlags: 1

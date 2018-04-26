@@ -7,6 +7,28 @@ public class SpellBookFunctions : MonoBehaviour {
     //This is a library of the functions that are available in SpellBook.
     // Ultima fecha de actualización: 25/04/2018
 
+    public static string Texture_Handling_Variables =
+        " uniform sampler2D _CustomTexture; " +
+        " uniform float4 _CustomTexture_ST; " +
+        " uniform fixed4 _TextureTint; "
+        ;
+
+    public static string Normal_Handling_Variables =
+        " uniform sampler2D _NormalMap; " +
+        " uniform float4 _NormalMap_ST; "
+        ;
+
+    public static string Phong_Variables = 
+        " uniform fixed4 _CustomSpecularColor; " +
+        " uniform float _CustomShininess; " +
+        " uniform float4 _Color; " +
+        " uniform float _Shininess; " +
+        " uniform float4 _SpecularColor; "
+        ;
+
+
+    //============FUNCTIONS ===================================================
+
     public static string vertexInput_AllVariables = 
         "struct vertexInput_AllVariables " + 
         " { " + 
