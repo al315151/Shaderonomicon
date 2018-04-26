@@ -58,6 +58,16 @@ public class ShaderEdition : MonoBehaviour {
 
     #endregion
 
+    #region CHANGE_SCALE_OFFSET_NORMAL_MAP
+    private float _Normal_Map_Scale_X = 1.0f;
+    private float _Normal_Map_Scale_Y = 1.0f;
+    private float _Normal_Map_Offset_X = 0.0f;
+    private float _Normal_Map_Offset_Y = 0.0f;
+
+
+    #endregion
+
+
     [Header("Canvas Tools References")]
     public ColorPicker colorPicker_CanvasReference_Script;
 
@@ -116,6 +126,7 @@ public class ShaderEdition : MonoBehaviour {
 	void Update () 
 	{
         UpdateScaleOffsetBaseTexture();
+        UpdateScaleOffsetNormalMap();
         UpdateLightingModel();
         
 
@@ -347,7 +358,7 @@ public class ShaderEdition : MonoBehaviour {
     }
     #endregion
 
-    #region UPDATE_SCALE_OFFSET_BASE_TEXTURE_FUNCTIONS
+    #region UPDATE_SCALE_OFFSET_TEXTURE_FUNCTIONS
     public void UpdateScaleOffsetBaseTexture()
     {
         if (Base_Texture_Scale_X.text != "")
@@ -364,6 +375,20 @@ public class ShaderEdition : MonoBehaviour {
         Shader.SetGlobalFloat("_OffsetTileX", _Base_Texture_Offset_X);
         Shader.SetGlobalFloat("_OffsetTileY", _Base_Texture_Offset_Y);
     }
+
+    public void UpdateScaleOffsetNormalMap()
+    {
+        //FALTA EL INPUT POR PARTE DEL MENÚ, TRATA DE HACER ESO ESTA NOCHE.
+
+        Shader.SetGlobalFloat("_NormalTileX", _Normal_Map_Scale_X);
+        Shader.SetGlobalFloat("_NormalTileY", _Normal_Map_Scale_Y);
+        Shader.SetGlobalFloat("_NormalOffsetX",  _Normal_Map_Offset_X);
+        Shader.SetGlobalFloat("_NormalOffsetY", _Normal_Map_Offset_Y);
+    }
+
+
+
+
 
     #endregion
 

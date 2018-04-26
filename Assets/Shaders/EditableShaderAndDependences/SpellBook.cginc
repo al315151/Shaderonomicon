@@ -6,11 +6,18 @@
 		//=================================
 		
 		uniform sampler2D _CustomTexture;
-		uniform float4 _CustomTexture_ST;
 		uniform fixed4 _TextureTint;
+		uniform float _TextureTileX;
+		uniform float _TextureTileY;
+		uniform float _OffsetTileX;
+		uniform float _OffsetTileY;
 		
 		uniform sampler2D _NormalMap;
-		uniform float4 _NormalMap_ST;
+		uniform float _NormalTileX;
+		uniform float _NormalTileY;
+		uniform float _NormalOffsetX;
+		uniform float _NormalOffsetY;
+
 		uniform half _NormalMapScale = 1.0f;
 
 		uniform fixed4 _CustomSpecularColor;
@@ -72,14 +79,20 @@
 
 		float4 Texture_Handling_Pixel(vertexOutput_PerPixelLighting input)
 		{
-			float4 textureColor  = tex2D(_CustomTexture, input.tex.xy);
+			float2 texCoordsScale = float2 (_TextureTileX, _TextureTileY);
+			texCoordsScale *= input.tex.xy;
+
+			float4 textureColor  = tex2D(_CustomTexture, texCoordsScale + float2(_OffsetTileX, _OffsetTileY));
 			textureColor = textureColor * _TextureTint;
 			return textureColor;
 		}
 
 		float4 Texture_Handling_Vertex(vertexOutput_PerVertexLighting input)
 		{
-			float4 textureColor  = tex2D(_CustomTexture, input.tex.xy);
+			float2 texCoordsScale = float2 (_TextureTileX, _TextureTileY);
+			texCoordsScale *= input.tex.xy;
+
+			float4 textureColor  = tex2D(_CustomTexture, texCoordsScale + float2(_OffsetTileX, _OffsetTileY));
 			textureColor = textureColor * _TextureTint;
 			return textureColor;
 		}
@@ -97,10 +110,11 @@
 			float3 biNormal = cross (input.normal, input.tangent.xyz) * input.tangent.w;
 			//scaled tangent and biNormal aprroximations
 			//to map distances from object space to Texture space.
-
-			float2 tex = input.texcoord;			
 			
-			float4 encodedNormal = tex2D(_NormalMap, _NormalMap_ST.xy * (tex.xy) + _NormalMap_ST.zw);
+			float2 normalCoordsScaled = float2 (_NormalTileX, _NormalTileY);
+			normalCoordsScaled *= input.texcoord;
+			float4 encodedNormal = tex2D(_NormalMap, normalCoordsScaled + float2(_NormalOffsetX, _NormalOffsetY));
+
 			float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0);
 			localCoords.z = 1.0 - 0.5 * dot (localCoords, localCoords);
 
@@ -125,7 +139,10 @@
 			//scaled tangent and biNormal aprroximations
 			//to map distances from object space to Texture space.
 
-			float4 encodedNormal = tex2D(_NormalMap, _NormalMap_ST.xy * (input.tex.xy) + _NormalMap_ST.zw);
+			float2 normalCoordsScaled = float2 (_NormalTileX, _NormalTileY);
+			normalCoordsScaled *= input.tex.xy;
+			float4 encodedNormal = tex2D(_NormalMap, normalCoordsScaled + float2(_NormalOffsetX, _NormalOffsetY));
+
 			float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0);
 			localCoords.z = 1.0 - 0.5 * dot (localCoords, localCoords);
 

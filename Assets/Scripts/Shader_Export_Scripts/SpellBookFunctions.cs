@@ -5,17 +5,23 @@ using UnityEngine;
 public class SpellBookFunctions : MonoBehaviour {
 
     //This is a library of the functions that are available in SpellBook.
-    // Ultima fecha de actualización: 25/04/2018
+    // Ultima fecha de actualización: 26/04/2018
 
     public static string Texture_Handling_Variables =
         " uniform sampler2D _CustomTexture; " +
-        " uniform float4 _CustomTexture_ST; " +
-        " uniform fixed4 _TextureTint; "
+        " uniform fixed4 _TextureTint; " +
+        " uniform float _TextureTileX; " +
+        " uniform float _TextureTileY; " +
+        " uniform float _OffsetTileX; " +
+        " uniform float _OffsetTileY; "
         ;
 
     public static string Normal_Handling_Variables =
         " uniform sampler2D _NormalMap; " +
-        " uniform float4 _NormalMap_ST; "
+        " uniform float _NormalTileX; " +
+        " uniform float _NormalTileY; " +
+        " uniform float _NormalOffsetX; " +
+        " uniform float _NormalOffsetY; "
         ;
 
     public static string Phong_Variables = 
@@ -60,16 +66,20 @@ public class SpellBookFunctions : MonoBehaviour {
     public static string Texture_Handling_Pixel =
         " float4 Texture_Handling_Pixel(vertexOutput_PerPixelLighting input) " +
         " { " +
-        " float4 textureColor = tex2D(_CustomTexture, ((input.tex.xy + _CurrentTexCoordOffset) * _CustomTexture_ST.xy + _CustomTexture_ST.zw)); " +
-        " textureColor = textureColor + _TextureTint; " +
+        " float2 texCoordsScale = float2 (_TextureTileX, _TextureTileY); " +
+        " texCoordsScale *= input.tex.xy; " +
+		" float4 textureColor = tex2D(_CustomTexture, texCoordsScale + float2(_OffsetTileX, _OffsetTileY)); " +
+        " textureColor = textureColor * _TextureTint; " +
         " return textureColor; " + "}"
         ;
 
     public static string Texture_Handling_Vertex =
         " float4 Texture_Handling_Vertex(vertexOutput_PerVertexLighting input) " +
          " { " +
-        " float4 textureColor = tex2D(_CustomTexture, ((input.tex.xy + _CurrentTexCoordOffset) * _CustomTexture_ST.xy + _CustomTexture_ST.zw)); " +
-        " textureColor = textureColor + _TextureTint; " +
+        " float2 texCoordsScale = float2 (_TextureTileX, _TextureTileY); " +
+        " texCoordsScale *= input.tex.xy; " +
+        " float4 textureColor = tex2D(_CustomTexture, texCoordsScale + float2(_OffsetTileX, _OffsetTileY)); " +
+        " textureColor = textureColor * _TextureTint; " +
         " return textureColor; " + "}"
         ;
 
@@ -82,8 +92,9 @@ public class SpellBookFunctions : MonoBehaviour {
         " float3 normalWorld = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " +
         " float3 BitangentWorld = normalize(cross(normalWorld, tangentWorld) * input.tangent.w); " +
         " float3 biNormal = cross(input.normal, input.tangent.xyz) * input.tangent.w; " +
-        " float2 tex = input.texcoord; " +
-        " float4 encodedNormal = tex2D(_NormalMap, _NormalMap_ST.xy * (tex.xy) + _NormalMap_ST.zw); " +
+        " float2 normalCoordsScaled = float2(_NormalTileX, _NormalTileY); " +
+        " normalCoordsScaled *= input.texcoord; " +
+		" float4 encodedNormal = tex2D(_NormalMap, normalCoordsScaled + float2(_NormalOffsetX, _NormalOffsetY)); " +
         " float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0); " +
         " localCoords.z = 1.0 - 0.5 * dot(localCoords, localCoords); " +
         " float3x3 local2WorldTranspose = float3x3(tangentWorld, BitangentWorld, normalWorld); " +
@@ -100,7 +111,9 @@ public class SpellBookFunctions : MonoBehaviour {
         " float3 normalWorld = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " +
         " float3 BitangentWorld = normalize(cross(normalWorld, tangentWorld) * input.tangent.w); " +
         " float3 biNormal = cross(input.normal, input.tangent.xyz) * input.tangent.w; " +
-        " float4 encodedNormal = tex2D(_NormalMap, _NormalMap_ST.xy * (input.tex.xy) + _NormalMap_ST.zw); " +
+        " float2 normalCoordsScaled = float2(_NormalTileX, _NormalTileY); " +
+        " normalCoordsScaled *= input.tex.xy; " +
+        " float4 encodedNormal = tex2D(_NormalMap, normalCoordsScaled + float2(_NormalOffsetX, _NormalOffsetY)); " +
         " float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0); " +
         " localCoords.z = 1.0 - 0.5 * dot(localCoords, localCoords); " +
         " float3x3 local2WorldTranspose = float3x3(tangentWorld, BitangentWorld, normalWorld); " +
