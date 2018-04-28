@@ -148,6 +148,8 @@
 
 			float3x3 local2WorldTranspose = float3x3(tangentWorld, BitangentWorld, normalWorld);
 			float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
+			
+			normalDirection = float3(_NormalMapScale, _NormalMapScale, 1.0f) * normalDirection;
 
 			return normalDirection;
 		

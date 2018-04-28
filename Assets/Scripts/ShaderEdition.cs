@@ -22,21 +22,7 @@ public class ShaderEdition : MonoBehaviour {
     #endregion
 
     #region SHADER_PROPERTIES_REFERENCE
-
-    #region BASE_TEXTURE
-    public Texture2D _CustomTexture;
-    float _RTextureTint = 1.0f;
-    float _GTextureTint = 1.0f;
-    float _BTextureTint = 1.0f;
-    float _ATextureTint = 1.0f;
-    Color _TextureTint = Color.white;
-    #endregion
-
-    #region AUXILIAR_MAPS
-    Texture2D _CustomNormalMap;
-    float _CustomNormalMapScale;
-    #endregion
-
+  
     #region CHANGE_LIGHTING_MODEL
     
     [Header("Lighting Model References")]
@@ -45,7 +31,7 @@ public class ShaderEdition : MonoBehaviour {
     private int _Current_Lighting_Model;
     #endregion
 
-    #region CHANGE_SCALE_OFFSET_BASE_TEXTURE
+    #region CHANGE_BASE_TEXTURE_PARAMETERS
     [Header("Base Texture Parameters")]
     public InputField Base_Texture_Scale_X;
     public InputField Base_Texture_Scale_Y;
@@ -59,9 +45,16 @@ public class ShaderEdition : MonoBehaviour {
     private float _Base_Texture_Offset_X = 0.0f;
     private float _Base_Texture_Offset_Y = 0.0f;
 
+    public Texture2D _CustomTexture;
+    float _RTextureTint = 1.0f;
+    float _GTextureTint = 1.0f;
+    float _BTextureTint = 1.0f;
+    float _ATextureTint = 1.0f;
+    Color _TextureTint = Color.white;
+
     #endregion
 
-    #region CHANGE_SCALE_OFFSET_NORMAL_MAP
+    #region CHANGE_NORMAL_MAP_PARAMETERS
     [Header("Normal Map Parameters")]
     public InputField Normal_Map_Scale_X;
     public InputField Normal_Map_Scale_Y;
@@ -74,12 +67,20 @@ public class ShaderEdition : MonoBehaviour {
     private float _Normal_Map_Offset_X = 0.0f;
     private float _Normal_Map_Offset_Y = 0.0f;
 
+    Texture2D _CustomNormalMap;
+    public InputField _NormalMapScale_InputField_CR;
+    private float _CustomNormalMapScale = 1.0f;
 
     #endregion
 
 
     [Header("Canvas Tools References")]
     public ColorPicker colorPicker_CanvasReference_Script;
+    public CanvasGroup ColorPicker_CanvasGroup_CR;
+    public CanvasGroup NormalMapParameters_CanvasGroup_CR;
+    public CanvasGroup BaseTextureParameters_CanvasGroup_CR;
+    public CanvasGroup LambertLightingParameters_CanvasGroup_CR;
+    public CanvasGroup PhongLightingParameters_CanvasGroup_CR;
 
     #endregion
 
@@ -138,12 +139,13 @@ public class ShaderEdition : MonoBehaviour {
         UpdateScaleOffsetBaseTexture();
         UpdateScaleOffsetNormalMap();
         UpdateLightingModel();
-        
+        UpdateNormalMapScale();
 
         #region UPDATE_GLOBAL_SHADER_VARIABLES
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
         Shader.SetGlobalColor("_TextureTint", _TextureTint);
         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
+        Shader.SetGlobalFloat("_NormalMapScale", _CustomNormalMapScale);
         Shader.SetGlobalInt("_LightingModel", _Current_Lighting_Model);
         #endregion
     }
@@ -238,6 +240,20 @@ public class ShaderEdition : MonoBehaviour {
 
     }
 
+    public void CloseCurrentSecMenu()
+    {
+        if(NormalMapParameters_CanvasGroup_CR != null && NormalMapParameters_CanvasGroup_CR.gameObject.activeInHierarchy)
+        {   NormalMapParameters_CanvasGroup_CR.gameObject.SetActive(false);        }
+        if (BaseTextureParameters_CanvasGroup_CR != null && BaseTextureParameters_CanvasGroup_CR.gameObject.activeInHierarchy)
+        {   BaseTextureParameters_CanvasGroup_CR.gameObject.SetActive(false);        }
+        if (LambertLightingParameters_CanvasGroup_CR != null && LambertLightingParameters_CanvasGroup_CR.gameObject.activeInHierarchy)
+        {   LambertLightingParameters_CanvasGroup_CR.gameObject.SetActive(false);     }
+        if (PhongLightingParameters_CanvasGroup_CR != null && PhongLightingParameters_CanvasGroup_CR.gameObject.activeInHierarchy)
+        {   PhongLightingParameters_CanvasGroup_CR.gameObject.SetActive(false);       }
+
+    }
+
+    //[This function is deprecated, as we do not use this kind of reference for now.]
     public void ChangeValueInputField(GameObject reference)
     {
         switch (reference.name)
@@ -281,9 +297,7 @@ public class ShaderEdition : MonoBehaviour {
 
 
     }
-
-
-
+    
 
     #endregion
 
@@ -406,11 +420,7 @@ public class ShaderEdition : MonoBehaviour {
         Shader.SetGlobalFloat("_NormalOffsetX",  _Normal_Map_Offset_X);
         Shader.SetGlobalFloat("_NormalOffsetY", _Normal_Map_Offset_Y);
     }
-
-
-
-
-
+    
     #endregion
 
     #region CHANGE_ACTIVE_COLOR_PICKER
@@ -429,13 +439,18 @@ public class ShaderEdition : MonoBehaviour {
                 OpenCloseSubCanvas(colorPicker_CanvasReference_Script.gameObject.GetComponent<CanvasGroup>());
             }           
         }
-
-
-
     }
 
+    #endregion
 
+    #region CHANGE_CUSTOM_PROPERTIES_FUNCTIONS
 
+    public void UpdateNormalMapScale()
+    {
+        if (_NormalMapScale_InputField_CR.text != "")
+        { _CustomNormalMapScale = float.Parse(_NormalMapScale_InputField_CR.text); }
+        Shader.SetGlobalFloat("_NormalMapScale", _CustomNormalMapScale);
+    }
 
     #endregion
 

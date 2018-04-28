@@ -25,7 +25,7 @@ public class RotateObject : MonoBehaviour {
     {       
         if (ShaderEdition.currentInstance != null && (MeshCamera == null || MeshReference == null))
         {
-            print("Llegamos a entrar aqui?");
+           // print("Llegamos a entrar aqui?");
             MeshCamera = ShaderEdition.currentInstance.ActiveCamera;
             MeshReference = ShaderEdition.currentInstance.displayObject;
         }      
