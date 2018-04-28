@@ -46,10 +46,13 @@ public class ShaderEdition : MonoBehaviour {
     #endregion
 
     #region CHANGE_SCALE_OFFSET_BASE_TEXTURE
+    [Header("Base Texture Parameters")]
     public InputField Base_Texture_Scale_X;
     public InputField Base_Texture_Scale_Y;
-    public InputField Base_Texture_Offset_X;
-    public InputField Base_Texture_Offset_Y;
+    public Slider Base_Texture_Offset_X;
+    public Slider Base_Texture_Offset_Y;
+    public RawImage Dummy_Texture_Image_CR;
+    public RawImage Dummy_Color_Texture_Image_CR;
 
     private float _Base_Texture_Scale_X = 1.0f;
     private float _Base_Texture_Scale_Y = 1.0f;
@@ -59,6 +62,13 @@ public class ShaderEdition : MonoBehaviour {
     #endregion
 
     #region CHANGE_SCALE_OFFSET_NORMAL_MAP
+    [Header("Normal Map Parameters")]
+    public InputField Normal_Map_Scale_X;
+    public InputField Normal_Map_Scale_Y;
+    public Slider Normal_Map_Offset_X;
+    public Slider Normal_Map_Offset_Y;
+    public RawImage Dummy_Normal_Map_Image_CR;
+
     private float _Normal_Map_Scale_X = 1.0f;
     private float _Normal_Map_Scale_Y = 1.0f;
     private float _Normal_Map_Offset_X = 0.0f;
@@ -158,12 +168,14 @@ public class ShaderEdition : MonoBehaviour {
                     {
                         _CustomTexture = BaseTexture_Sprite.texture;
                         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
+                        Dummy_Texture_Image_CR.texture = _CustomTexture;
                         break;
                     }
                 case "NormalMap":
                     {
                         _CustomNormalMap = BaseNormalMap_Sprite.texture;
                         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
+                        Dummy_Normal_Map_Image_CR.texture = _CustomNormalMap;
                         break;
                     }
                 default:
@@ -187,12 +199,14 @@ public class ShaderEdition : MonoBehaviour {
                     {
                         _CustomTexture = webObject.texture;
                         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
+                        Dummy_Texture_Image_CR.texture = _CustomTexture;
                         break;
                     }
                 case "NormalMap":
                     {
                         _CustomNormalMap = webObject.texture;
                         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
+                        Dummy_Normal_Map_Image_CR.texture = _CustomNormalMap;
                         break;
                     }
                 default:
@@ -365,10 +379,9 @@ public class ShaderEdition : MonoBehaviour {
         { _Base_Texture_Scale_X = float.Parse(Base_Texture_Scale_X.text); }
         if (Base_Texture_Scale_Y.text != "")
         { _Base_Texture_Scale_Y = float.Parse(Base_Texture_Scale_Y.text); }
-        if (Base_Texture_Offset_X.text != "")
-        { _Base_Texture_Offset_X = float.Parse(Base_Texture_Offset_X.text); }
-        if (Base_Texture_Offset_Y.text != "")
-        { _Base_Texture_Offset_Y = float.Parse(Base_Texture_Offset_Y.text); }        
+
+        _Base_Texture_Offset_X = Base_Texture_Offset_X.value;
+        _Base_Texture_Offset_Y = Base_Texture_Offset_Y.value;
 
         Shader.SetGlobalFloat("_TextureTileX", _Base_Texture_Scale_X);
         Shader.SetGlobalFloat("_TextureTileY", _Base_Texture_Scale_Y);
@@ -378,6 +391,14 @@ public class ShaderEdition : MonoBehaviour {
 
     public void UpdateScaleOffsetNormalMap()
     {
+        if (Normal_Map_Scale_X.text != "")
+        { _Normal_Map_Scale_X = float.Parse(Normal_Map_Scale_X.text); }
+        if (Normal_Map_Scale_Y.text != "")
+        { _Normal_Map_Scale_Y = float.Parse(Normal_Map_Scale_Y.text); }
+
+        _Normal_Map_Offset_X = Normal_Map_Offset_X.value;
+        _Normal_Map_Offset_Y = Normal_Map_Offset_Y.value;
+        
         //FALTA EL INPUT POR PARTE DEL MENÚ, TRATA DE HACER ESO ESTA NOCHE.
 
         Shader.SetGlobalFloat("_NormalTileX", _Normal_Map_Scale_X);
@@ -404,6 +425,7 @@ public class ShaderEdition : MonoBehaviour {
             else
             {
                 _TextureTint = colorPicker_CanvasReference_Script.CurrentColorSelected;
+                Dummy_Color_Texture_Image_CR.color = _TextureTint;
                 OpenCloseSubCanvas(colorPicker_CanvasReference_Script.gameObject.GetComponent<CanvasGroup>());
             }           
         }
