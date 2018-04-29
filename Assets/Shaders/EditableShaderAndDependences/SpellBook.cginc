@@ -27,6 +27,7 @@
 		//=======SPECULAR_HIGHLIGHTS, from: https://en.wikibooks.org/wiki/Cg_Programming/Unity/Specular_Highlights =================
 		uniform float4 _Color;		
 		uniform float _Shininess;
+		uniform float _DiffuseColor;
 		uniform float4 _SpecularColor;
 		//===========================================
 
@@ -121,6 +122,8 @@
 			float3x3 local2WorldTranspose = float3x3(tangentWorld, BitangentWorld, normalWorld);
 			float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
 
+			normalDirection = float3(_NormalMapScale, _NormalMapScale, 1.0f) * normalDirection;
+
 			return normalDirection;
 		
 		}
@@ -142,6 +145,7 @@
 			float2 normalCoordsScaled = float2 (_NormalTileX, _NormalTileY);
 			normalCoordsScaled *= input.tex.xy;
 			float4 encodedNormal = tex2D(_NormalMap, normalCoordsScaled + float2(_NormalOffsetX, _NormalOffsetY));
+			//encodedNormal.xyz*= float3(_NormalMapScale, _NormalMapScale, 1.0f);
 
 			float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0);
 			localCoords.z = 1.0 - 0.5 * dot (localCoords, localCoords);

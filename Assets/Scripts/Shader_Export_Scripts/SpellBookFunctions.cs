@@ -5,7 +5,7 @@ using UnityEngine;
 public class SpellBookFunctions : MonoBehaviour {
 
     //This is a library of the functions that are available in SpellBook.
-    // Ultima fecha de actualización: 26/04/2018
+    // Ultima fecha de actualización: 29/04/2018
 
     public static string Texture_Handling_Variables =
         " uniform sampler2D _CustomTexture; " +
@@ -28,6 +28,7 @@ public class SpellBookFunctions : MonoBehaviour {
         " uniform fixed4 _CustomSpecularColor; " +
         " uniform float _CustomShininess; " +
         " uniform float4 _Color; " +
+        " uniform float _DiffuseColor; " +
         " uniform float _Shininess; " +
         " uniform float4 _SpecularColor; "
         ;
@@ -99,6 +100,7 @@ public class SpellBookFunctions : MonoBehaviour {
         " localCoords.z = 1.0 - 0.5 * dot(localCoords, localCoords); " +
         " float3x3 local2WorldTranspose = float3x3(tangentWorld, BitangentWorld, normalWorld); " +
         " float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose)); " +
+        " normalDirection = float3(_NormalMapScale, _NormalMapScale, 1.0f) * normalDirection; " +
         " return normalDirection; " + "}"
         ;
 
@@ -118,6 +120,7 @@ public class SpellBookFunctions : MonoBehaviour {
         " localCoords.z = 1.0 - 0.5 * dot(localCoords, localCoords); " +
         " float3x3 local2WorldTranspose = float3x3(tangentWorld, BitangentWorld, normalWorld); " +
         " float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose)); " +
+        " normalDirection = float3(_NormalMapScale, _NormalMapScale, 1.0f) * normalDirection; " +
         " return normalDirection; " + "}"
         ;
 

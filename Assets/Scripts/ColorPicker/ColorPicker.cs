@@ -25,7 +25,7 @@ public class ColorPicker : MonoBehaviour {
     [Header("Update Colors and HUE Canvas References")]
     public Slider HUESlider;
     private Color HUESelected;
-
+    public float ClickOffset_Float;
 
     public Image NewColorSelected_Image;
     public Image CurrentColorSelected_Image;
@@ -35,6 +35,11 @@ public class ColorPicker : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
+        Width_ColorSelection_Image_Float = ColorSelection_TopRight_Corner.transform.position.x - ColorSelection_TopLeft_Corner.transform.position.x;
+        Height_ColorSelection_Image_Float = ColorSelection_TopLeft_Corner.transform.position.y - ColorSelection_BottomLeft_Corner.transform.position.y;
+
+        ClickOffset_Float = Width_ColorSelection_Image_Float <= Height_ColorSelection_Image_Float ? Width_ColorSelection_Image_Float : Height_ColorSelection_Image_Float;
+        ClickOffset_Float = ClickOffset_Float / 10f;
     }
 	
 	// Update is called once per frame
@@ -54,6 +59,9 @@ public class ColorPicker : MonoBehaviour {
     {
         Width_ColorSelection_Image_Float = ColorSelection_TopRight_Corner.transform.position.x - ColorSelection_TopLeft_Corner.transform.position.x;
         Height_ColorSelection_Image_Float = ColorSelection_TopLeft_Corner.transform.position.y - ColorSelection_BottomLeft_Corner.transform.position.y;
+        ClickOffset_Float = Width_ColorSelection_Image_Float <= Height_ColorSelection_Image_Float ? Width_ColorSelection_Image_Float : Height_ColorSelection_Image_Float;
+        ClickOffset_Float = ClickOffset_Float / 20f;
+
 
         float PosX = (ColorHorizontal_Slider.value * Width_ColorSelection_Image_Float) + ColorSelection_BottomLeft_Corner.transform.position.x;
 
@@ -216,15 +224,17 @@ public class ColorPicker : MonoBehaviour {
 
     private void SetSliderValueFromMousePosition()
     {
-        if (Input.mousePosition.x > ColorSelection_BottomLeft_Corner.transform.position.x &&
-            Input.mousePosition.x < ColorSelection_BottomRight_Corner.transform.position.x &&
-            Input.mousePosition.y > ColorSelection_BottomLeft_Corner.transform.position.y &&
-            Input.mousePosition.y < ColorSelection_TopLeft_Corner.transform.position.y)
+        if (Input.mousePosition.x > ColorSelection_BottomLeft_Corner.transform.position.x - ClickOffset_Float &&
+            Input.mousePosition.x < ColorSelection_BottomRight_Corner.transform.position.x + ClickOffset_Float &&
+            Input.mousePosition.y > ColorSelection_BottomLeft_Corner.transform.position.y - ClickOffset_Float &&
+            Input.mousePosition.y < ColorSelection_TopLeft_Corner.transform.position.y + ClickOffset_Float)
         {
             print("ITS IN!!");
             // Valor between 0 and 1
             float DifferenceX = (Input.mousePosition.x - ColorSelection_BottomLeft_Corner.transform.position.x) / Width_ColorSelection_Image_Float;
             float DifferenceY = (Input.mousePosition.y - ColorSelection_BottomLeft_Corner.transform.position.y) / Height_ColorSelection_Image_Float;
+            Mathf.Clamp(DifferenceX, 0f, 1f);
+            Mathf.Clamp(DifferenceY, 0f, 1f);
 
             ColorHorizontal_Slider.value = DifferenceX;
             ColorVertical_Slider.value = DifferenceY;

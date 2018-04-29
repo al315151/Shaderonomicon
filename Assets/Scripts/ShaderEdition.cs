@@ -73,6 +73,19 @@ public class ShaderEdition : MonoBehaviour {
 
     #endregion
 
+    #region CHANGE_PHONG_LIGHT_MODEL_PARAMETERS
+    [Header("Phong Light Model Parameters")]
+    public Slider Shininess_Slider_CR;
+    public InputField Min_Range_Shininess_InputField_CR;
+    public InputField Max_Range_Shininess_InputField_CR;
+
+    public RawImage Dummy_Phong_Ambient_Color_Image_CR;
+    public RawImage Dummy_Phong_Diffuse_Color_Image_CR;
+    public RawImage Dummy_Phong_Specular_Color_Image_CR;
+
+    #endregion
+
+    #region CANVAS_TOOLS_REFERENCES
 
     [Header("Canvas Tools References")]
     public ColorPicker colorPicker_CanvasReference_Script;
@@ -104,6 +117,8 @@ public class ShaderEdition : MonoBehaviour {
 
     public Sprite BaseTexture_Sprite;
     public Sprite BaseNormalMap_Sprite;
+
+    #endregion
 
     #endregion
 
