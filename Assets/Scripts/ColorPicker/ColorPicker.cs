@@ -30,6 +30,8 @@ public class ColorPicker : MonoBehaviour {
     public Image NewColorSelected_Image;
     public Image CurrentColorSelected_Image;
 
+    [HideInInspector]
+    public string ColorChangeID;
 
 
     // Use this for initialization
@@ -229,7 +231,7 @@ public class ColorPicker : MonoBehaviour {
             Input.mousePosition.y > ColorSelection_BottomLeft_Corner.transform.position.y - ClickOffset_Float &&
             Input.mousePosition.y < ColorSelection_TopLeft_Corner.transform.position.y + ClickOffset_Float)
         {
-            print("ITS IN!!");
+            //print("ITS IN!!");
             // Valor between 0 and 1
             float DifferenceX = (Input.mousePosition.x - ColorSelection_BottomLeft_Corner.transform.position.x) / Width_ColorSelection_Image_Float;
             float DifferenceY = (Input.mousePosition.y - ColorSelection_BottomLeft_Corner.transform.position.y) / Height_ColorSelection_Image_Float;

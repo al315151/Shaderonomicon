@@ -34,7 +34,7 @@ Shader "Custom/NewShader"
 			
 			CGPROGRAM
 			#pragma vertex vert_PerPixelLighting
-			#pragma fragment frag_PerPixelLighting_Lambert
+			#pragma fragment frag_PerPixelLighting_Phong
 			
 			#include "SpellBook.cginc"			
  

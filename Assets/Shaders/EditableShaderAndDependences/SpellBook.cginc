@@ -21,15 +21,14 @@
 		uniform half _NormalMapScale = 1.0f;
 
 		uniform fixed4 _CustomSpecularColor;
-		uniform float _CustomShininess = 1.0f;
+		uniform float _CustomShininess = 10.0f;
 		
+		uniform float4 _PhongAmbientColor;
+		uniform float4 _PhongSpecularColor;
+		uniform float4 _PhongDiffuseColor;
+
 		//===========================================
 		//=======SPECULAR_HIGHLIGHTS, from: https://en.wikibooks.org/wiki/Cg_Programming/Unity/Specular_Highlights =================
-		uniform float4 _Color;		
-		uniform float _Shininess;
-		uniform float _DiffuseColor;
-		uniform float4 _SpecularColor;
-		//===========================================
 
 		struct vertexInput 
 			{
@@ -184,8 +183,8 @@
 				lightDirection = normalize(vertexToLightSource);
 			}
 
-			float3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT.rgb * _Color.rgb;
-			float3 diffuseReflection = attenuation * _LightColor0.rgb * _Color.rgb * 
+			float3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT.rgb * _PhongAmbientColor.rgb;
+			float3 diffuseReflection = attenuation * _LightColor0.rgb * _PhongDiffuseColor.rgb * 
 									   max(0.0, dot(normalDirection, lightDirection));
 
 			float3 specularReflection;
@@ -193,9 +192,9 @@
 			if (dot(normalDirection, lightDirection) < 0.0)
 			{	specularReflection = float3 (0.0, 0.0, 0.0);	}
 			else
-			{		specularReflection = attenuation * _LightColor0.rgb * _SpecularColor.rgb * 
+			{		specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * 
 										 pow(max(0.0, dot(reflect(-lightDirection, normalDirection),
-														  viewDirection)), _Shininess);
+														  viewDirection)), _CustomShininess);
 			}
 
 			  return float4(ambientLighting + diffuseReflection + specularReflection, 1.0);
@@ -225,7 +224,7 @@
 				lightDirection = normalize(vertexToLightSource);
 			}
 
-			float3 diffuseReflection = attenuation * _LightColor0.rgb * _Color.rgb * 
+			float3 diffuseReflection = attenuation * _LightColor0.rgb * _PhongDiffuseColor.rgb * 
 									   max(0.0, dot(normalDirection, lightDirection));
 
 			float3 specularReflection;
@@ -233,9 +232,9 @@
 			if (dot(normalDirection, lightDirection) < 0.0)
 			{	specularReflection = float3 (0.0, 0.0, 0.0);	}
 			else
-			{		specularReflection = attenuation * _LightColor0.rgb * _SpecularColor.rgb * 
+			{		specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * 
 										 pow(max(0.0, dot(reflect(-lightDirection, normalDirection),
-														  viewDirection)), _Shininess);
+														  viewDirection)), _CustomShininess);
 			}
 
 			return float4(diffuseReflection + specularReflection, 1.0);
@@ -314,7 +313,7 @@
 
 		float3 Phong_Lighting_Pixel (vertexOutput_PerPixelLighting input, float3 normalDirection)
 		{
-			//float3 normalDirection = normalize(input.normalDir);
+			normalDirection += normalize(input.normalDir);
 
 			float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz);
 
@@ -334,9 +333,9 @@
 				lightDirection = normalize(vertexToLightSource);				
 			}
 			
-			float3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT.rgb * _Color.rgb;
+			float3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT.rgb * _PhongAmbientColor.rgb;
 
-			float3 diffuseReflection = attenuation * _LightColor0.rgb * _Color.rgb * 
+			float3 diffuseReflection = attenuation * _LightColor0.rgb * _PhongDiffuseColor.rgb * 
 										   max(0.0, dot(normalDirection, lightDirection));
 				
 			float3 specularReflection;
@@ -344,9 +343,9 @@
 			{	specularReflection = float3(0.0, 0.0, 0.0);		}
 			else 
 			{
-				specularReflection = attenuation * _LightColor0.rgb * _SpecColor.rgb * 
+				specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * 
 									 pow(max(0.0, dot(reflect(-lightDirection, normalDirection),
-													  viewDirection)), _Shininess);				
+													  viewDirection)), _CustomShininess);				
 			}	
 
 			return float3(ambientLighting + diffuseReflection + specularReflection);
@@ -421,12 +420,7 @@
 
 		vertexOutput_PerVertexLighting vert_PerVertexLighting_PhongBase (vertexInput_AllVariables input)
 		{
-			_Shininess = _CustomShininess;
-			_SpecularColor = _CustomSpecularColor;
-			_Color = _TextureTint;
-
-			vertexOutput_PerVertexLighting output;
-			
+			vertexOutput_PerVertexLighting output;			
 			
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
 			output.col = PhongBase_Lighting_Vertex(input, normalDirection);
@@ -465,12 +459,7 @@
 
 		vertexOutput_PerVertexLighting vert_PerVertexLighting_PhongAdd (vertexInput_AllVariables input)
 		{
-			_Shininess = _CustomShininess;
-			_SpecularColor = _CustomSpecularColor;
-			_Color = _TextureTint;
-
-			vertexOutput_PerVertexLighting output;			
-
+			vertexOutput_PerVertexLighting output;		
 
 			float normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
 
@@ -508,13 +497,9 @@
 		//PhongModel
 		float4 frag_PerPixelLighting_Phong (vertexOutput_PerPixelLighting input) : COLOR
 		{	
-			_Shininess = _CustomShininess;
-			_SpecularColor = _CustomSpecularColor;
-			_Color = _TextureTint;
-
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input);
 
-			return float4(Texture_Handling_Pixel(input) * Phong_Lighting_Pixel(input, normalDirection), 1.0f);		
+			return float4(Texture_Handling_Pixel(input).xyz * Phong_Lighting_Pixel(input, normalDirection), 1.0f);		
 		}
 
 		float4 frag_PerPixelLighting_Lambert(vertexOutput_PerPixelLighting input) : COLOR

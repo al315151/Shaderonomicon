@@ -79,6 +79,10 @@ public class ShaderEdition : MonoBehaviour {
     public InputField Min_Range_Shininess_InputField_CR;
     public InputField Max_Range_Shininess_InputField_CR;
 
+    Color _PhongAmbientColor = Color.white;
+    Color _PhongDiffuseColor = Color.white;
+    Color _PhongSpecularColor = Color.white;
+
     public RawImage Dummy_Phong_Ambient_Color_Image_CR;
     public RawImage Dummy_Phong_Diffuse_Color_Image_CR;
     public RawImage Dummy_Phong_Specular_Color_Image_CR;
@@ -89,7 +93,9 @@ public class ShaderEdition : MonoBehaviour {
 
     [Header("Canvas Tools References")]
     public ColorPicker colorPicker_CanvasReference_Script;
+
     public CanvasGroup ColorPicker_CanvasGroup_CR;
+
     public CanvasGroup NormalMapParameters_CanvasGroup_CR;
     public CanvasGroup BaseTextureParameters_CanvasGroup_CR;
     public CanvasGroup LambertLightingParameters_CanvasGroup_CR;
@@ -162,6 +168,10 @@ public class ShaderEdition : MonoBehaviour {
         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
         Shader.SetGlobalFloat("_NormalMapScale", _CustomNormalMapScale);
         Shader.SetGlobalInt("_LightingModel", _Current_Lighting_Model);
+        Shader.SetGlobalColor("_PhongAmbientColor", _PhongAmbientColor);
+        Shader.SetGlobalColor("_PhongDiffuseColor", _PhongDiffuseColor);
+        Shader.SetGlobalColor("_PhongSpecularColor", _PhongSpecularColor);
+
         #endregion
     }
 
@@ -239,21 +249,19 @@ public class ShaderEdition : MonoBehaviour {
 
     #region CANVAS_RELATED_FUNCTIONS
 
-    public void OpenCloseSubCanvas(CanvasGroup subCanvas)
+    public void CloseCanvasGroup(CanvasGroup CG)
+    { CG.gameObject.SetActive(false);     }
+    public void OpenCanvasGroup(CanvasGroup CG)
+    { CG.gameObject.SetActive(true);      }
+
+    //Opening a secondary menu means closing the other ones...
+    public void OpenSecMenu ( CanvasGroup CG)
     {
-        if (subCanvas.gameObject.activeInHierarchy)
-        { subCanvas.gameObject.SetActive(false); }
-        else
-        {
-            if (subCanvas.name == "ColorPicker")
-            {
-                SetActiveChangeColor("TextureColor");
-            }
-
-            subCanvas.gameObject.SetActive(true);  
-        }
-
+        CloseCurrentSecMenu();
+        CG.gameObject.SetActive(true);
     }
+
+
 
     public void CloseCurrentSecMenu()
     {
@@ -265,6 +273,8 @@ public class ShaderEdition : MonoBehaviour {
         {   LambertLightingParameters_CanvasGroup_CR.gameObject.SetActive(false);     }
         if (PhongLightingParameters_CanvasGroup_CR != null && PhongLightingParameters_CanvasGroup_CR.gameObject.activeInHierarchy)
         {   PhongLightingParameters_CanvasGroup_CR.gameObject.SetActive(false);       }
+        if (ColorPicker_CanvasGroup_CR != null && ColorPicker_CanvasGroup_CR.gameObject.activeInHierarchy)
+        {   ColorPicker_CanvasGroup_CR.gameObject.SetActive(false); }
 
     }
 
@@ -439,22 +449,62 @@ public class ShaderEdition : MonoBehaviour {
     #endregion
 
     #region CHANGE_ACTIVE_COLOR_PICKER
-    public void SetActiveChangeColor(string colorName)
+    public void SetActiveChangeColor()
     {
-        if (colorName == "TextureColor")
-        {
             if (colorPicker_CanvasReference_Script.gameObject.activeInHierarchy == false)
             {
-                colorPicker_CanvasReference_Script.CurrentColorSelected_Image.color = _TextureTint;
+                print("HOW DID I GET HERE??!!!");
             }
             else
             {
-                _TextureTint = colorPicker_CanvasReference_Script.CurrentColorSelected;
-                Dummy_Color_Texture_Image_CR.color = _TextureTint;
-                OpenCloseSubCanvas(colorPicker_CanvasReference_Script.gameObject.GetComponent<CanvasGroup>());
+                print("[TO DO] Color to change depending ID. We arrive here?");
+                CloseCanvasGroup(ColorPicker_CanvasGroup_CR);
             }           
+    }
+
+    public void setColorPickerColorChangeID(string newID)
+    {
+        colorPicker_CanvasReference_Script.ColorChangeID = newID;
+        OpenCanvasGroup(ColorPicker_CanvasGroup_CR);
+
+    }
+
+    public void ResetColorByID(string colorID)
+    {  switch (colorID)
+        {
+            case "PhongAmbientColor":
+                {
+                    _PhongAmbientColor = Color.white;
+                    break;
+                }
+            case "PhongDiffuseColor":
+                {
+                    _PhongDiffuseColor = Color.white;
+                    break;
+                }
+            case "PhongSpecularColor":
+                {
+                    _PhongSpecularColor = Color.white;
+                    break;
+                }
+            case "TextureTint":
+                {
+                    _TextureTint = Color.white;
+                    break;
+                }
+            default:
+                {
+                    print("You should not be here!!!");
+                    break;
+                }
+
+
+
+
+
         }
     }
+
 
     #endregion
 

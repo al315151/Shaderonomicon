@@ -1677,7 +1677,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1431554765906116
 GameObject:
   m_ObjectHideFlags: 1
@@ -4031,7 +4031,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 114899482583570094}
         m_MethodName: SetActiveChangeColor
-        m_Mode: 5
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -5954,7 +5954,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114899482583570094}
-        m_MethodName: OpenCloseSubCanvas
+        m_MethodName: CloseCanvasGroup
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 225007256001563144}
@@ -12397,6 +12397,7 @@ MonoBehaviour:
   ClickOffset_Float: 0
   NewColorSelected_Image: {fileID: 114555601928532738}
   CurrentColorSelected_Image: {fileID: 114112355097344086}
+  ColorChangeID: 
 --- !u!114 &114947251662046574
 MonoBehaviour:
   m_ObjectHideFlags: 1
