@@ -12,14 +12,14 @@ Shader "Custom/NewShader"
 		//_TextureTint("Custom Texture Tint", Color) = (1.0, 1.0, 1.0, 1.0)
 		//_NormalMap("Normal Map", 2D) = "bump"{}
 		//_NormalMapScale("Normal Map Scale", float) = 1.0
-		_CustomSpecularColor ("Specular Color", Color) = (1.0, 1.0, 1.0, 1.0)
-		_CustomShininess("Shininess", Range(0.0, 10.0)) = 10
+		//_CustomSpecularColor ("Specular Color", Color) = (1.0, 1.0, 1.0, 1.0)
+		//_CustomShininess("Shininess", Range(0.0, 20.0)) = 10
 		//_TextureTileX("Texture Tiling X", float) = 1.0
 		//_TextureTileY("Texture Tiling Y", float) = 1.0
 		//_OffsetTileX("Offset Tiling X", float) = 0.0
 		//_OffsetTileY("Offset Tiling Y", float) = 0.0
 		//_LightingModel("Lighting Model", int) = 0
-		_Color("Main Color (Diffuse Reflection)", Color) = (1.0, 1.0, 1.0, 1.0)
+		//_Color("Main Color (Diffuse Reflection)", Color) = (1.0, 1.0, 1.0, 1.0)
 	}
 	SubShader
 	{
@@ -31,10 +31,10 @@ Shader "Custom/NewShader"
 		{
 			Tags { "LightMode" = "ForwardBase"}
 			LOD 100
-			
+
 			CGPROGRAM
-			#pragma vertex vert_PerPixelLighting
-			#pragma fragment frag_PerPixelLighting_Phong
+			#pragma vertex vert_PerVertexLighting_Lambert
+			#pragma fragment frag_PerVertexLighting
 			
 			#include "SpellBook.cginc"			
  
@@ -46,8 +46,8 @@ Shader "Custom/NewShader"
 			LOD 100
 			
 			CGPROGRAM
-			#pragma vertex 
-			#pragma fragment 
+			#pragma vertex vert_PerPixelLighting 
+			#pragma fragment frag_PerPixelLighting_Phong 
 			
 			#include "SpellBook.cginc"			
  

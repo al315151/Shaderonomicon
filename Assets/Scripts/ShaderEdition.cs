@@ -33,8 +33,8 @@ public class ShaderEdition : MonoBehaviour {
 
     #region CHANGE_BASE_TEXTURE_PARAMETERS
     [Header("Base Texture Parameters")]
-    public InputField Base_Texture_Scale_X;
-    public InputField Base_Texture_Scale_Y;
+    public InputField Base_Texture_Scale_X_InputField_CR;
+    public InputField Base_Texture_Scale_Y_inputField_CR;
     public Slider Base_Texture_Offset_X;
     public Slider Base_Texture_Offset_Y;
     public RawImage Dummy_Texture_Image_CR;
@@ -79,6 +79,10 @@ public class ShaderEdition : MonoBehaviour {
     public InputField Min_Range_Shininess_InputField_CR;
     public InputField Max_Range_Shininess_InputField_CR;
 
+    private float _CustomShininess;
+    private float Min_Range_Shininess;
+    private float Max_Range_Shininess;
+
     Color _PhongAmbientColor = Color.white;
     Color _PhongDiffuseColor = Color.white;
     Color _PhongSpecularColor = Color.white;
@@ -86,6 +90,18 @@ public class ShaderEdition : MonoBehaviour {
     public RawImage Dummy_Phong_Ambient_Color_Image_CR;
     public RawImage Dummy_Phong_Diffuse_Color_Image_CR;
     public RawImage Dummy_Phong_Specular_Color_Image_CR;
+
+    public Slider Phong_Ambient_Force_Slider_CR;
+    public Slider Phong_Specular_Force_Slider_CR;
+    public Slider Phong_Diffuse_Force_Slider_CR;
+
+    public Text Phong_Ambient_Force_Text_CR;
+    public Text Phong_Diffuse_Force_Text_CR;
+    public Text Phong_Specular_Force_Text_CR;
+
+    float _PhongAmbientForce = 0.5f;
+    float _PhongDiffuseForce = 0.5f;
+    float _PhongSpecularForce = 0.5f;
 
     #endregion
 
@@ -151,7 +167,9 @@ public class ShaderEdition : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
- 
+        SetInitialPhongProperties();
+        Base_Texture_Scale_X_InputField_CR.text = 1.0f + "";
+        Base_Texture_Scale_Y_inputField_CR.text = 1.0f + "";
     }
 	
 	// Update is called once per frame
@@ -161,6 +179,7 @@ public class ShaderEdition : MonoBehaviour {
         UpdateScaleOffsetNormalMap();
         UpdateLightingModel();
         UpdateNormalMapScale();
+        UpdatePhongForces();
 
         #region UPDATE_GLOBAL_SHADER_VARIABLES
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
@@ -171,6 +190,10 @@ public class ShaderEdition : MonoBehaviour {
         Shader.SetGlobalColor("_PhongAmbientColor", _PhongAmbientColor);
         Shader.SetGlobalColor("_PhongDiffuseColor", _PhongDiffuseColor);
         Shader.SetGlobalColor("_PhongSpecularColor", _PhongSpecularColor);
+        Shader.SetGlobalFloat("_PhongAmbientForce", _PhongAmbientForce);
+        Shader.SetGlobalFloat("_PhongDiffuseForce", _PhongDiffuseForce);
+        Shader.SetGlobalFloat("_PhongSpecularForce", _PhongSpecularForce);
+        Shader.SetGlobalFloat("_CustomShininess", _CustomShininess);
 
         #endregion
     }
@@ -414,10 +437,10 @@ public class ShaderEdition : MonoBehaviour {
     #region UPDATE_SCALE_OFFSET_TEXTURE_FUNCTIONS
     public void UpdateScaleOffsetBaseTexture()
     {
-        if (Base_Texture_Scale_X.text != "")
-        { _Base_Texture_Scale_X = float.Parse(Base_Texture_Scale_X.text); }
-        if (Base_Texture_Scale_Y.text != "")
-        { _Base_Texture_Scale_Y = float.Parse(Base_Texture_Scale_Y.text); }
+        if (Base_Texture_Scale_X_InputField_CR.text != "")
+        { _Base_Texture_Scale_X = float.Parse(Base_Texture_Scale_X_InputField_CR.text); }
+        if (Base_Texture_Scale_Y_inputField_CR.text != "")
+        { _Base_Texture_Scale_Y = float.Parse(Base_Texture_Scale_Y_inputField_CR.text); }
 
         _Base_Texture_Offset_X = Base_Texture_Offset_X.value;
         _Base_Texture_Offset_Y = Base_Texture_Offset_Y.value;
@@ -457,7 +480,43 @@ public class ShaderEdition : MonoBehaviour {
             }
             else
             {
-                print("[TO DO] Color to change depending ID. We arrive here?");
+            switch (colorPicker_CanvasReference_Script.ColorChangeID)
+            {
+                case "PhongAmbientColor":
+                {
+                        _PhongAmbientColor = colorPicker_CanvasReference_Script.CurrentColorSelected;
+                        Dummy_Phong_Ambient_Color_Image_CR.color = _PhongAmbientColor;
+                        Shader.SetGlobalColor("_PhongAmbientColor", _PhongAmbientColor);
+                        break;
+                }
+                case "PhongDiffuseColor":
+                    {
+                        _PhongDiffuseColor = colorPicker_CanvasReference_Script.CurrentColorSelected;
+                        Dummy_Phong_Diffuse_Color_Image_CR.color = _PhongDiffuseColor;
+                        Shader.SetGlobalColor("_PhongDiffuseColor", _PhongDiffuseColor);
+                        break;
+                    }
+                case "PhongSpecularColor":
+                    {
+                        _PhongSpecularColor = colorPicker_CanvasReference_Script.CurrentColorSelected;
+                        Dummy_Phong_Specular_Color_Image_CR.color = _PhongSpecularColor;
+                        Shader.SetGlobalColor("_PhongSpecularColor", _PhongSpecularColor);
+                        break;
+                    }
+                case "TextureTint":
+                    {
+                        _TextureTint = colorPicker_CanvasReference_Script.CurrentColorSelected;
+                        Dummy_Color_Texture_Image_CR.color = _TextureTint;
+                        Shader.SetGlobalColor("_TextureTint", _TextureTint);
+                        break;
+                    }
+                default:
+                    {
+                        print("You should not be here!!!");
+                        break;
+                    }
+            }
+                //print("[TO DO] Color to change depending ID. We arrive here?");
                 CloseCanvasGroup(ColorPicker_CanvasGroup_CR);
             }           
     }
@@ -466,7 +525,6 @@ public class ShaderEdition : MonoBehaviour {
     {
         colorPicker_CanvasReference_Script.ColorChangeID = newID;
         OpenCanvasGroup(ColorPicker_CanvasGroup_CR);
-
     }
 
     public void ResetColorByID(string colorID)
@@ -515,6 +573,51 @@ public class ShaderEdition : MonoBehaviour {
         if (_NormalMapScale_InputField_CR.text != "")
         { _CustomNormalMapScale = float.Parse(_NormalMapScale_InputField_CR.text); }
         Shader.SetGlobalFloat("_NormalMapScale", _CustomNormalMapScale);
+    }
+
+    public void UpdatePhongForces()
+    {
+        #region COLOR_FORCES
+        _PhongAmbientForce = Phong_Ambient_Force_Slider_CR.value;
+        _PhongDiffuseForce = Phong_Diffuse_Force_Slider_CR.value;
+        _PhongSpecularForce = Phong_Specular_Force_Slider_CR.value;
+
+        Phong_Ambient_Force_Text_CR.text = Mathf.Round(_PhongAmbientForce * 100f) / 100f + "";
+        Phong_Diffuse_Force_Text_CR.text = Mathf.Round(_PhongDiffuseForce * 100f) / 100f + "";
+        Phong_Specular_Force_Text_CR.text = Mathf.Round(_PhongSpecularForce * 100f) / 100f + "";
+
+        Shader.SetGlobalFloat("_PhongAmbientForce", _PhongAmbientForce);
+        Shader.SetGlobalFloat("_PhongDiffuseForce", _PhongDiffuseForce);
+        Shader.SetGlobalFloat("_PhongSpecularForce", _PhongSpecularForce);
+        #endregion
+
+        #region SHININESS_SLIDER
+        _CustomShininess = Shininess_Slider_CR.value;
+        Max_Range_Shininess = float.Parse(Max_Range_Shininess_InputField_CR.text);
+        Min_Range_Shininess = float.Parse(Min_Range_Shininess_InputField_CR.text);
+
+        Shininess_Slider_CR.maxValue = Max_Range_Shininess;
+        Shininess_Slider_CR.minValue = Min_Range_Shininess;
+        Mathf.Clamp(Shininess_Slider_CR.value, Min_Range_Shininess, Max_Range_Shininess);
+
+        Shader.SetGlobalFloat("_CustomShininess", _CustomShininess);
+        #endregion
+    }
+
+    public void SetInitialPhongProperties()
+    {
+        Phong_Ambient_Force_Slider_CR.value = 0.5f;
+        Phong_Diffuse_Force_Slider_CR.value = 0.5f;
+        Phong_Specular_Force_Slider_CR.value = 0.5f;
+
+        Min_Range_Shininess_InputField_CR.text = 0f + "";
+        Max_Range_Shininess_InputField_CR.text = 1f + "";
+        Shininess_Slider_CR.minValue = 0f;
+        Shininess_Slider_CR.maxValue = 1f;
+        Min_Range_Shininess = 0f;
+        _CustomShininess = 0.25f;
+        Max_Range_Shininess = 1f;
+        Shininess_Slider_CR.value = _CustomShininess;
     }
 
     #endregion

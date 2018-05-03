@@ -20,35 +20,16 @@
 
 		uniform half _NormalMapScale = 1.0f;
 
-		uniform fixed4 _CustomSpecularColor;
-		uniform float _CustomShininess = 10.0f;
-		
+		uniform float _CustomShininess;		
 		uniform float4 _PhongAmbientColor;
+		uniform float _PhongAmbientForce;
 		uniform float4 _PhongSpecularColor;
+		uniform float _PhongSpecularForce;
 		uniform float4 _PhongDiffuseColor;
+		uniform float _PhongDiffuseForce;
 
 		//===========================================
 		//=======SPECULAR_HIGHLIGHTS, from: https://en.wikibooks.org/wiki/Cg_Programming/Unity/Specular_Highlights =================
-
-		struct vertexInput 
-			{
-            float4 vertex : POSITION;
-            float2 texcoord : TEXCOORD0;
-			float3 normal : NORMAL;
-			float4 tangent : TANGENT;
-			};
-		struct vertexOutput 
-			{
-            float4 pos : SV_POSITION;
-			float4 worldPosition : TEXCOORD0;
-            float2 tex : TEXCOORD1;
-			float3 NormalWorld : TEXCOORD2;
-			float3 TangentWorld : TEXCOORD3;
-			float3 BitangentWorld : TEXCOORD4;
-			float3 viewDirWorld : TEXCOORD5;
-			float3 viewDirInScaledSurfaceCoords : TEXCOORD6;
-
-			};	
 
 		struct vertexInput_AllVariables
 		{
@@ -110,10 +91,10 @@
 			float3 biNormal = cross (input.normal, input.tangent.xyz) * input.tangent.w;
 			//scaled tangent and biNormal aprroximations
 			//to map distances from object space to Texture space.
-			
+
 			float2 normalCoordsScaled = float2 (_NormalTileX, _NormalTileY);
-			normalCoordsScaled *= input.texcoord;
-			float4 encodedNormal = tex2D(_NormalMap, normalCoordsScaled + float2(_NormalOffsetX, _NormalOffsetY));
+			normalCoordsScaled *= input.texcoord.xy;
+			float4 encodedNormal = tex2Dlod(_NormalMap, float4(normalCoordsScaled, float2(_NormalOffsetX, _NormalOffsetY)));
 
 			float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0);
 			localCoords.z = 1.0 - 0.5 * dot (localCoords, localCoords);
@@ -143,8 +124,7 @@
 
 			float2 normalCoordsScaled = float2 (_NormalTileX, _NormalTileY);
 			normalCoordsScaled *= input.tex.xy;
-			float4 encodedNormal = tex2D(_NormalMap, normalCoordsScaled + float2(_NormalOffsetX, _NormalOffsetY));
-			//encodedNormal.xyz*= float3(_NormalMapScale, _NormalMapScale, 1.0f);
+			float4 encodedNormal = tex2D(_NormalMap, (normalCoordsScaled + float2(_NormalOffsetX, _NormalOffsetY)).xy);
 
 			float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0);
 			localCoords.z = 1.0 - 0.5 * dot (localCoords, localCoords);
@@ -158,12 +138,13 @@
 		
 		}
 
+		//========================================================================================================
 
 		float4 PhongBase_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection)
 		{
 			float4x4 modelMatrix = unity_ObjectToWorld;
 			float3x3 modelMatrixInverse = unity_WorldToObject;
-			//float3 normalDirection = normalize(mul(input.normal, modelMatrixInverse));
+			 normalDirection += normalize(mul(input.normal, modelMatrixInverse));
 			float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(modelMatrix, input.vertex).xyz);
 			
 			float3 lightDirection;
@@ -197,14 +178,15 @@
 														  viewDirection)), _CustomShininess);
 			}
 
-			  return float4(ambientLighting + diffuseReflection + specularReflection, 1.0);
+			  return float4(ambientLighting * _PhongAmbientForce + diffuseReflection * _PhongDiffuseForce 
+						  + specularReflection * _PhongSpecularForce, 1.0f);
 		}
 
 		float4 PhongAdd_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection)
 		{
 			float4x4 modelMatrix = unity_ObjectToWorld;
 			float3x3 modelMatrixInverse = unity_WorldToObject;
-			//float3 normalDirection = normalize(mul(input.normal, modelMatrixInverse));
+			normalDirection += normalize(mul(input.normal, modelMatrixInverse));
 			float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(modelMatrix, input.vertex).xyz);
 			
 			float3 lightDirection;
@@ -237,11 +219,11 @@
 														  viewDirection)), _CustomShininess);
 			}
 
-			return float4(diffuseReflection + specularReflection, 1.0);
+			return float4(diffuseReflection * _PhongDiffuseForce + specularReflection * _PhongSpecularForce, 1.0f);
 
 		}
 
-		float3 Lambert_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection)
+		float4 Lambert_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection)
 		{
 			float4x4 modelMatrix = unity_ObjectToWorld;
 			float4x4 modelMatrixInverse = unity_WorldToObject;
@@ -249,7 +231,7 @@
 			float3 posWorld = mul(modelMatrix, input.vertex);
 			float3 normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz);
 
-			//float3 normalDirection = normalize(normalDir);
+			normalDirection += normalize(normalDir);
 			float3 viewDirection = normalize(_WorldSpaceCameraPos - posWorld.xyz);
 
 			float3 lightDirection;
@@ -273,7 +255,7 @@
 			float NDotL = max (0.0, dot(normalDirection, lightDirection));
 			float LambertDiffuse = NDotL;	
 			float3 finalColor = LambertDiffuse * attenuation * _LightColor0.rgb;
-			return finalColor;
+			return float4 (finalColor, 1.0f);
 		}
 
 		float3 HalfLambert_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection)
@@ -284,7 +266,7 @@
 			float3 posWorld = mul(modelMatrix, input.vertex);
 			float3 normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz);
 
-			//float3 normalDirection = normalize(normalDir);
+			normalDirection += normalize(normalDir);
 			float3 viewDirection = normalize(_WorldSpaceCameraPos - posWorld.xyz);
 		
 			float3 lightDirection;
@@ -310,6 +292,8 @@
 			float3 finalColor = HalfLambertDiffuse * attenuation * _LightColor0.rgb;
 			return finalColor;
 		}
+
+		//=======================================================================================================
 
 		float3 Phong_Lighting_Pixel (vertexOutput_PerPixelLighting input, float3 normalDirection)
 		{
@@ -344,11 +328,13 @@
 			else 
 			{
 				specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * 
-									 pow(max(0.0, dot(reflect(-lightDirection, normalDirection),
-													  viewDirection)), _CustomShininess);				
+									 max(0.0, dot(reflect(-lightDirection, normalDirection),
+													  viewDirection));
+				specularReflection = specularReflection * _CustomShininess;
 			}	
 
-			return float3(ambientLighting + diffuseReflection + specularReflection);
+			return float3(ambientLighting * _PhongAmbientForce + diffuseReflection * _PhongDiffuseForce 
+						  + specularReflection * _PhongSpecularForce);
 		}
 
 		float3 Lambert_Lighting_Pixel(vertexOutput_PerPixelLighting input, float3 normalDirection)
@@ -385,7 +371,7 @@
 		float3 HalfLambert_Lighting_Pixel(vertexOutput_PerPixelLighting input, float3 normalDirection)
 		{
 			
-			//normalDirection = normalize(input.normalDir);
+			normalDirection += normalize(input.normalDir);
 		
 			float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz);
 		
@@ -423,9 +409,10 @@
 			vertexOutput_PerVertexLighting output;			
 			
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
+
 			output.col = PhongBase_Lighting_Vertex(input, normalDirection);
 			output.pos = UnityObjectToClipPos(input.vertex);
-
+			output.tex = input.texcoord;
 			return output;
 		}
 
@@ -433,12 +420,11 @@
 		{
 			vertexOutput_PerVertexLighting output;
 
-
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
 
-			output.col = float4(Lambert_Lighting_Vertex(input, normalDirection), 1.0);
+			output.col = Lambert_Lighting_Vertex(input, normalDirection);
 			output.pos = UnityObjectToClipPos(input.vertex);
-		
+			output.tex = input.texcoord;
 			return output;
 
 		}
@@ -446,13 +432,12 @@
 		vertexOutput_PerVertexLighting vert_PerVertexLighting_HalfLambert(vertexInput_AllVariables input)
 		{
 			vertexOutput_PerVertexLighting output;
-
-
+			
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
 
 			output.col = float4(HalfLambert_Lighting_Vertex(input, normalDirection), 1.0);
 			output.pos = UnityObjectToClipPos(input.vertex);
-		
+			output.tex = input.texcoord;
 			return output;
 		
 		}
@@ -461,11 +446,11 @@
 		{
 			vertexOutput_PerVertexLighting output;		
 
-			float normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
+			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
 
 			output.col = PhongAdd_Lighting_Vertex(input, normalDirection);
 			output.pos = UnityObjectToClipPos(input.vertex);
-
+			output.tex = input.texcoord;
 			return output;
 		}
 		

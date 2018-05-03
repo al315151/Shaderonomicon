@@ -5,7 +5,7 @@ using UnityEngine;
 public class SpellBookFunctions : MonoBehaviour {
 
     //This is a library of the functions that are available in SpellBook.
-    // Ultima fecha de actualización: 29/04/2018
+    // Ultima fecha de actualización: 02/05/2018
 
     public static string Texture_Handling_Variables =
         " uniform sampler2D _CustomTexture; " +
@@ -25,12 +25,14 @@ public class SpellBookFunctions : MonoBehaviour {
         ;
 
     public static string Phong_Variables = 
-        " uniform fixed4 _CustomSpecularColor; " +
+       
         " uniform float _CustomShininess; " +
-        " uniform float4 _Color; " +
-        " uniform float _DiffuseColor; " +
-        " uniform float _Shininess; " +
-        " uniform float4 _SpecularColor; "
+        " uniform float4 _PhongAmbientColor; " +
+        " uniform float _PhongAmbientForce; " +
+        " uniform float4 _PhongSpecularColor; " +
+		" uniform float _PhongSpecularForce; " +
+        " uniform float4 _PhongDiffuseColor; " +
+		" uniform float _PhongDiffuseForce; "
         ;
 
 
@@ -155,7 +157,7 @@ public class SpellBookFunctions : MonoBehaviour {
         " { " +
             " specularReflection = attenuation * _LightColor0.rgb * _SpecularColor.rgb * pow(max(0.0, dot(reflect(-lightDirection, normalDirection),viewDirection)), _Shininess); " +
         " } " +
-        " return float4(ambientLighting + diffuseReflection + specularReflection, 1.0); " + " } "
+        "return float4(ambientLighting * _PhongAmbientForce + diffuseReflection * _PhongDiffuseForce  + specularReflection * _PhongSpecularForce, 1.0f) " + " } "
         ;
 
     public static string PhongAdd_Lighting_Vertex =
@@ -187,7 +189,7 @@ public class SpellBookFunctions : MonoBehaviour {
         " { " +
             " specularReflection = attenuation * _LightColor0.rgb * _SpecularColor.rgb * pow(max(0.0, dot(reflect(-lightDirection, normalDirection),viewDirection)), _Shininess); " +
         " } " +
-        " return float4(diffuseReflection + specularReflection, 1.0); " + " } "
+        " return float4(diffuseReflection * _PhongDiffuseForce + specularReflection * _PhongSpecularForce, 1.0f) " + " } "
         ;
 
 
@@ -277,7 +279,7 @@ public class SpellBookFunctions : MonoBehaviour {
         " { " +
             " specularReflection = attenuation * _LightColor0.rgb * _SpecColor.rgb * pow(max(0.0, dot(reflect(-lightDirection, normalDirection), viewDirection)), _Shininess); " +
         " } " +
-        " return float3(ambientLighting + diffuseReflection + specularReflection); " + " } "
+        " return float3(ambientLighting * _PhongAmbientForce + diffuseReflection * _PhongDiffuseForce  + specularReflection * _PhongSpecularForce) " + " } "
         ;
 
     public static string Lambert_Lighting_Pixel =
