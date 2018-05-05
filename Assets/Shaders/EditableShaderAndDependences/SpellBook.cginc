@@ -1,8 +1,7 @@
 #include "UnityCG.cginc"
 #include "UnityLightingCommon.cginc"
 
-//variables
-
+		//variables
 		//=================================
 		
 		uniform sampler2D _CustomTexture;
@@ -55,10 +54,28 @@
 			float4 tangent : TANGENT;
 			float3 normal : NORMAL;
 		};
+		
+		//====STRUCTS AND VARIABLES ONLY USED IN SHADER EDITING, THEY SHALL NOT BE USED AT THE FINAL SHADER ===================
 
-		// =============SUB-FUNCTIONS FOR TEXTURE HANDLING, NORMAL MAP AND BUMP MAP HANDLING ==================
+		uniform float _LightingModel;
+		uniform float _IsPixelLighting;
 
-		float4 Texture_Handling_Pixel(vertexOutput_PerPixelLighting input)
+		struct vertexOutput_AllVariables
+		{
+			float4 pos : SV_POSITION;
+			float4 col : COLOR;	
+			float2 tex : TEXCOORD3;
+			float3 posWorld : TEXCOORD4;
+			float3 normalDir : TEXCOORD5;
+			float4 tangent : TANGENT;
+			float3 normal : NORMAL;		
+		};
+		//=======================================================================================================
+		
+
+		// =============SUB-FUNCTIONS FOR TEXTURE HANDLING, NORMAL MAP HANDLING ==================
+		
+		float4 Texture_Handling_Vertex(vertexOutput_PerVertexLighting input)
 		{
 			float2 texCoordsScale = float2 (_TextureTileX, _TextureTileY);
 			texCoordsScale *= input.tex.xy;
@@ -68,7 +85,7 @@
 			return textureColor;
 		}
 
-		float4 Texture_Handling_Vertex(vertexOutput_PerVertexLighting input)
+		float4 Texture_Handling_Pixel(vertexOutput_PerPixelLighting input)
 		{
 			float2 texCoordsScale = float2 (_TextureTileX, _TextureTileY);
 			texCoordsScale *= input.tex.xy;
@@ -453,6 +470,18 @@
 			output.tex = input.texcoord;
 			return output;
 		}
+
+		vertexOutput_PerVertexLighting vert_PerVertexLighting_NoLight (vertexInput_AllVariables input)
+		{
+			vertexOutput_PerVertexLighting output;		
+
+			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
+
+			output.col = float4 (1.0f, 1.0f, 1.0f, 1.0f);
+			output.pos = UnityObjectToClipPos(input.vertex);
+			output.tex = input.texcoord;
+			return output;
+		}
 		
 		float4 frag_PerVertexLighting(vertexOutput_PerVertexLighting input) : COLOR
 		{	
@@ -508,6 +537,108 @@
 			return (TextureColor);		
 		}
 		
+		//===========================================================================================================
+
+		//==== FUNCTIONS ONLY USED FOR SHADER EDITING, THEY SHALL NOT BE USED IN THE FINAL SHADER ====================
+
+		vertexOutput_AllVariables vert_AllPosibilities(vertexInput_AllVariables input)
+		{
+			vertexOutput_AllVariables output;
+		
+			if (_IsPixelLighting == 1.0f) // Pixel
+			{
+				vertexOutput_PerPixelLighting outputDummy;
+				outputDummy = vert_PerPixelLighting(input);
+				output.posWorld = outputDummy.posWorld;
+				output.pos = outputDummy.pos;
+				output.normalDir = outputDummy.normalDir;
+				output.tex = outputDummy.tex;
+				output.tangent = outputDummy.tangent;
+				output.normal = outputDummy.normal;		
+				
+				//If i do not put this one, unity cries, so xd
+				output.col = float4(0.0f, 0.0f, 0.0f, 0.0f);
+			}
+			else // Vertex
+			{
+				vertexOutput_PerVertexLighting outputDummy;
+				
+				if (_LightingModel == 1.0f) // PhongBase
+				{
+					outputDummy = vert_PerVertexLighting_PhongBase(input);							
+				}			
+				if (_LightingModel == 2.0f) // Lambert
+				{
+					outputDummy = vert_PerVertexLighting_Lambert(input);				
+				}
+				if (_LightingModel == 3.0f) // HalfLambert
+				{
+					outputDummy = vert_PerVertexLighting_HalfLambert(input);			
+				}
+				if (_LightingModel == 4.0f) // PhongAdd
+				{
+					outputDummy = vert_PerVertexLighting_PhongBase(input);		
+				}
+				if (_LightingModel == 0.0f) // No_Light
+				{
+					outputDummy = vert_PerVertexLighting_NoLight(input);							
+				}
+
+				output.pos = outputDummy.pos;
+				output.col = outputDummy.col;
+				output.tex = outputDummy.tex;	
+
+				//If i do not put this one, unity cries, so i will just insert null values
+				output.posWorld = float3(0.0f, 0.0f, 0.0f);
+				output.normalDir = float3(0.0f, 0.0f, 0.0f);
+				output.tangent = float4(0.0f, 0.0f, 0.0f, 0.0f);
+				output.normal = float3(0.0f, 0.0f, 0.0f);
+			}
+			
+			return output;
+		}
+
+		float4 frag_AllPosibilities(vertexOutput_AllVariables input) : COLOR
+		{
+			float4 finalColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+			if (_IsPixelLighting == 0.0f) //Vertex Lighting
+			{
+				vertexOutput_PerVertexLighting inputDummy;
+				inputDummy.tex = input.tex;
+				inputDummy.col = input.col;
+				inputDummy.pos = input.pos;
+
+				finalColor = frag_PerVertexLighting(inputDummy);
+				return finalColor;
+			}
+			else // Pixel Lighting
+			{
+				vertexOutput_PerPixelLighting inputDummy;
+				inputDummy.posWorld = input.posWorld;
+				inputDummy.pos = input.pos;
+				inputDummy.normalDir = input.normalDir;
+				inputDummy.tex = input.tex;
+				inputDummy.tangent = input.tangent;
+				inputDummy.normal = input.normal;
+
+				if (_LightingModel == 1.0f) // Phong
+				{	 finalColor = frag_PerPixelLighting_Phong(inputDummy);	}	
+				if (_LightingModel == 2.0f) // Lambert
+				{	 finalColor = frag_PerPixelLighting_Lambert(inputDummy);	}
+				if (_LightingModel == 3.0f) // HalfLambert
+				{	 finalColor = frag_PerPixelLighting_HalfLambert(inputDummy);	}
+				if (_LightingModel == 4.0f) // Phong
+				{	 finalColor = frag_PerPixelLighting_Phong(inputDummy);	}
+				if (_LightingModel == 0.0f) // NoLight
+				{	 finalColor = frag_PerPixelLighting_NoLight(inputDummy);	}
+
+				return finalColor;
+			}
+
+			return finalColor;		
+		}
+
 
 		
 

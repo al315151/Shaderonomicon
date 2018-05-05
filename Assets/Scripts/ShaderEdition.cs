@@ -28,7 +28,13 @@ public class ShaderEdition : MonoBehaviour {
     [Header("Lighting Model References")]
     public Slider lighting_Model_Slider_CR;
     public Text lighting_Model_Text_CR;
-    private int _Current_Lighting_Model;
+    [HideInInspector]
+    public int _Current_Lighting_Model;
+    [HideInInspector]
+    public int _Is_Pixel_Lighting; // ARE WE USING PIXEL LIGHTING OR NOT?
+    public Button Pixel_Lighting_Button_CR;
+    public Button Vertex_Lighting_Button_CR;
+    
     #endregion
 
     #region CHANGE_BASE_TEXTURE_PARAMETERS
@@ -142,6 +148,22 @@ public class ShaderEdition : MonoBehaviour {
 
     #endregion
 
+    #region TEMPORAL_SHADER_EXPORT_VARIABLES
+
+    public string CurrentLightingModel = "PhongBase";
+
+
+    #endregion
+
+    #region FINAL_SHADER_EXPORT_VARIABLES
+
+    [HideInInspector]
+    public bool shaderHasTexture;
+    [HideInInspector]
+    public bool shaderHasNormalMap;
+
+    #endregion
+
     #endregion
 
     public static ShaderEdition currentInstance;
@@ -161,7 +183,9 @@ public class ShaderEdition : MonoBehaviour {
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
         Shader.SetGlobalFloat("_NormalMapScale", _CustomNormalMapScale );
-	}
+        Shader.SetGlobalInt("_LightingModel", _Current_Lighting_Model);
+        Shader.SetGlobalInt("_IsPixelLighting", _Is_Pixel_Lighting);
+    }
 
 
 	// Use this for initialization
@@ -396,10 +420,11 @@ public class ShaderEdition : MonoBehaviour {
 
 
     }
-    
+
     #endregion
 
     #region CHANGE_LIGHTING_MODEL_FUNCTIONS
+
     public void UpdateLightingModel()
     {
         _Current_Lighting_Model = (int)lighting_Model_Slider_CR.value;
@@ -431,6 +456,9 @@ public class ShaderEdition : MonoBehaviour {
                     break;
                 }
         }
+
+        Shader.SetGlobalInt("_LightingModel", _Current_Lighting_Model);
+
     }
     #endregion
 
@@ -619,6 +647,20 @@ public class ShaderEdition : MonoBehaviour {
         Max_Range_Shininess = 1f;
         Shininess_Slider_CR.value = _CustomShininess;
     }
+
+    public void setInitialLightingModelProperties()
+    {
+        //We'll start with some sickass Phong Pixel Lighting
+        _Is_Pixel_Lighting = 1;
+        _Current_Lighting_Model = 1;
+        lighting_Model_Slider_CR.value = 1.0f;
+    }
+
+    public void ChangeToPixelLighting()
+    { _Is_Pixel_Lighting = 1; Shader.SetGlobalInt("_IsPixelLighting", _Is_Pixel_Lighting); }
+
+    public void ChanteToVertexLighting()
+    { _Is_Pixel_Lighting = 0; Shader.SetGlobalInt("_IsPixelLighting", _Is_Pixel_Lighting); }
 
     #endregion
 

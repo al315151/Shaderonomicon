@@ -33,12 +33,14 @@ Shader "Custom/NewShader"
 			LOD 100
 
 			CGPROGRAM
-			#pragma vertex vert_PerVertexLighting_Lambert
-			#pragma fragment frag_PerVertexLighting
 			
-			#include "SpellBook.cginc"			
- 
-         ENDCG
+			#include "SpellBook.cginc"	
+
+			#pragma vertex vert_AllPosibilities
+			
+			#pragma fragment frag_AllPosibilities
+					 
+			ENDCG
 		}
 		/*Pass
 		{
