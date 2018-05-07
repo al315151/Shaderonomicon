@@ -85,7 +85,6 @@ public class ShaderExport : MonoBehaviour {
                              SpellBookFunctions.Normal_Direction_With_Normal_Map_Handling_Pixel +
                              SpellBookFunctions.Normal_Direction_With_Normal_Map_Handling_Vertex +
                              SpellBookFunctions.PhongBase_Lighting_Vertex +
-                             SpellBookFunctions.PhongAdd_Lighting_Vertex +
                              SpellBookFunctions.Lambert_Lighting_Vertex +
                              SpellBookFunctions.HalfLambert_Lighting_Vertex +
                              SpellBookFunctions.Phong_Lighting_Pixel +
@@ -95,7 +94,6 @@ public class ShaderExport : MonoBehaviour {
         //Vert and frag functions
 
         temporalSpellBook += SpellBookFunctions.vert_PerVertexLighting_PhongBase +
-                             SpellBookFunctions.vert_PerVertexLighting_PhongAdd +
                              SpellBookFunctions.vert_PerVertexLighting_Lambert +
                              SpellBookFunctions.vert_PerVertexLighting_HalfLambert +
                              SpellBookFunctions.vert_PerPixelLighting +
@@ -186,26 +184,7 @@ public class ShaderExport : MonoBehaviour {
                     }
                     break;
                 }
-            case (4):
-                {
-                    if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //Phong, Pixel
-                    {
-                        currentVertexFunction = "vert_PerPixelLighting";
-                        currentFragmentFunction = "frag_PerPixelLighting_Phong";
-                    }
-                    else //PhongAdd, Vertex
-                    {
-                        currentVertexFunction = "vert_PerVertexLighting_PhongAdd";
-                        currentFragmentFunction = "frag_PerVertexLighting";
-
-                    }
-                    break;
-                }
-
         }
-
-
-
     }
 
 

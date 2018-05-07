@@ -199,46 +199,7 @@
 						  + specularReflection * _PhongSpecularForce, 1.0f);
 		}
 
-		float4 PhongAdd_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection)
-		{
-			float4x4 modelMatrix = unity_ObjectToWorld;
-			float3x3 modelMatrixInverse = unity_WorldToObject;
-			normalDirection += normalize(mul(input.normal, modelMatrixInverse));
-			float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(modelMatrix, input.vertex).xyz);
-			
-			float3 lightDirection;
-			float attenuation;
-
-			if (0.0 == _WorldSpaceLightPos0.w) // directional light
-			{
-				attenuation = 1.0;
-				lightDirection = normalize(_WorldSpaceLightPos0.xyz);
-			}
-			else
-			{
-				float3 vertexToLightSource = _WorldSpaceLightPos0.xyz -	
-											 mul(modelMatrix, input.vertex).xyz;
-				float3 distance = length(vertexToLightSource);
-				attenuation = 1.0 / distance;
-				lightDirection = normalize(vertexToLightSource);
-			}
-
-			float3 diffuseReflection = attenuation * _LightColor0.rgb * _PhongDiffuseColor.rgb * 
-									   max(0.0, dot(normalDirection, lightDirection));
-
-			float3 specularReflection;
-
-			if (dot(normalDirection, lightDirection) < 0.0)
-			{	specularReflection = float3 (0.0, 0.0, 0.0);	}
-			else
-			{		specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * 
-										 pow(max(0.0, dot(reflect(-lightDirection, normalDirection),
-														  viewDirection)), _CustomShininess);
-			}
-
-			return float4(diffuseReflection * _PhongDiffuseForce + specularReflection * _PhongSpecularForce, 1.0f);
-
-		}
+		
 
 		float4 Lambert_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection)
 		{
@@ -459,18 +420,6 @@
 		
 		}
 
-		vertexOutput_PerVertexLighting vert_PerVertexLighting_PhongAdd (vertexInput_AllVariables input)
-		{
-			vertexOutput_PerVertexLighting output;		
-
-			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
-
-			output.col = PhongAdd_Lighting_Vertex(input, normalDirection);
-			output.pos = UnityObjectToClipPos(input.vertex);
-			output.tex = input.texcoord;
-			return output;
-		}
-
 		vertexOutput_PerVertexLighting vert_PerVertexLighting_NoLight (vertexInput_AllVariables input)
 		{
 			vertexOutput_PerVertexLighting output;		
@@ -574,10 +523,6 @@
 				if (_LightingModel == 3.0f) // HalfLambert
 				{
 					outputDummy = vert_PerVertexLighting_HalfLambert(input);			
-				}
-				if (_LightingModel == 4.0f) // PhongAdd
-				{
-					outputDummy = vert_PerVertexLighting_PhongBase(input);		
 				}
 				if (_LightingModel == 0.0f) // No_Light
 				{

@@ -168,39 +168,7 @@ public class SpellBookFunctions : MonoBehaviour {
         "return float4(ambientLighting * _PhongAmbientForce + diffuseReflection * _PhongDiffuseForce  + specularReflection * _PhongSpecularForce, 1.0f); " + " } " + '\n' 
         ;
 
-    public static string PhongAdd_Lighting_Vertex =
-       "  float4 PhongAdd_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection) " +
-         " { " +
-        " float4x4 modelMatrix = unity_ObjectToWorld; " +
-        " float3x3 modelMatrixInverse = unity_WorldToObject; " +
-        " normalDirection += normalize(mul(input.normal, modelMatrixInverse)); " +
-        " float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(modelMatrix, input.vertex).xyz); " +
-        " float3 lightDirection; " +
-        " float attenuation; " +
-        " if (0.0 == _WorldSpaceLightPos0.w) " +
-        " { " +
-            " attenuation = 1.0; " +
-            " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " +
-        " } " +
-        " else " +
-        " { " +
-            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - mul(modelMatrix, input.vertex).xyz; " +
-            " float3 distance = length(vertexToLightSource); " +
-            " attenuation = 1.0 / distance; " +
-            " lightDirection = normalize(vertexToLightSource); " +
-        " } " +
-        " float3 diffuseReflection = attenuation * _LightColor0.rgb * _PhongDiffuseColor.rgb * max(0.0, dot(normalDirection, lightDirection)); " +
-        " float3 specularReflection; " +
-        " if (dot(normalDirection, lightDirection) < 0.0) " +
-        " { specularReflection = float3(0.0, 0.0, 0.0); } " +
-        " else " +
-        " { " +
-            " specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * pow(max(0.0, dot(reflect(-lightDirection, normalDirection),viewDirection)), _CustomShininess); " +
-        " } " +
-        " return float4(diffuseReflection * _PhongDiffuseForce + specularReflection * _PhongSpecularForce, 1.0f); " + " } " + '\n' 
-        ;
-
-
+    
     public static string Lambert_Lighting_Vertex =
        " float3 Lambert_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection) " +
         " { " +
@@ -368,17 +336,6 @@ public class SpellBookFunctions : MonoBehaviour {
         " vertexOutput_PerVertexLighting output; " +
         " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input); " +
         " output.col = float4(HalfLambert_Lighting_Vertex(input, normalDirection), 1.0); " +
-        " output.pos = UnityObjectToClipPos(input.vertex); " +
-        " output.tex = input.texcoord; " +
-        " return output; " + " } " + '\n' 
-        ;
-
-    public static string vert_PerVertexLighting_PhongAdd =
-        " vertexOutput_PerVertexLighting vert_PerVertexLighting_PhongAdd(vertexInput_AllVariables input) " +
-        " { " +
-        " vertexOutput_PerVertexLighting output; " +
-        " float normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input); " +
-        " output.col = PhongAdd_Lighting_Vertex(input, normalDirection); " +
         " output.pos = UnityObjectToClipPos(input.vertex); " +
         " output.tex = input.texcoord; " +
         " return output; " + " } " + '\n' 

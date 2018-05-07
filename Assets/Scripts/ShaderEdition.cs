@@ -450,11 +450,6 @@ public class ShaderEdition : MonoBehaviour {
                     lighting_Model_Text_CR.text = "Half-Lambert Lighting";
                     break;
                 }
-            case 4:
-                {
-                    lighting_Model_Text_CR.text = "Phong (No Ambient Lighting)";
-                    break;
-                }
         }
 
         Shader.SetGlobalInt("_LightingModel", _Current_Lighting_Model);
