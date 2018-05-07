@@ -194,6 +194,7 @@ public class ShaderEdition : MonoBehaviour {
         SetInitialPhongProperties();
         Base_Texture_Scale_X_InputField_CR.text = 1.0f + "";
         Base_Texture_Scale_Y_inputField_CR.text = 1.0f + "";
+        ChangeToPixelLighting();
     }
 	
 	// Update is called once per frame
@@ -307,8 +308,6 @@ public class ShaderEdition : MonoBehaviour {
         CloseCurrentSecMenu();
         CG.gameObject.SetActive(true);
     }
-
-
 
     public void CloseCurrentSecMenu()
     {
@@ -427,34 +426,43 @@ public class ShaderEdition : MonoBehaviour {
 
     public void UpdateLightingModel()
     {
-        _Current_Lighting_Model = (int)lighting_Model_Slider_CR.value;
-        switch (_Current_Lighting_Model)
+
+        if ((int)lighting_Model_Slider_CR.value != _Current_Lighting_Model)
         {
-            case 0:
-                {
-                    lighting_Model_Text_CR.text = "No Lighting";
-                    break;
-                }
-            case 1:
-                {
-                    lighting_Model_Text_CR.text = "Phong Lighting";
-                    break;
-                }
-            case 2:
-                {
-                    lighting_Model_Text_CR.text = "Lambert Lighting";
-                    break;
-                }
-            case 3:
-                {
-                    lighting_Model_Text_CR.text = "Half-Lambert Lighting";
-                    break;
-                }
+            _Current_Lighting_Model = (int)lighting_Model_Slider_CR.value;
+            switch (_Current_Lighting_Model)
+            {
+                case 0:
+                    {
+                        lighting_Model_Text_CR.text = "No Lighting";
+                        CloseCurrentSecMenu();
+                        break;
+                    }
+                case 1:
+                    {
+                        lighting_Model_Text_CR.text = "Phong Lighting";
+                        OpenSecMenu(PhongLightingParameters_CanvasGroup_CR);
+                        break;
+                    }
+                case 2:
+                    {
+                        lighting_Model_Text_CR.text = "Lambert Lighting";
+                        CloseCurrentSecMenu();
+                        break;
+                    }
+                case 3:
+                    {
+                        lighting_Model_Text_CR.text = "Half-Lambert Lighting";
+                        CloseCurrentSecMenu();
+                        break;
+                    }
+            }
         }
 
         Shader.SetGlobalInt("_LightingModel", _Current_Lighting_Model);
 
     }
+    
     #endregion
 
     #region UPDATE_SCALE_OFFSET_TEXTURE_FUNCTIONS
@@ -652,10 +660,18 @@ public class ShaderEdition : MonoBehaviour {
     }
 
     public void ChangeToPixelLighting()
-    { _Is_Pixel_Lighting = 1; Shader.SetGlobalInt("_IsPixelLighting", _Is_Pixel_Lighting); }
+    { _Is_Pixel_Lighting = 1;
+        Navigation dummyNavigation = new Navigation();
+        dummyNavigation.mode = Navigation.Mode.None;
+        Pixel_Lighting_Button_CR.navigation = dummyNavigation;
+     Shader.SetGlobalInt("_IsPixelLighting", _Is_Pixel_Lighting); }
 
     public void ChanteToVertexLighting()
-    { _Is_Pixel_Lighting = 0; Shader.SetGlobalInt("_IsPixelLighting", _Is_Pixel_Lighting); }
+    { _Is_Pixel_Lighting = 0;
+        Navigation dummyNavigation = new Navigation();
+        dummyNavigation.mode = Navigation.Mode.None;
+        Vertex_Lighting_Button_CR.navigation = dummyNavigation;
+        Shader.SetGlobalInt("_IsPixelLighting", _Is_Pixel_Lighting); }
 
     #endregion
 
