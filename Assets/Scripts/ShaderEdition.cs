@@ -134,6 +134,7 @@ public class ShaderEdition : MonoBehaviour {
     public CanvasGroup BaseTextureParameters_CanvasGroup_CR;
     public CanvasGroup LambertLightingParameters_CanvasGroup_CR;
     public CanvasGroup PhongLightingParameters_CanvasGroup_CR;
+    public Text SecMenu_Title_Text_CR;
 
     #endregion
 
@@ -191,22 +192,52 @@ public class ShaderEdition : MonoBehaviour {
         _CustomTexture = BaseTexture_Sprite.texture;
        
         _CustomNormalMap = BaseNormalMap_Sprite.texture;
-
+       
+        #region UPDATE_GLOBAL_SHADER_VARIABLES
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
+        Shader.SetGlobalColor("_TextureTint", _TextureTint);
         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
-        Shader.SetGlobalFloat("_NormalMapScale", _CustomNormalMapScale );
+        Shader.SetGlobalFloat("_NormalMapScale", _CustomNormalMapScale);
         Shader.SetGlobalInt("_LightingModel", _Current_Lighting_Model);
+        Shader.SetGlobalColor("_PhongAmbientColor", _PhongAmbientColor);
+        Shader.SetGlobalColor("_PhongDiffuseColor", _PhongDiffuseColor);
+        Shader.SetGlobalColor("_PhongSpecularColor", _PhongSpecularColor);
+        Shader.SetGlobalFloat("_PhongAmbientForce", _PhongAmbientForce);
+        Shader.SetGlobalFloat("_PhongDiffuseForce", _PhongDiffuseForce);
+        Shader.SetGlobalFloat("_PhongSpecularForce", _PhongSpecularForce);
+        Shader.SetGlobalFloat("_CustomShininess", _CustomShininess);
+        Shader.SetGlobalFloat("_LambertTintForce", _LambertTintForce);
+        Shader.SetGlobalColor("_LambertTintColor", _LambertTintColor);
         Shader.SetGlobalInt("_IsPixelLighting", _Is_Pixel_Lighting);
+        Shader.SetGlobalFloat("_TextureTileX", _Base_Texture_Scale_X);
+        Shader.SetGlobalFloat("_TextureTileY", _Base_Texture_Scale_Y);
+        Shader.SetGlobalFloat("_OffsetTileX", _Base_Texture_Offset_X);
+        Shader.SetGlobalFloat("_OffsetTileY", _Base_Texture_Offset_Y);
+        Shader.SetGlobalFloat("_NormalTileX", _Normal_Map_Scale_X);
+        Shader.SetGlobalFloat("_NormalTileY", _Normal_Map_Scale_Y);
+        Shader.SetGlobalFloat("_NormalOffsetX", _Normal_Map_Offset_X);
+        Shader.SetGlobalFloat("_NormalOffsetY", _Normal_Map_Offset_Y);
+        #endregion
     }
 
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start ()
     {
         SetInitialPhongProperties();
+        SetLambertSpecs();
+
         Base_Texture_Scale_X_InputField_CR.text = 1.0f + "";
         Base_Texture_Scale_Y_inputField_CR.text = 1.0f + "";
+        Normal_Map_Scale_X.text = 1.0f + "";
+        Normal_Map_Scale_Y.text = 1.0f + "";
+        _NormalMapScale_InputField_CR.text = 1.0f + "";
+
         ChangeToPixelLighting();
+
+
+        _Current_Lighting_Model = 4; //tHIS IS FOR INITIAL UPDATE ON THE TEXTS.
+        UpdateLightingModel();
     }
 	
 	// Update is called once per frame
@@ -234,6 +265,15 @@ public class ShaderEdition : MonoBehaviour {
         Shader.SetGlobalFloat("_CustomShininess", _CustomShininess);
         Shader.SetGlobalFloat("_LambertTintForce", _LambertTintForce);
         Shader.SetGlobalColor("_LambertTintColor", _LambertTintColor);
+        Shader.SetGlobalFloat("_TextureTileX", _Base_Texture_Scale_X);
+        Shader.SetGlobalFloat("_TextureTileY", _Base_Texture_Scale_Y);
+        Shader.SetGlobalFloat("_OffsetTileX", _Base_Texture_Offset_X);
+        Shader.SetGlobalFloat("_OffsetTileY", _Base_Texture_Offset_Y);
+        Shader.SetGlobalFloat("_NormalTileX", _Normal_Map_Scale_X);
+        Shader.SetGlobalFloat("_NormalTileY", _Normal_Map_Scale_Y);
+        Shader.SetGlobalFloat("_NormalOffsetX", _Normal_Map_Offset_X);
+        Shader.SetGlobalFloat("_NormalOffsetY", _Normal_Map_Offset_Y);
+        Shader.SetGlobalInt("_LightingModel", _Current_Lighting_Model);
         #endregion
     }
 
@@ -320,7 +360,18 @@ public class ShaderEdition : MonoBehaviour {
     public void OpenSecMenu ( CanvasGroup CG)
     {
         CloseCurrentSecMenu();
+        if (CG.name == BaseTextureParameters_CanvasGroup_CR.name)
+        { SecMenu_Title_Text_CR.text = "Base Texture Parameters"; }
+        else if (CG.name == NormalMapParameters_CanvasGroup_CR.name)
+        { SecMenu_Title_Text_CR.text = "Normal Map Parameters"; }
+        else if (CG.name == LambertLightingParameters_CanvasGroup_CR.name)
+        { SecMenu_Title_Text_CR.text = "Lambert Lighting Model Parameters"; }
+        else if (CG.name == PhongLightingParameters_CanvasGroup_CR.name)
+        { SecMenu_Title_Text_CR.text = "Phong Lighting Model Parameters"; }
+        else
+        { Debug.Log("You should not be here at all m8"); }
         CG.gameObject.SetActive(true);
+
     }
 
     public void CloseCurrentSecMenu()
@@ -337,6 +388,9 @@ public class ShaderEdition : MonoBehaviour {
         {   ColorPicker_CanvasGroup_CR.gameObject.SetActive(false); }
 
     }
+
+
+
 
     //[This function is deprecated, as we do not use this kind of reference for now.]
     public void ChangeValueInputField(GameObject reference)
@@ -640,6 +694,15 @@ public class ShaderEdition : MonoBehaviour {
         Shader.SetGlobalFloat("_LambertTintForce", _LambertTintForce);
     }
 
+    public void SetLambertSpecs()
+    {
+        _LambertTintForce = 1f;
+        Lambert_Tint_Force_Slider_CR.value = _LambertTintForce;
+        _LambertTintColor = Color.white;
+        Dummy_Lambert_Tint_Image_CR.color = _LambertTintColor;
+        Shader.SetGlobalColor("_LambertTintColor", _LambertTintColor);
+        Shader.SetGlobalFloat("_LambertTintForce", _LambertTintForce);
+    }
 
     public void UpdatePhongForces()
     {
