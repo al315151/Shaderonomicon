@@ -27,6 +27,9 @@
 		uniform float4 _PhongDiffuseColor;
 		uniform float _PhongDiffuseForce;
 
+		uniform float _LambertTintForce;
+		uniform float4 _LambertTintColor;
+
 		//===========================================
 		//=======SPECULAR_HIGHLIGHTS, from: https://en.wikibooks.org/wiki/Cg_Programming/Unity/Specular_Highlights =================
 
@@ -691,18 +694,18 @@
 
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
 
-			output.col = Lambert_Lighting_Vertex(input, normalDirection);
+			output.col = Lambert_Lighting_Vertex(input, normalDirection) * (_LambertTintColor * _LambertTintForce);
 			output.pos = UnityObjectToClipPos(input.vertex);
 			output.tex = input.texcoord;
 			return output;
 
 		}
 
-		vertexOutput_NoTextureNoNormalMap_PerVertexLighting vert_PerVertexLighting_Lambert(vertexInput_NoTextureNoNormalMap input)
+		vertexOutput_NoTextureNoNormalMap_PerVertexLighting vert_PerVertexLighting_Lambert_NoNormalMap(vertexInput_NoTextureNoNormalMap input)
 		{
 			vertexOutput_NoTextureNoNormalMap_PerVertexLighting output;
 
-			output.col = Lambert_Lighting_Vertex_NoNormalMap(input);
+			output.col = Lambert_Lighting_Vertex_NoNormalMap(input) * (_LambertTintColor * _LambertTintForce);
 			output.pos = UnityObjectToClipPos(input.vertex);
 			return output;
 
@@ -714,7 +717,7 @@
 			
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
 
-			output.col = float4(HalfLambert_Lighting_Vertex(input, normalDirection), 1.0);
+			output.col = float4(HalfLambert_Lighting_Vertex(input, normalDirection), 1.0)* (_LambertTintColor * _LambertTintForce);
 			output.pos = UnityObjectToClipPos(input.vertex);
 			output.tex = input.texcoord;
 			return output;
@@ -725,7 +728,7 @@
 		{
 			vertexOutput_NoTextureNoNormalMap_PerVertexLighting output;
 
-			output.col = float4(HalfLambert_Lighting_Vertex_NoNormalMap(input), 1.0);
+			output.col = float4(HalfLambert_Lighting_Vertex_NoNormalMap(input), 1.0)* (_LambertTintColor * _LambertTintForce);
 			output.pos = UnityObjectToClipPos(input.vertex);
 			return output;
 
@@ -847,19 +850,19 @@
 		{
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input);
 
-			return float4 (Texture_Handling_Pixel(input) * Lambert_Lighting_Pixel(input, normalDirection), 1.0f);		
+			return float4 (Texture_Handling_Pixel(input) * Lambert_Lighting_Pixel(input, normalDirection) , 1.0f) * (_LambertTintColor * _LambertTintForce);		
 		}
 
 		float4 frag_PerPixelLighting_Lambert_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) : COLOR
 		{
-			return float4 (Texture_Handling_Pixel_NoNormalMap(input) * Lambert_Lighting_Pixel_NoNormalMap(input), 1.0f);		
+			return float4 (Texture_Handling_Pixel_NoNormalMap(input) * Lambert_Lighting_Pixel_NoNormalMap(input), 1.0f) * (_LambertTintColor * _LambertTintForce);		
 		}
 
 		float4 frag_PerPixelLighting_Lambert_NoTextureMap(vertexOutput_PerPixelLighting input) : COLOR
 		{
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input);
 
-			return float4(Lambert_Lighting_Pixel(input, normalDirection), 1.0f);			
+			return float4(Lambert_Lighting_Pixel(input, normalDirection), 1.0f) * (_LambertTintColor * _LambertTintForce);			
 		}
 
 		float4 frag_PerPixelLighting_Lambert_NoTextureNoNormalMap(vertexOutput_NoTextureNoNormalMap_PerPixelLighting input) : COLOR
@@ -871,26 +874,26 @@
 			dummyOutput.normal = input.normal;
 			dummyOutput.pos = input.pos;
 
-			return float4 (Lambert_Lighting_Pixel_NoNormalMap(dummyOutput), 1.0f);
+			return float4 (Lambert_Lighting_Pixel_NoNormalMap(dummyOutput), 1.0f) * (_LambertTintColor * _LambertTintForce);
 		}
 
 		float4 frag_PerPixelLighting_HalfLambert(vertexOutput_PerPixelLighting input) : COLOR
 		{
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input);
 
-			return float4 (Texture_Handling_Pixel(input) * HalfLambert_Lighting_Pixel(input, normalDirection), 1.0);		
+			return float4 (Texture_Handling_Pixel(input) * HalfLambert_Lighting_Pixel(input, normalDirection), 1.0) * (_LambertTintColor * _LambertTintForce);		
 		}
 
 		float4 frag_PerPixelLighting_HalfLambert_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) : COLOR
 		{
-			return float4 (Texture_Handling_Pixel_NoNormalMap(input) * HalfLambert_Lighting_Pixel_NoNormalMap(input), 1.0);
+			return float4 (Texture_Handling_Pixel_NoNormalMap(input) * HalfLambert_Lighting_Pixel_NoNormalMap(input), 1.0) * (_LambertTintColor * _LambertTintForce);
 		}
 
 		float4 frag_PerPixelLighting_HalfLambert_NoTextureMap(vertexOutput_PerPixelLighting input) : COLOR
 		{
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input);
 
-			return float4(HalfLambert_Lighting_Pixel(input, normalDirection), 1.0f);
+			return float4(HalfLambert_Lighting_Pixel(input, normalDirection), 1.0f)* (_LambertTintColor * _LambertTintForce);
 		}
 
 		float4 frag_PerPixelLighting_HalfLambert_NoTextureMapNoNormalMap(vertexOutput_NoTextureNoNormalMap_PerPixelLighting input) : COLOR
@@ -902,7 +905,7 @@
 			dummyOutput.normal = input.normal;
 			dummyOutput.pos = input.pos;
 
-			return float4 (HalfLambert_Lighting_Pixel_NoNormalMap(dummyOutput), 1.0f);			
+			return float4 (HalfLambert_Lighting_Pixel_NoNormalMap(dummyOutput), 1.0f)* (_LambertTintColor * _LambertTintForce);			
 		}
 
 		float4 frag_PerPixelLighting_NoLight(vertexOutput_PerPixelLighting input) : COLOR
@@ -1003,8 +1006,6 @@
 				{	 finalColor = frag_PerPixelLighting_Lambert(inputDummy);	}
 				if (_LightingModel == 3.0f) // HalfLambert
 				{	 finalColor = frag_PerPixelLighting_HalfLambert(inputDummy);	}
-				if (_LightingModel == 4.0f) // Phong
-				{	 finalColor = frag_PerPixelLighting_Phong(inputDummy);	}
 				if (_LightingModel == 0.0f) // NoLight
 				{	 finalColor = frag_PerPixelLighting_NoLight(inputDummy);	}
 

@@ -111,6 +111,18 @@ public class ShaderEdition : MonoBehaviour {
 
     #endregion
 
+    #region CHANGE_LAMBERT_LIGHT_MODEL_PARAMETERS
+    [Header("Lambert Light Model Parameters")]
+    public Toggle Automatic_Lambert_Light_Toogle_CR;    
+    public RawImage Dummy_Lambert_Tint_Image_CR;
+    public Slider Lambert_Tint_Force_Slider_CR;
+    public Text Lambert_Tint_Text_CR;
+
+    Color _LambertTintColor = Color.white;
+    float _LambertTintForce = 0.5f;
+
+    #endregion
+
     #region CANVAS_TOOLS_REFERENCES
 
     [Header("Canvas Tools References")]
@@ -205,6 +217,7 @@ public class ShaderEdition : MonoBehaviour {
         UpdateLightingModel();
         UpdateNormalMapScale();
         UpdatePhongForces();
+        UpdateLambertSpecs();
 
         #region UPDATE_GLOBAL_SHADER_VARIABLES
         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
@@ -219,7 +232,8 @@ public class ShaderEdition : MonoBehaviour {
         Shader.SetGlobalFloat("_PhongDiffuseForce", _PhongDiffuseForce);
         Shader.SetGlobalFloat("_PhongSpecularForce", _PhongSpecularForce);
         Shader.SetGlobalFloat("_CustomShininess", _CustomShininess);
-
+        Shader.SetGlobalFloat("_LambertTintForce", _LambertTintForce);
+        Shader.SetGlobalColor("_LambertTintColor", _LambertTintColor);
         #endregion
     }
 
@@ -447,13 +461,13 @@ public class ShaderEdition : MonoBehaviour {
                 case 2:
                     {
                         lighting_Model_Text_CR.text = "Lambert Lighting";
-                        CloseCurrentSecMenu();
+                        OpenSecMenu(LambertLightingParameters_CanvasGroup_CR);
                         break;
                     }
                 case 3:
                     {
                         lighting_Model_Text_CR.text = "Half-Lambert Lighting";
-                        CloseCurrentSecMenu();
+                        OpenSecMenu(LambertLightingParameters_CanvasGroup_CR);
                         break;
                     }
             }
@@ -541,6 +555,14 @@ public class ShaderEdition : MonoBehaviour {
                         Shader.SetGlobalColor("_TextureTint", _TextureTint);
                         break;
                     }
+                case "LambertTint":
+                    {
+                        _LambertTintColor = colorPicker_CanvasReference_Script.CurrentColorSelected;
+                        Dummy_Lambert_Tint_Image_CR.color = _LambertTintColor;
+                        Shader.SetGlobalColor("_LambertTintColor", _LambertTintColor);
+                        break;
+                    }
+
                 default:
                     {
                         print("You should not be here!!!");
@@ -581,6 +603,11 @@ public class ShaderEdition : MonoBehaviour {
                     _TextureTint = Color.white;
                     break;
                 }
+            case "LambertTint":
+                {
+                    _LambertTintColor = Color.white;
+                    break;
+                }
             default:
                 {
                     print("You should not be here!!!");
@@ -605,6 +632,14 @@ public class ShaderEdition : MonoBehaviour {
         { _CustomNormalMapScale = float.Parse(_NormalMapScale_InputField_CR.text); }
         Shader.SetGlobalFloat("_NormalMapScale", _CustomNormalMapScale);
     }
+
+    public void UpdateLambertSpecs()
+    {
+        _LambertTintForce = Lambert_Tint_Force_Slider_CR.value;
+        Lambert_Tint_Text_CR.text = Mathf.Round(_LambertTintForce * 100f) / 100f + "";
+        Shader.SetGlobalFloat("_LambertTintForce", _LambertTintForce);
+    }
+
 
     public void UpdatePhongForces()
     {
