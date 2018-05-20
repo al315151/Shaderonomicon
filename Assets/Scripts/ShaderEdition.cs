@@ -163,7 +163,11 @@ public class ShaderEdition : MonoBehaviour {
 
     #region TEMPORAL_SHADER_EXPORT_VARIABLES
 
-    public string CurrentLightingModel = "PhongBase";
+    public string CurrentLightingModel = "Phong";
+    [HideInInspector]
+    public bool IsNewTextureApplied = false;
+    [HideInInspector]
+    public bool IsNormalMapApplied = false;
 
 
     #endregion
@@ -295,6 +299,7 @@ public class ShaderEdition : MonoBehaviour {
             {
                 case "DiffuseTexture":
                     {
+                        IsNewTextureApplied = false;
                         _CustomTexture = BaseTexture_Sprite.texture;
                         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
                         Dummy_Texture_Image_CR.texture = _CustomTexture;
@@ -302,6 +307,7 @@ public class ShaderEdition : MonoBehaviour {
                     }
                 case "NormalMap":
                     {
+                        IsNormalMapApplied = false;
                         _CustomNormalMap = BaseNormalMap_Sprite.texture;
                         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
                         Dummy_Normal_Map_Image_CR.texture = _CustomNormalMap;
@@ -326,6 +332,7 @@ public class ShaderEdition : MonoBehaviour {
             {
                 case "DiffuseTexture":
                     {
+                        IsNewTextureApplied = true;
                         _CustomTexture = webObject.texture;
                         Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
                         Dummy_Texture_Image_CR.texture = _CustomTexture;
@@ -333,6 +340,7 @@ public class ShaderEdition : MonoBehaviour {
                     }
                 case "NormalMap":
                     {
+                        IsNormalMapApplied = true;
                         _CustomNormalMap = webObject.texture;
                         Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
                         Dummy_Normal_Map_Image_CR.texture = _CustomNormalMap;
@@ -675,6 +683,14 @@ public class ShaderEdition : MonoBehaviour {
         }
     }
 
+    public void ResetTextureByID(string TextureID)
+    {
+
+
+
+
+
+    }
 
     #endregion
 

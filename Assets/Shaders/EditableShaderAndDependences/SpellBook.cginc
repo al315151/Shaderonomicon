@@ -118,6 +118,8 @@
 		uniform float _LightingModel;
 		uniform float _IsPixelLighting;
 
+		//==============================================================================================================
+
 		struct vertexOutput_AllVariables
 		{
 			float4 pos : SV_POSITION;
@@ -382,7 +384,7 @@
 			return float4 (finalColor, 1.0f);
 		}
 
-		float3 HalfLambert_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection)
+		float4 HalfLambert_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection)
 		{
 			float4x4 modelMatrix = unity_ObjectToWorld;
 			float4x4 modelMatrixInverse = unity_WorldToObject;
@@ -414,10 +416,10 @@
 			float3 NDotL = max (0.0, dot(normalDirection, lightDirection));
 			float HalfLambertDiffuse = pow(NDotL * 0.5 + 0.5, 2.0);
 			float3 finalColor = HalfLambertDiffuse * attenuation * _LightColor0.rgb;
-			return finalColor;
+			return float4 (finalColor, 1.0f);
 		}
 
-		float3 HalfLambert_Lighting_Vertex_NoNormalMap(vertexInput_NoTextureNoNormalMap input)
+		float4 HalfLambert_Lighting_Vertex_NoNormalMap(vertexInput_NoTextureNoNormalMap input)
 		{
 			float4x4 modelMatrix = unity_ObjectToWorld;
 			float4x4 modelMatrixInverse = unity_WorldToObject;
@@ -449,7 +451,7 @@
 			float3 NDotL = max (0.0, dot(normalDirection, lightDirection));
 			float HalfLambertDiffuse = pow(NDotL * 0.5 + 0.5, 2.0);
 			float3 finalColor = HalfLambertDiffuse * attenuation * _LightColor0.rgb;
-			return finalColor;
+			return float4 (finalColor, 1.0f);
 		}
 
 		//=======================================================================================================
@@ -736,16 +738,14 @@
 
 		vertexOutput_PerVertexLighting vert_PerVertexLighting_NoLight (vertexInput_AllVariables input)
 		{
-			vertexOutput_PerVertexLighting output;		
-
-			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
+			vertexOutput_PerVertexLighting output;
 
 			output.col = float4 (1.0f, 1.0f, 1.0f, 1.0f);
 			output.pos = UnityObjectToClipPos(input.vertex);
 			output.tex = input.texcoord;
 			return output;
 		}
-		
+
 		vertexOutput_NoLight_NoTextureNoNormalMap vert_PerVertexLighting_NoLight_NoTextureNoNormalMap (vertexInput_NoLight_NoTextureNoNormalMap input)
 		{
 			vertexOutput_NoLight_NoTextureNoNormalMap output;
@@ -762,7 +762,7 @@
 			return float4(input.col.xyz * TextureColor.xyz, 1.0f);		
 		}
 
-		float4 frag_PerVertexLighting_NoTextureMap (vertexOutput_NoTextureNoNormalMap_PerVertexLighting input)
+		float4 frag_PerVertexLighting_NoTextureMap (vertexOutput_NoTextureNoNormalMap_PerVertexLighting input) : COLOR
 		{	return float4(input.col.xyz * _TextureTint.xyz, 1.0f);		}
 
 
@@ -812,7 +812,6 @@
 			output.pos = UnityObjectToClipPos(input.vertex);
 			return output;
 		}
-
 
 		//PhongModel
 		float4 frag_PerPixelLighting_Phong (vertexOutput_PerPixelLighting input) : COLOR
@@ -914,6 +913,12 @@
 			return float4(TextureColor.xyz, 1.0f);		
 		}
 
+		float4 frag_PerPixelLighting_NoLight_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) : COLOR
+		{
+			float4 TextureColor = Texture_Handling_Pixel_NoNormalMap(input);
+			return float4(TextureColor.xyz, 1.0f);		
+		}
+
 		float4 frag_PerPixelLighting_NoLight_NoTextureMap(vertexOutput_NoTextureNoNormalMap_PerPixelLighting input)
 		{
 			return float4(_TextureTint.xyz, 1.0f);
@@ -945,7 +950,7 @@
 			{
 				vertexOutput_PerVertexLighting outputDummy;
 				
-				if (_LightingModel == 1.0f) // PhongBase
+				if (_LightingModel == 1.0f) // Phong
 				{
 					outputDummy = vert_PerVertexLighting_Phong(input);							
 				}			
