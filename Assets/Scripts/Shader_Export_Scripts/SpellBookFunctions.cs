@@ -807,7 +807,7 @@ public class SpellBookFunctions : MonoBehaviour
 
 
     public static string frag_PerPixelLighting_NoLight_NoTextureMap =
-        "  float4 frag_PerPixelLighting_NoLight_NoTextureMap(vertexOutput_NoTextureNoNormalMap_PerPixelLighting input) " +
+        "  float4 frag_PerPixelLighting_NoLight_NoTextureMap(vertexOutput_NoTextureNoNormalMap_PerPixelLighting input) : COLOR " +
         " { " +
         " return float4(_TextureTint.xyz, 1.0f); " +
         " } " + '\n';

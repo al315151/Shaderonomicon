@@ -10,13 +10,6 @@ using UnityEditor;
 #endif
 public class ShaderEdition : MonoBehaviour {
 
-   
-    public Shader modifiableShaderReference;
-    TextAsset shaderTextAsset;
-    string shaderCurrentText;
-   
-    
-
     #region OBJECTIVE_SHADER_MESH
     public GameObject displayObject;
     #endregion
@@ -136,15 +129,16 @@ public class ShaderEdition : MonoBehaviour {
     public CanvasGroup PhongLightingParameters_CanvasGroup_CR;
     public Text SecMenu_Title_Text_CR;
 
+    public InputField Change_Shader_Name_InputField_CR;
+
+    [HideInInspector]
+    public string ShaderName;
+
     #endregion
 
     #region SHADER_SAVE
     [HideInInspector]
     public string FilePath;
-    [HideInInspector]
-    public string saveFilePath;
-    [HideInInspector]
-    public string shaderName;
     #endregion
 
     #region CHANGE_MESH_VARIABLES
@@ -162,14 +156,10 @@ public class ShaderEdition : MonoBehaviour {
     #endregion
 
     #region TEMPORAL_SHADER_EXPORT_VARIABLES
-
-    public string CurrentLightingModel = "Phong";
     [HideInInspector]
     public bool IsNewTextureApplied = false;
     [HideInInspector]
     public bool IsNormalMapApplied = false;
-
-
     #endregion
 
     #region FINAL_SHADER_EXPORT_VARIABLES
@@ -247,6 +237,7 @@ public class ShaderEdition : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
+        UpdateShaderNameInputField();
         UpdateScaleOffsetBaseTexture();
         UpdateScaleOffsetNormalMap();
         UpdateLightingModel();
@@ -397,7 +388,11 @@ public class ShaderEdition : MonoBehaviour {
 
     }
 
-
+    public void UpdateShaderNameInputField()
+    {
+        if (Change_Shader_Name_InputField_CR.text != "")
+        { ShaderName = Change_Shader_Name_InputField_CR.text; }
+    }
 
 
     //[This function is deprecated, as we do not use this kind of reference for now.]

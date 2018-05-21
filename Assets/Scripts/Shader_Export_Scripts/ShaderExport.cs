@@ -6,16 +6,12 @@ using Crosstales.FB;
 
 public class ShaderExport : MonoBehaviour {
 
-    [Header("Editable Shader Files References")]
-    public Shader editableShaderReferences;
-    public TextAsset[] neededReferencesForEditableShader;
 
     #region SHADER_VARIABLES
 
     public static string RenderType = "Opaque";
     public static string LightModeType = "ForwardBase";
-    public static string shaderName = "GreatTest";
-    public static string temporalShaderName = "NewShader";
+    public string shaderName = "GreatTest";
 
     public static string currentVertexFunction = "vert_PerVertexLighting_Phong";
     public static string currentFragmentFunction = "frag_PerVertexLighting";
@@ -33,20 +29,6 @@ public class ShaderExport : MonoBehaviour {
         //CreateTemporalSpellBook();
     }
 
-    // Update is called once per frame
-    void Update() {
-
-    }
-
-    public void ReadFile()
-    {
-        //StreamReader shaderFound = new StreamReader(Application.dataPath, System.Text.Encoding.UTF8);
-        //string textFound = shaderFound.ReadToEnd();
-
-    }
-
-
-
     public void SaveFile()
     {
 
@@ -57,19 +39,23 @@ public class ShaderExport : MonoBehaviour {
         string vertexFunction = "  #pragma vertex " + currentVertexFunction + "  " + '\n' ;
         string PixelFunction = "  #pragma fragment " + currentFragmentFunction + "  " + '\n';
 
+        shaderName = ShaderEdition.currentInstance.ShaderName;
+        string shaderTextTitle = " Shader" + '"' + "Shaderonomicon/" + shaderName + '"' + "  " + '\n';
+
         string folderPath = FileBrowser.OpenSingleFolder("Choose the folder to save shader...");
 
         if (File.Exists(folderPath + '/' + shaderName + ".shader"))
         {
-            print("DELETE THIS");
+            //print("DELETE THIS");
             File.Delete(folderPath + '/' + shaderName + ".shader");
         }
         else
         {            
-            print("El directorio no existía, por lo que creamos doc!!");
+            //print("El directorio no existía, por lo que creamos doc!!");
         }
 
         StreamWriter newShader = new StreamWriter(folderPath + '/' + shaderName + ".shader", true, System.Text.Encoding.UTF8);
+        newShader.Write(shaderTextTitle);
         newShader.Write(shaderTextStart);
         newShader.Write(vertexFunction);
         newShader.Write(PixelFunction);
@@ -118,7 +104,7 @@ public class ShaderExport : MonoBehaviour {
                              SpellBookFunctions.frag_PerPixelLighting_NoLight;
 
         string spellBookRoute = Application.dataPath + "/SpellBook.cginc";
-        print(spellBookRoute);
+        //print(spellBookRoute);
         if (File.Exists(spellBookRoute) != true)
         {
             StreamWriter customSpellBook = new StreamWriter(spellBookRoute, true, System.Text.Encoding.UTF8);
@@ -149,13 +135,13 @@ public class ShaderExport : MonoBehaviour {
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //No Light, Pixel, no normal map, no texture
                             {
                                 temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
-                                temporalSpellBook += SpellBookFunctions.vertexInput_NoLight_NoTextureNoNormalMap;
+                                temporalSpellBook += SpellBookFunctions.vertexInput_NoTextureNoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoTextureNoNormalMap_PerPixelLighting;
                                 temporalSpellBook += SpellBookFunctions.vert_PerPixelLighting_NoTextureNoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.frag_PerPixelLighting_NoLight_NoTextureMap;
                                 currentVertexFunction = "vert_PerPixelLighting_NoTextureNoNormalMap";
                                 currentFragmentFunction = "frag_PerPixelLighting_NoLight_NoTextureMap";
-                                print(temporalSpellBook);
+                                //print(temporalSpellBook);
                             }
                             else //No Light, Vertex, no normal map, no texture
                             {
@@ -663,9 +649,7 @@ public class ShaderExport : MonoBehaviour {
         }       
     }
 
-
-    static string shaderTextStart =
-       " Shader" + '"' + "Custom/" + shaderName + '"' + "  " + '\n' +
+    static string shaderTextStart =       
         " { " + '\n' +
             " SubShader " + '\n' +
             " { " + '\n' +
