@@ -25,8 +25,7 @@ public class ShaderEdition : MonoBehaviour {
     public int _Current_Lighting_Model;
     [HideInInspector]
     public int _Is_Pixel_Lighting; // ARE WE USING PIXEL LIGHTING OR NOT?
-    public Button Pixel_Lighting_Button_CR;
-    public Button Vertex_Lighting_Button_CR;
+   
     
     #endregion
 
@@ -127,12 +126,26 @@ public class ShaderEdition : MonoBehaviour {
     public CanvasGroup BaseTextureParameters_CanvasGroup_CR;
     public CanvasGroup LambertLightingParameters_CanvasGroup_CR;
     public CanvasGroup PhongLightingParameters_CanvasGroup_CR;
-    public Text SecMenu_Title_Text_CR;
 
+    [Header("Canvas Buttons And Parameters References")]
+
+    public Text SecMenu_Title_Text_CR;
     public InputField Change_Shader_Name_InputField_CR;
+
+    public Button Pixel_Lighting_Button_CR;
+    public Button Vertex_Lighting_Button_CR;
+
+    public Button Sphere_Mesh_Button_CR;
+    public Button Cube_Mesh_Button_CR;
+    public Button Capsule_Mesh_Button_CR;
+    public Button Cylinder_Mesh_Button_CR;
 
     [HideInInspector]
     public string ShaderName;
+
+    public Slider Transparency_Slider_CR;
+    [HideInInspector]
+    public float _CustomAlpha = 1.0f;
 
     #endregion
 
@@ -162,15 +175,6 @@ public class ShaderEdition : MonoBehaviour {
     public bool IsNormalMapApplied = false;
     #endregion
 
-    #region FINAL_SHADER_EXPORT_VARIABLES
-
-    [HideInInspector]
-    public bool shaderHasTexture;
-    [HideInInspector]
-    public bool shaderHasNormalMap;
-
-    #endregion
-
     #endregion
 
     public static ShaderEdition currentInstance;
@@ -183,34 +187,13 @@ public class ShaderEdition : MonoBehaviour {
     private void OnPreRender()
 	{
         //Shader.SetGlobalFloat ("_CustomSmoothness", smoothSlider.value);
-        _CustomTexture = BaseTexture_Sprite.texture;
-       
+        _CustomTexture = BaseTexture_Sprite.texture;       
         _CustomNormalMap = BaseNormalMap_Sprite.texture;
-       
+
+        Transparency_Slider_CR.value = 1.0f;
+
         #region UPDATE_GLOBAL_SHADER_VARIABLES
-        Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
-        Shader.SetGlobalColor("_TextureTint", _TextureTint);
-        Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
-        Shader.SetGlobalFloat("_NormalMapScale", _CustomNormalMapScale);
-        Shader.SetGlobalInt("_LightingModel", _Current_Lighting_Model);
-        Shader.SetGlobalColor("_PhongAmbientColor", _PhongAmbientColor);
-        Shader.SetGlobalColor("_PhongDiffuseColor", _PhongDiffuseColor);
-        Shader.SetGlobalColor("_PhongSpecularColor", _PhongSpecularColor);
-        Shader.SetGlobalFloat("_PhongAmbientForce", _PhongAmbientForce);
-        Shader.SetGlobalFloat("_PhongDiffuseForce", _PhongDiffuseForce);
-        Shader.SetGlobalFloat("_PhongSpecularForce", _PhongSpecularForce);
-        Shader.SetGlobalFloat("_CustomShininess", _CustomShininess);
-        Shader.SetGlobalFloat("_LambertTintForce", _LambertTintForce);
-        Shader.SetGlobalColor("_LambertTintColor", _LambertTintColor);
-        Shader.SetGlobalInt("_IsPixelLighting", _Is_Pixel_Lighting);
-        Shader.SetGlobalFloat("_TextureTileX", _Base_Texture_Scale_X);
-        Shader.SetGlobalFloat("_TextureTileY", _Base_Texture_Scale_Y);
-        Shader.SetGlobalFloat("_OffsetTileX", _Base_Texture_Offset_X);
-        Shader.SetGlobalFloat("_OffsetTileY", _Base_Texture_Offset_Y);
-        Shader.SetGlobalFloat("_NormalTileX", _Normal_Map_Scale_X);
-        Shader.SetGlobalFloat("_NormalTileY", _Normal_Map_Scale_Y);
-        Shader.SetGlobalFloat("_NormalOffsetX", _Normal_Map_Offset_X);
-        Shader.SetGlobalFloat("_NormalOffsetY", _Normal_Map_Offset_Y);
+        UpdateGlobalShaderStats();
         #endregion
     }
 
@@ -246,29 +229,7 @@ public class ShaderEdition : MonoBehaviour {
         UpdateLambertSpecs();
 
         #region UPDATE_GLOBAL_SHADER_VARIABLES
-        Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
-        Shader.SetGlobalColor("_TextureTint", _TextureTint);
-        Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
-        Shader.SetGlobalFloat("_NormalMapScale", _CustomNormalMapScale);
-        Shader.SetGlobalInt("_LightingModel", _Current_Lighting_Model);
-        Shader.SetGlobalColor("_PhongAmbientColor", _PhongAmbientColor);
-        Shader.SetGlobalColor("_PhongDiffuseColor", _PhongDiffuseColor);
-        Shader.SetGlobalColor("_PhongSpecularColor", _PhongSpecularColor);
-        Shader.SetGlobalFloat("_PhongAmbientForce", _PhongAmbientForce);
-        Shader.SetGlobalFloat("_PhongDiffuseForce", _PhongDiffuseForce);
-        Shader.SetGlobalFloat("_PhongSpecularForce", _PhongSpecularForce);
-        Shader.SetGlobalFloat("_CustomShininess", _CustomShininess);
-        Shader.SetGlobalFloat("_LambertTintForce", _LambertTintForce);
-        Shader.SetGlobalColor("_LambertTintColor", _LambertTintColor);
-        Shader.SetGlobalFloat("_TextureTileX", _Base_Texture_Scale_X);
-        Shader.SetGlobalFloat("_TextureTileY", _Base_Texture_Scale_Y);
-        Shader.SetGlobalFloat("_OffsetTileX", _Base_Texture_Offset_X);
-        Shader.SetGlobalFloat("_OffsetTileY", _Base_Texture_Offset_Y);
-        Shader.SetGlobalFloat("_NormalTileX", _Normal_Map_Scale_X);
-        Shader.SetGlobalFloat("_NormalTileY", _Normal_Map_Scale_Y);
-        Shader.SetGlobalFloat("_NormalOffsetX", _Normal_Map_Offset_X);
-        Shader.SetGlobalFloat("_NormalOffsetY", _Normal_Map_Offset_Y);
-        Shader.SetGlobalInt("_LightingModel", _Current_Lighting_Model);
+        UpdateGlobalShaderStats();
         #endregion
     }
 
@@ -394,6 +355,37 @@ public class ShaderEdition : MonoBehaviour {
         { ShaderName = Change_Shader_Name_InputField_CR.text; }
     }
 
+    public void OpenCurrentLightingModelMenu()
+    {
+        switch (_Current_Lighting_Model)
+        {
+            case 0:
+                {
+                    CloseCurrentSecMenu();
+                    break;
+                }
+            case 1:
+                {
+                    OpenSecMenu(PhongLightingParameters_CanvasGroup_CR);
+                    break;
+                }
+            case 2:
+                {
+                    OpenSecMenu(LambertLightingParameters_CanvasGroup_CR);
+                    break;
+                }
+            case 3:
+                {
+                    OpenSecMenu(LambertLightingParameters_CanvasGroup_CR);
+                    break;
+                }
+            default:
+                {
+                    Debug.Log("YOU SHOULD NOT BE HERE M8");
+                    break;
+                }
+        }
+    }
 
     //[This function is deprecated, as we do not use this kind of reference for now.]
     public void ChangeValueInputField(GameObject reference)
@@ -491,6 +483,68 @@ public class ShaderEdition : MonoBehaviour {
 
     }
 
+    public void ChangeMeshFromButtons(string meshID)
+    {
+        switch (meshID)
+        {
+            case "Sphere":
+                {
+                    if (availableMeshes[0] != null)
+                    {
+                        displayObject.GetComponent<MeshFilter>().mesh = availableMeshes[0];
+                        Sphere_Mesh_Button_CR.interactable = false;
+                        Cube_Mesh_Button_CR.interactable = true;
+                        Capsule_Mesh_Button_CR.interactable = true;
+                        Cylinder_Mesh_Button_CR.interactable = true;
+                    }
+                    break;
+                }
+            case "Cube":
+                {
+                    if (availableMeshes[1] != null)
+                    {
+                        displayObject.GetComponent<MeshFilter>().mesh = availableMeshes[1];
+                        Sphere_Mesh_Button_CR.interactable = true;
+                        Cube_Mesh_Button_CR.interactable = false;
+                        Capsule_Mesh_Button_CR.interactable = true;
+                        Cylinder_Mesh_Button_CR.interactable = true;
+                    }
+                    break;
+                }
+            case "Capsule":
+                {
+                    if (availableMeshes[2] != null)
+                    {
+                        displayObject.GetComponent<MeshFilter>().mesh = availableMeshes[2];
+                        Sphere_Mesh_Button_CR.interactable = true;
+                        Cube_Mesh_Button_CR.interactable = true;
+                        Capsule_Mesh_Button_CR.interactable = false;
+                        Cylinder_Mesh_Button_CR.interactable = true;
+                    }
+                    break;
+                }
+            case "Cylinder":
+                {
+                    if (availableMeshes[3] != null)
+                    {
+                        displayObject.GetComponent<MeshFilter>().mesh = availableMeshes[3];
+                        Sphere_Mesh_Button_CR.interactable = false;
+                        Cube_Mesh_Button_CR.interactable = true;
+                        Capsule_Mesh_Button_CR.interactable = true;
+                        Cylinder_Mesh_Button_CR.interactable = false;
+                    }
+                    break;
+                }
+            default:
+                {
+                    Debug.Log("Selected option not valid. Revisa codigo y DropDown.");
+                    break;
+                }
+        }
+
+
+    }
+
     #endregion
 
     #region CHANGE_LIGHTING_MODEL_FUNCTIONS
@@ -506,6 +560,7 @@ public class ShaderEdition : MonoBehaviour {
                 case 0:
                     {
                         lighting_Model_Text_CR.text = "No Lighting";
+                        SecMenu_Title_Text_CR.text = "No Lighting Model Selected";
                         CloseCurrentSecMenu();
                         break;
                     }
@@ -643,26 +698,31 @@ public class ShaderEdition : MonoBehaviour {
             case "PhongAmbientColor":
                 {
                     _PhongAmbientColor = Color.white;
+                    Dummy_Phong_Ambient_Color_Image_CR.color = _PhongAmbientColor;
                     break;
                 }
             case "PhongDiffuseColor":
                 {
                     _PhongDiffuseColor = Color.white;
+                    Dummy_Phong_Diffuse_Color_Image_CR.color = _PhongDiffuseColor;
                     break;
                 }
             case "PhongSpecularColor":
                 {
                     _PhongSpecularColor = Color.white;
+                    Dummy_Phong_Specular_Color_Image_CR.color = _PhongSpecularColor;
                     break;
                 }
             case "TextureTint":
                 {
                     _TextureTint = Color.white;
+                    Dummy_Color_Texture_Image_CR.color = _TextureTint;
                     break;
                 }
             case "LambertTint":
                 {
                     _LambertTintColor = Color.white;
+                    Dummy_Lambert_Tint_Image_CR.color = _LambertTintColor;
                     break;
                 }
             default:
@@ -670,21 +730,32 @@ public class ShaderEdition : MonoBehaviour {
                     print("You should not be here!!!");
                     break;
                 }
-
-
-
-
-
         }
     }
 
     public void ResetTextureByID(string TextureID)
     {
-
-
-
-
-
+        switch (TextureID)
+        {
+            case "NormalMap":
+                {
+                    _CustomNormalMap = BaseNormalMap_Sprite.texture;
+                    Dummy_Normal_Map_Image_CR.texture = _CustomNormalMap;
+                    break;
+                }
+            case "BaseTexture":
+                {
+                    _CustomTexture = BaseTexture_Sprite.texture;
+                    Dummy_Texture_Image_CR.texture = _CustomTexture;
+                    break;
+                }
+            default:
+                {
+                    Debug.Log("You should not be here m9");
+                    break;
+                }
+        }
+        UpdateGlobalShaderStats();
     }
 
     #endregion
@@ -769,18 +840,52 @@ public class ShaderEdition : MonoBehaviour {
     }
 
     public void ChangeToPixelLighting()
-    { _Is_Pixel_Lighting = 1;
-        Navigation dummyNavigation = new Navigation();
-        dummyNavigation.mode = Navigation.Mode.None;
-        Pixel_Lighting_Button_CR.navigation = dummyNavigation;
-     Shader.SetGlobalInt("_IsPixelLighting", _Is_Pixel_Lighting); }
+    {
+        _Is_Pixel_Lighting = 1;
+        Pixel_Lighting_Button_CR.interactable = false;
+        Vertex_Lighting_Button_CR.interactable = true;
+
+        Shader.SetGlobalInt("_IsPixelLighting", _Is_Pixel_Lighting); }
 
     public void ChanteToVertexLighting()
-    { _Is_Pixel_Lighting = 0;
-        Navigation dummyNavigation = new Navigation();
-        dummyNavigation.mode = Navigation.Mode.None;
-        Vertex_Lighting_Button_CR.navigation = dummyNavigation;
+    {
+        _Is_Pixel_Lighting = 0;
+        Vertex_Lighting_Button_CR.interactable = false;
+        Pixel_Lighting_Button_CR.interactable = true;
+
         Shader.SetGlobalInt("_IsPixelLighting", _Is_Pixel_Lighting); }
+
+    public void UpdateTransparency()
+    {   _CustomAlpha = Transparency_Slider_CR.value;    }
+
+    public void UpdateGlobalShaderStats()
+    {
+        Shader.SetGlobalTexture("_CustomTexture", _CustomTexture);
+        Shader.SetGlobalColor("_TextureTint", _TextureTint);
+        Shader.SetGlobalTexture("_NormalMap", _CustomNormalMap);
+        Shader.SetGlobalFloat("_NormalMapScale", _CustomNormalMapScale);
+        Shader.SetGlobalInt("_LightingModel", _Current_Lighting_Model);
+        Shader.SetGlobalColor("_PhongAmbientColor", _PhongAmbientColor);
+        Shader.SetGlobalColor("_PhongDiffuseColor", _PhongDiffuseColor);
+        Shader.SetGlobalColor("_PhongSpecularColor", _PhongSpecularColor);
+        Shader.SetGlobalFloat("_PhongAmbientForce", _PhongAmbientForce);
+        Shader.SetGlobalFloat("_PhongDiffuseForce", _PhongDiffuseForce);
+        Shader.SetGlobalFloat("_PhongSpecularForce", _PhongSpecularForce);
+        Shader.SetGlobalFloat("_CustomShininess", _CustomShininess);
+        Shader.SetGlobalFloat("_LambertTintForce", _LambertTintForce);
+        Shader.SetGlobalColor("_LambertTintColor", _LambertTintColor);
+        Shader.SetGlobalInt("_IsPixelLighting", _Is_Pixel_Lighting);
+        Shader.SetGlobalFloat("_TextureTileX", _Base_Texture_Scale_X);
+        Shader.SetGlobalFloat("_TextureTileY", _Base_Texture_Scale_Y);
+        Shader.SetGlobalFloat("_OffsetTileX", _Base_Texture_Offset_X);
+        Shader.SetGlobalFloat("_OffsetTileY", _Base_Texture_Offset_Y);
+        Shader.SetGlobalFloat("_NormalTileX", _Normal_Map_Scale_X);
+        Shader.SetGlobalFloat("_NormalTileY", _Normal_Map_Scale_Y);
+        Shader.SetGlobalFloat("_NormalOffsetX", _Normal_Map_Offset_X);
+        Shader.SetGlobalFloat("_NormalOffsetY", _Normal_Map_Offset_Y);
+        Shader.SetGlobalFloat("_CustomAlpha", _CustomAlpha);
+    }
+
 
     #endregion
 

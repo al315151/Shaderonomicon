@@ -653,6 +653,7 @@ public class ShaderExport : MonoBehaviour {
         " { " + '\n' +
             " SubShader " + '\n' +
             " { " + '\n' +
+                "  Blend SrcAlpha OneMinusSrcAlpha  " + '\n' +
                 " Pass " + '\n' +
                 "{ " + '\n' +
                     " Tags { " + '"' + "LightMode" + '"' + " = " + '"' + LightModeType + '"' + " } " + "  " + '\n' +
