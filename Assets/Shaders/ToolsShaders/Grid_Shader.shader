@@ -64,8 +64,8 @@
 
 				float distanceFromCenter = max(abs(i.uv.x- 0.5f), abs(i.uv.y - 0.5f));
 
-				if (frac(_GridCoordX) < 0.1f || frac(_GridCoordX) > 0.9f ||
-					frac(_GridCoordY) < 0.1f || frac(_GridCoordY) > 0.9f)
+				if (frac(_GridCoordX) < 0.05f || frac(_GridCoordX) > 0.95f ||
+					frac(_GridCoordY) < 0.05f || frac(_GridCoordY) > 0.95f)
 					{	_GridColor.a = clamp(0.0f, _AlphaFactor, _AlphaFactor - distanceFromCenter * _GridFadeFactor);	}
 				else {_GridColor.a = 0.0f;}
 

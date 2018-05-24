@@ -70,7 +70,7 @@ Material:
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SquareRows: 50
+    - _SquareRows: 300
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
