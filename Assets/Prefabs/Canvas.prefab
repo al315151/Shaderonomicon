@@ -406,7 +406,7 @@ GameObject:
   - component: {fileID: 225733935552568858}
   - component: {fileID: 114607306982040888}
   m_Layer: 5
-  m_Name: Basic Color
+  m_Name: Basic_Color_Texture_Menu_Button_CR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -876,7 +876,7 @@ GameObject:
   - component: {fileID: 114988804335386226}
   - component: {fileID: 114541274079887264}
   m_Layer: 5
-  m_Name: NormalMap
+  m_Name: Normal_Map_Menu_Button_CR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15945,16 +15945,30 @@ MonoBehaviour:
   Base_Texture_Offset_Y: {fileID: 114400939358545520}
   Dummy_Texture_Image_CR: {fileID: 114097397402385338}
   Dummy_Color_Texture_Image_CR: {fileID: 114457613184577548}
+  _Base_Texture_Scale_X: 1
+  _Base_Texture_Scale_Y: 1
+  _Base_Texture_Offset_X: 0
+  _Base_Texture_Offset_Y: 0
   _CustomTexture: {fileID: 0}
+  _TextureTint: {r: 1, g: 1, b: 1, a: 1}
   Normal_Map_Scale_X: {fileID: 114539287576236912}
   Normal_Map_Scale_Y: {fileID: 114181217624024100}
   Normal_Map_Offset_X: {fileID: 114668149369101374}
   Normal_Map_Offset_Y: {fileID: 114680171850299320}
   Dummy_Normal_Map_Image_CR: {fileID: 114844183525043700}
+  _Normal_Map_Scale_X: 1
+  _Normal_Map_Scale_Y: 1
+  _Normal_Map_Offset_X: 0
+  _Normal_Map_Offset_Y: 0
   _NormalMapScale_InputField_CR: {fileID: 114036968391381340}
+  _CustomNormalMapScale: 1
   Shininess_Slider_CR: {fileID: 114531328223100414}
   Min_Range_Shininess_InputField_CR: {fileID: 114050906383887362}
   Max_Range_Shininess_InputField_CR: {fileID: 114794258298756276}
+  _CustomShininess: 0
+  _PhongAmbientColor: {r: 1, g: 1, b: 1, a: 1}
+  _PhongDiffuseColor: {r: 1, g: 1, b: 1, a: 1}
+  _PhongSpecularColor: {r: 1, g: 1, b: 1, a: 1}
   Dummy_Phong_Ambient_Color_Image_CR: {fileID: 114302885207236548}
   Dummy_Phong_Diffuse_Color_Image_CR: {fileID: 114001722383233394}
   Dummy_Phong_Specular_Color_Image_CR: {fileID: 114057576745270080}
@@ -15964,10 +15978,15 @@ MonoBehaviour:
   Phong_Ambient_Force_Text_CR: {fileID: 114879830027959816}
   Phong_Diffuse_Force_Text_CR: {fileID: 114254159751877732}
   Phong_Specular_Force_Text_CR: {fileID: 114906233769432084}
+  _PhongAmbientForce: 0.5
+  _PhongDiffuseForce: 0.5
+  _PhongSpecularForce: 0.5
   Automatic_Lambert_Light_Toogle_CR: {fileID: 114961226098625496}
   Dummy_Lambert_Tint_Image_CR: {fileID: 114676244749071646}
   Lambert_Tint_Force_Slider_CR: {fileID: 114345670666128226}
   Lambert_Tint_Text_CR: {fileID: 114886966448188474}
+  _LambertTintColor: {r: 1, g: 1, b: 1, a: 1}
+  _LambertTintForce: 0.5
   colorPicker_CanvasReference_Script: {fileID: 114946815751818734}
   ColorPicker_CanvasGroup_CR: {fileID: 225007256001563144}
   NormalMapParameters_CanvasGroup_CR: {fileID: 225022031890077324}
@@ -15982,6 +16001,9 @@ MonoBehaviour:
   Cube_Mesh_Button_CR: {fileID: 114088597254646270}
   Capsule_Mesh_Button_CR: {fileID: 114473078571426146}
   Cylinder_Mesh_Button_CR: {fileID: 114537823710958328}
+  Base_Texture_Menu_Button_CR: {fileID: 114064467798354588}
+  Normal_Map_Menu_Button_CR: {fileID: 114988804335386226}
+  Open_Current_Lighting_Menu_Button_CR: {fileID: 114040119525732540}
   ShaderName: 
   Transparency_Slider_CR: {fileID: 114441569786470474}
   _CustomAlpha: 0

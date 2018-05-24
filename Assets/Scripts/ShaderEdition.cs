@@ -38,17 +38,25 @@ public class ShaderEdition : MonoBehaviour {
     public RawImage Dummy_Texture_Image_CR;
     public RawImage Dummy_Color_Texture_Image_CR;
 
-    private float _Base_Texture_Scale_X = 1.0f;
-    private float _Base_Texture_Scale_Y = 1.0f;
-    private float _Base_Texture_Offset_X = 0.0f;
-    private float _Base_Texture_Offset_Y = 0.0f;
+    [HideInInspector]
+    public float _Base_Texture_Scale_X = 1.0f;
+    [HideInInspector]
+    public float _Base_Texture_Scale_Y = 1.0f;
+    [HideInInspector]
+    public float _Base_Texture_Offset_X = 0.0f;
+    [HideInInspector]
+    public float _Base_Texture_Offset_Y = 0.0f;
 
+    [HideInInspector]
     public Texture2D _CustomTexture;
+
     float _RTextureTint = 1.0f;
     float _GTextureTint = 1.0f;
     float _BTextureTint = 1.0f;
     float _ATextureTint = 1.0f;
-    Color _TextureTint = Color.white;
+
+    [HideInInspector]
+    public Color _TextureTint = Color.white;
 
     #endregion
 
@@ -60,14 +68,19 @@ public class ShaderEdition : MonoBehaviour {
     public Slider Normal_Map_Offset_Y;
     public RawImage Dummy_Normal_Map_Image_CR;
 
-    private float _Normal_Map_Scale_X = 1.0f;
-    private float _Normal_Map_Scale_Y = 1.0f;
-    private float _Normal_Map_Offset_X = 0.0f;
-    private float _Normal_Map_Offset_Y = 0.0f;
+    [HideInInspector]
+    public float _Normal_Map_Scale_X = 1.0f;
+    [HideInInspector]
+    public float _Normal_Map_Scale_Y = 1.0f;
+    [HideInInspector]
+    public float _Normal_Map_Offset_X = 0.0f;
+    [HideInInspector]
+    public float _Normal_Map_Offset_Y = 0.0f;
 
     Texture2D _CustomNormalMap;
     public InputField _NormalMapScale_InputField_CR;
-    private float _CustomNormalMapScale = 1.0f;
+    [HideInInspector]
+    public float _CustomNormalMapScale = 1.0f;
 
     #endregion
 
@@ -77,13 +90,17 @@ public class ShaderEdition : MonoBehaviour {
     public InputField Min_Range_Shininess_InputField_CR;
     public InputField Max_Range_Shininess_InputField_CR;
 
-    private float _CustomShininess;
+    [HideInInspector]
+    public float _CustomShininess;
     private float Min_Range_Shininess;
     private float Max_Range_Shininess;
 
-    Color _PhongAmbientColor = Color.white;
-    Color _PhongDiffuseColor = Color.white;
-    Color _PhongSpecularColor = Color.white;
+    [HideInInspector]
+    public Color _PhongAmbientColor = Color.white;
+    [HideInInspector]
+    public Color _PhongDiffuseColor = Color.white;
+    [HideInInspector]
+    public Color _PhongSpecularColor = Color.white;
 
     public RawImage Dummy_Phong_Ambient_Color_Image_CR;
     public RawImage Dummy_Phong_Diffuse_Color_Image_CR;
@@ -97,9 +114,12 @@ public class ShaderEdition : MonoBehaviour {
     public Text Phong_Diffuse_Force_Text_CR;
     public Text Phong_Specular_Force_Text_CR;
 
-    float _PhongAmbientForce = 0.5f;
-    float _PhongDiffuseForce = 0.5f;
-    float _PhongSpecularForce = 0.5f;
+    [HideInInspector]
+    public float _PhongAmbientForce = 0.5f;
+    [HideInInspector]
+    public float _PhongDiffuseForce = 0.5f;
+    [HideInInspector]
+    public float _PhongSpecularForce = 0.5f;
 
     #endregion
 
@@ -110,12 +130,14 @@ public class ShaderEdition : MonoBehaviour {
     public Slider Lambert_Tint_Force_Slider_CR;
     public Text Lambert_Tint_Text_CR;
 
-    Color _LambertTintColor = Color.white;
-    float _LambertTintForce = 0.5f;
+    [HideInInspector]
+    public Color _LambertTintColor = Color.white;
+    [HideInInspector]
+    public float _LambertTintForce = 0.5f;
 
     #endregion
 
-    #region CANVAS_TOOLS_REFERENCES
+    #region CANVAS_RELATED_REFERENCES
 
     [Header("Canvas Tools References")]
     public ColorPicker colorPicker_CanvasReference_Script;
@@ -139,6 +161,10 @@ public class ShaderEdition : MonoBehaviour {
     public Button Cube_Mesh_Button_CR;
     public Button Capsule_Mesh_Button_CR;
     public Button Cylinder_Mesh_Button_CR;
+
+    public Button Base_Texture_Menu_Button_CR;
+    public Button Normal_Map_Menu_Button_CR;
+    public Button Open_Current_Lighting_Menu_Button_CR;
 
     [HideInInspector]
     public string ShaderName;
@@ -215,6 +241,8 @@ public class ShaderEdition : MonoBehaviour {
 
         _Current_Lighting_Model = 4; //tHIS IS FOR INITIAL UPDATE ON THE TEXTS.
         UpdateLightingModel();
+
+        //print(_TextureTint.ToString());
     }
 	
 	// Update is called once per frame
@@ -528,7 +556,7 @@ public class ShaderEdition : MonoBehaviour {
                     if (availableMeshes[3] != null)
                     {
                         displayObject.GetComponent<MeshFilter>().mesh = availableMeshes[3];
-                        Sphere_Mesh_Button_CR.interactable = false;
+                        Sphere_Mesh_Button_CR.interactable = true;
                         Cube_Mesh_Button_CR.interactable = true;
                         Capsule_Mesh_Button_CR.interactable = true;
                         Cylinder_Mesh_Button_CR.interactable = false;
@@ -844,6 +872,8 @@ public class ShaderEdition : MonoBehaviour {
         _Is_Pixel_Lighting = 1;
         Pixel_Lighting_Button_CR.interactable = false;
         Vertex_Lighting_Button_CR.interactable = true;
+        Pixel_Lighting_Button_CR.GetComponentInChildren<Text>().color = Color.black;
+        Vertex_Lighting_Button_CR.GetComponentInChildren<Text>().color = Color.white;       
 
         Shader.SetGlobalInt("_IsPixelLighting", _Is_Pixel_Lighting); }
 
@@ -852,6 +882,8 @@ public class ShaderEdition : MonoBehaviour {
         _Is_Pixel_Lighting = 0;
         Vertex_Lighting_Button_CR.interactable = false;
         Pixel_Lighting_Button_CR.interactable = true;
+        Pixel_Lighting_Button_CR.GetComponentInChildren<Text>().color = Color.white;
+        Vertex_Lighting_Button_CR.GetComponentInChildren<Text>().color = Color.black;
 
         Shader.SetGlobalInt("_IsPixelLighting", _Is_Pixel_Lighting); }
 

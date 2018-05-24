@@ -22,6 +22,12 @@ public class ShaderExport : MonoBehaviour {
 
     private string temporalSpellBook;
 
+    string texture_Variables;
+    string Normal_Handling_Variables;
+    string Phong_Variables;
+    string Lambert_Variables;
+    string NoTextureMap_Variables;
+    string transparency; // TO DO
 
     // Use this for initialization
     void Start()
@@ -31,6 +37,7 @@ public class ShaderExport : MonoBehaviour {
 
     public void SaveFile()
     {
+        StoreDesiredVariables();
 
         PrepareSpellBook();
 
@@ -134,7 +141,8 @@ public class ShaderExport : MonoBehaviour {
                             //print("Entramos en No Light, Pixel, no normal map, no texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //No Light, Pixel, no normal map, no texture
                             {
-                                temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
+                                temporalSpellBook += NoTextureMap_Variables;
+                                //temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoTextureNoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoTextureNoNormalMap_PerPixelLighting;
                                 temporalSpellBook += SpellBookFunctions.vert_PerPixelLighting_NoTextureNoNormalMap;
@@ -145,7 +153,8 @@ public class ShaderExport : MonoBehaviour {
                             }
                             else //No Light, Vertex, no normal map, no texture
                             {
-                                temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
+                                temporalSpellBook += NoTextureMap_Variables;
+                                //temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoLight_NoTextureNoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoLight_NoTextureNoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vert_PerVertexLighting_NoLight_NoTextureNoNormalMap;
@@ -160,7 +169,8 @@ public class ShaderExport : MonoBehaviour {
                             //print("Entramos en phong, Pixel, no normal map, no texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //Phong, Pixel, no texture, no normal map
                             {
-                                temporalSpellBook += SpellBookFunctions.Phong_Variables;
+                                temporalSpellBook += Phong_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Phong_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoTextureNoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoTextureNoNormalMap_PerPixelLighting;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoNormalMap_PerPixelLighting;
@@ -172,8 +182,10 @@ public class ShaderExport : MonoBehaviour {
                             }
                             else //Phong, Vertex, no texture, no normal map
                             {
-                                temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
-                                temporalSpellBook += SpellBookFunctions.Phong_Variables;
+                                temporalSpellBook += NoTextureMap_Variables;
+                                temporalSpellBook += Phong_Variables;
+                                //temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Phong_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoTextureNoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoTextureNoNormalMap_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Phong_Lighting_Vertex_NoNormalMap;
@@ -188,8 +200,9 @@ public class ShaderExport : MonoBehaviour {
                         {
                             //print("Entramos en lambert, Pixel, no normal map, no texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //Lambert, Pixel, no texture, no normal
-                            { 
-                                temporalSpellBook += SpellBookFunctions.Lambert_Variables;
+                            {
+                                temporalSpellBook += Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoTextureNoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoTextureNoNormalMap_PerPixelLighting;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoNormalMap_PerPixelLighting;
@@ -201,8 +214,10 @@ public class ShaderExport : MonoBehaviour {
                             }
                             else //Lambert, Vertex
                             {
-                                temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
-                                temporalSpellBook += SpellBookFunctions.Lambert_Variables;
+                                temporalSpellBook += NoTextureMap_Variables;
+                                temporalSpellBook += Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoTextureNoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoTextureNoNormalMap_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Lambert_Lighting_Vertex_NoNormalMap;
@@ -218,7 +233,8 @@ public class ShaderExport : MonoBehaviour {
                             //print("Entramos en HalfLambert, Pixel, no normal map, no texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //HalfLambert, Pixel, no texture, no normal map
                             {
-                                temporalSpellBook += SpellBookFunctions.Lambert_Variables;
+                                temporalSpellBook += Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoTextureNoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoTextureNoNormalMap_PerPixelLighting;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoNormalMap_PerPixelLighting;
@@ -230,8 +246,10 @@ public class ShaderExport : MonoBehaviour {
                             }
                             else //HalfLambert, Vertex, no texture, no normal map
                             {
-                                temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
-                                temporalSpellBook += SpellBookFunctions.Lambert_Variables;
+                                temporalSpellBook += Lambert_Variables;
+                                temporalSpellBook += NoTextureMap_Variables; 
+                                //temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoTextureNoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoTextureNoNormalMap_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.HalfLambert_Lighting_Vertex_NoNormalMap;
@@ -254,7 +272,8 @@ public class ShaderExport : MonoBehaviour {
                             //If you do not receive light, how could you use normal maps?
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //No Light, Pixel, no texture, normal map
                             {
-                                temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
+                                temporalSpellBook += NoTextureMap_Variables;
+                                //temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoLight_NoTextureNoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoTextureNoNormalMap_PerPixelLighting;
                                 temporalSpellBook += SpellBookFunctions.vert_PerPixelLighting_NoTextureNoNormalMap;
@@ -264,7 +283,8 @@ public class ShaderExport : MonoBehaviour {
                             }
                             else //No Light, Vertex, no texture. no normal map
                             {
-                                temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
+                                temporalSpellBook += NoTextureMap_Variables;
+                                //temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoLight_NoTextureNoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoLight_NoTextureNoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vert_PerVertexLighting_NoLight_NoTextureNoNormalMap;
@@ -279,8 +299,10 @@ public class ShaderExport : MonoBehaviour {
                             //print("Entramos en Phong, Pixel, normal map, no texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //Phong, Pixel, no texture, normal map
                             {
-                                temporalSpellBook += SpellBookFunctions.Phong_Variables;
-                                temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
+                                temporalSpellBook += Phong_Variables;
+                                temporalSpellBook += Normal_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Phong_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Normal_Direction_With_Normal_Map_Handling_Pixel;
@@ -292,8 +314,11 @@ public class ShaderExport : MonoBehaviour {
                             }
                             else //Phong, Vertex, no texture, normal map
                             {
-                                temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
-                                temporalSpellBook += SpellBookFunctions.Phong_Variables;
+                                temporalSpellBook += NoTextureMap_Variables;
+                                temporalSpellBook += Phong_Variables;
+                                temporalSpellBook += Normal_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Phong_Variables;
                                 temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerVertexLighting;
@@ -312,8 +337,10 @@ public class ShaderExport : MonoBehaviour {
                             //print("Entramos en Lambert, Pixel, normal map, no texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //Lambert, Pixel
                             {
-                                temporalSpellBook += SpellBookFunctions.Lambert_Variables;
-                                temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
+                                temporalSpellBook += Lambert_Variables;
+                                temporalSpellBook += Normal_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerPixelLighting;
                                 temporalSpellBook += SpellBookFunctions.Normal_Direction_With_Normal_Map_Handling_Pixel;
@@ -325,9 +352,12 @@ public class ShaderExport : MonoBehaviour {
                             }
                             else //Lambert, Vertex
                             {
-                                temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
-                                temporalSpellBook += SpellBookFunctions.Lambert_Variables;
-                                temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
+                                temporalSpellBook += NoTextureMap_Variables;
+                                temporalSpellBook += Lambert_Variables;
+                                temporalSpellBook += Normal_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Normal_Direction_With_Normal_Map_Handling_Vertex;
@@ -343,8 +373,10 @@ public class ShaderExport : MonoBehaviour {
                             //print("Entramos en Half Lambert, Pixel, normal map, no texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //HalfLambert, Pixel
                             {
-                                temporalSpellBook += SpellBookFunctions.Lambert_Variables;
-                                temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
+                                temporalSpellBook += Lambert_Variables;
+                                temporalSpellBook += Normal_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerPixelLighting;
                                 temporalSpellBook += SpellBookFunctions.Normal_Direction_With_Normal_Map_Handling_Pixel;
@@ -356,9 +388,12 @@ public class ShaderExport : MonoBehaviour {
                             }
                             else //HalfLambert, Vertex
                             {
-                                temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
-                                temporalSpellBook += SpellBookFunctions.Lambert_Variables;
-                                temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
+                                temporalSpellBook += NoTextureMap_Variables;
+                                temporalSpellBook += Lambert_Variables;
+                                temporalSpellBook += Normal_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.NoTextureMap_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Normal_Direction_With_Normal_Map_Handling_Vertex;
@@ -386,7 +421,8 @@ public class ShaderExport : MonoBehaviour {
                             //print("Entramos en No Light, Pixel, no normal map, texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //No Light, Pixel, texture, no normal map
                             {
-                                temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
+                                temporalSpellBook += texture_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoNormalMap_PerPixelLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Pixel_NoNormalMap;
@@ -397,7 +433,8 @@ public class ShaderExport : MonoBehaviour {
                             }
                             else //No Light, Vertex, texture, no normal map
                             {
-                                temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
+                                temporalSpellBook += texture_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Vertex;
@@ -413,8 +450,10 @@ public class ShaderExport : MonoBehaviour {
                             //print("Entramos en Phong, Pixel, no normal map, texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //Phong, Pixel, texture, no normal map
                             {
-                                temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
-                                temporalSpellBook += SpellBookFunctions.Phong_Variables;
+                                temporalSpellBook += texture_Variables;
+                                temporalSpellBook += Phong_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Phong_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoNormalMap_PerPixelLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Pixel_NoNormalMap;
@@ -426,8 +465,10 @@ public class ShaderExport : MonoBehaviour {
                             }
                             else //Phong, Vertex, texture, no normal map
                             {
-                                temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
-                                temporalSpellBook += SpellBookFunctions.Phong_Variables;
+                                temporalSpellBook += texture_Variables;
+                                temporalSpellBook += Phong_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Phong_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Vertex;
@@ -444,8 +485,10 @@ public class ShaderExport : MonoBehaviour {
                             //print("Entramos en Lambert, Pixel, no normal map, texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //Lambert, Pixel
                             {
-                                temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
-                                temporalSpellBook += SpellBookFunctions.Lambert_Variables;
+                                temporalSpellBook += texture_Variables;
+                                temporalSpellBook += Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoNormalMap_PerPixelLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Pixel_NoNormalMap;
@@ -457,8 +500,10 @@ public class ShaderExport : MonoBehaviour {
                             }
                             else //Lambert, Vertex
                             {
-                                temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
-                                temporalSpellBook += SpellBookFunctions.Lambert_Variables;
+                                temporalSpellBook += texture_Variables;
+                                temporalSpellBook += Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Vertex;
@@ -476,8 +521,10 @@ public class ShaderExport : MonoBehaviour {
                             //print("Entramos en HalfLambert, Pixel, no normal map, texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //HalfLambert, Pixel
                             {
-                                temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
-                                temporalSpellBook += SpellBookFunctions.Lambert_Variables;
+                                temporalSpellBook += texture_Variables;
+                                temporalSpellBook += Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_NoNormalMap_PerPixelLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Pixel_NoNormalMap;
@@ -489,8 +536,10 @@ public class ShaderExport : MonoBehaviour {
                             }
                             else //HalfLambert, Vertex
                             {
-                                temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
-                                temporalSpellBook += SpellBookFunctions.Lambert_Variables;
+                                temporalSpellBook += texture_Variables;
+                                temporalSpellBook += Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Vertex;
@@ -513,8 +562,10 @@ public class ShaderExport : MonoBehaviour {
                         {
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //No Light, Pixel
                             {
-                                temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
-                                temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
+                                temporalSpellBook += texture_Variables;
+                                temporalSpellBook += Normal_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerPixelLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Pixel;
@@ -526,8 +577,10 @@ public class ShaderExport : MonoBehaviour {
                             }
                             else //No Light, Vertex
                             {
-                                temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
-                                temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
+                                temporalSpellBook += texture_Variables;
+                                temporalSpellBook += Normal_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Vertex;
@@ -544,9 +597,12 @@ public class ShaderExport : MonoBehaviour {
                         {
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //Phong, Pixel
                             {
-                                temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
-                                temporalSpellBook += SpellBookFunctions.Phong_Variables;
-                                temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
+                                temporalSpellBook += texture_Variables;
+                                temporalSpellBook += Phong_Variables;
+                                temporalSpellBook += Normal_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Phong_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerPixelLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Pixel;
@@ -559,9 +615,12 @@ public class ShaderExport : MonoBehaviour {
                             }
                             else //Phong, Vertex
                             {
-                                temporalSpellBook += SpellBookFunctions.Phong_Variables;
-                                temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
-                                temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
+                                temporalSpellBook += texture_Variables;
+                                temporalSpellBook += Normal_Handling_Variables;
+                                temporalSpellBook += Phong_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Phong_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Vertex;
@@ -579,9 +638,12 @@ public class ShaderExport : MonoBehaviour {
                         {
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //Lambert, Pixel
                             {
-                                temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
-                                temporalSpellBook += SpellBookFunctions.Lambert_Variables;
-                                temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
+                                temporalSpellBook += texture_Variables;
+                                temporalSpellBook += Normal_Handling_Variables;
+                                temporalSpellBook += Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerPixelLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Pixel;
@@ -594,9 +656,12 @@ public class ShaderExport : MonoBehaviour {
                             }
                             else //Lambert, Vertex
                             {
-                                temporalSpellBook += SpellBookFunctions.Lambert_Variables;
-                                temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
-                                temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
+                                temporalSpellBook += texture_Variables;
+                                temporalSpellBook += Normal_Handling_Variables;
+                                temporalSpellBook += Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Vertex;
@@ -614,9 +679,12 @@ public class ShaderExport : MonoBehaviour {
                         {
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //HalfLambert, Pixel
                             {
-                                temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
-                                temporalSpellBook += SpellBookFunctions.Lambert_Variables;
-                                temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
+                                temporalSpellBook += texture_Variables;
+                                temporalSpellBook += Lambert_Variables;
+                                temporalSpellBook += Normal_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerPixelLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Pixel;
@@ -629,9 +697,12 @@ public class ShaderExport : MonoBehaviour {
                             }
                             else //HalfLambert, Vertex
                             {
-                                temporalSpellBook += SpellBookFunctions.Lambert_Variables;
-                                temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
-                                temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
+                                temporalSpellBook += texture_Variables;
+                                temporalSpellBook += Normal_Handling_Variables;
+                                temporalSpellBook += Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Texture_Handling_Variables;
+                                //temporalSpellBook += SpellBookFunctions.Normal_Handling_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Vertex;
@@ -648,6 +719,52 @@ public class ShaderExport : MonoBehaviour {
             }
         }       
     }
+
+    public void StoreDesiredVariables()
+    {
+        texture_Variables = " uniform sampler2D _CustomTexture; " +
+        " uniform fixed4 _TextureTint =  " + FromColorToShaderColor(ShaderEdition.currentInstance._TextureTint) + " ; " +
+        " uniform float _TextureTileX = " + ShaderEdition.currentInstance._Base_Texture_Scale_X + " ; " +
+        " uniform float _TextureTileY = " + ShaderEdition.currentInstance._Base_Texture_Scale_Y + " ; " +
+        " uniform float _OffsetTileX; = " + ShaderEdition.currentInstance.Base_Texture_Offset_X + " ; " +
+        " uniform float _OffsetTileY = " + ShaderEdition.currentInstance.Base_Texture_Offset_Y + " ; "+ '\n';
+
+        Normal_Handling_Variables =
+        " uniform sampler2D _NormalMap; " +
+        " uniform float _NormalTileX = " + ShaderEdition.currentInstance.Normal_Map_Scale_X + " ; " +
+        " uniform float _NormalTileY = " + ShaderEdition.currentInstance.Normal_Map_Scale_Y + " ; " +
+        " uniform float _NormalOffsetX = " + ShaderEdition.currentInstance.Normal_Map_Offset_X + " ; " +
+        " uniform float _NormalOffsetY = " + ShaderEdition.currentInstance.Normal_Map_Offset_X + " ; " +
+        " uniform half _NormalMapScale  = " + ShaderEdition.currentInstance._CustomNormalMapScale + " ; " + '\n'
+        ;
+
+        Phong_Variables =
+        " uniform float _CustomShininess = " + ShaderEdition.currentInstance._CustomShininess + " ; " +
+        " uniform float4 _PhongAmbientColor =  " + FromColorToShaderColor(ShaderEdition.currentInstance._PhongAmbientColor) + " ; " +
+        " uniform float _PhongAmbientForce = " + ShaderEdition.currentInstance._PhongAmbientForce + " ; " +
+        " uniform float4 _PhongSpecularColor =  " + FromColorToShaderColor(ShaderEdition.currentInstance._PhongSpecularColor) + " ; " +
+        " uniform float _PhongSpecularForce = " + ShaderEdition.currentInstance._PhongSpecularForce + " ; " +
+        " uniform float4 _PhongDiffuseColor =  " + FromColorToShaderColor(ShaderEdition.currentInstance._PhongDiffuseColor) + " ; " +
+        " uniform float _PhongDiffuseForce = " + ShaderEdition.currentInstance._PhongDiffuseForce + " ; " + '\n'
+        ;
+
+        Lambert_Variables =
+
+        " uniform float _LambertTintForce = " + ShaderEdition.currentInstance._LambertTintForce + " ; " +
+        " uniform float4 _LambertTintColor;  = " + FromColorToShaderColor(ShaderEdition.currentInstance._LambertTintColor) + " ; " + '\n';
+
+        NoTextureMap_Variables =
+        " uniform fixed4 _TextureTint = " + FromColorToShaderColor(ShaderEdition.currentInstance._TextureTint) + " ; " + '\n';
+        
+    }
+
+    public string FromColorToShaderColor(Color input)
+    {
+        string resultBase = "float4(";
+        resultBase += input.r + " , " + input.g + " , " + input.b + " , " + input.a + " );";
+        return resultBase;
+    }
+
 
     static string shaderTextStart =       
         " { " + '\n' +
