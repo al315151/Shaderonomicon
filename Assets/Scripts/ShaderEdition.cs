@@ -148,6 +148,7 @@ public class ShaderEdition : MonoBehaviour {
     public CanvasGroup BaseTextureParameters_CanvasGroup_CR;
     public CanvasGroup LambertLightingParameters_CanvasGroup_CR;
     public CanvasGroup PhongLightingParameters_CanvasGroup_CR;
+    public CanvasGroup SceneSettingsParameters_CanvasGroup_CR;
 
     [Header("Canvas Buttons And Parameters References")]
 
@@ -241,6 +242,8 @@ public class ShaderEdition : MonoBehaviour {
 
         _Current_Lighting_Model = 4; //tHIS IS FOR INITIAL UPDATE ON THE TEXTS.
         UpdateLightingModel();
+
+        SceneSettingsParameters_CanvasGroup_CR.GetComponent<SkyBoxPropertiesSetter>().SetInitialSceneProperties();
 
         //print(_TextureTint.ToString());
     }
@@ -356,6 +359,8 @@ public class ShaderEdition : MonoBehaviour {
         { SecMenu_Title_Text_CR.text = "Lambert Lighting Model Parameters"; }
         else if (CG.name == PhongLightingParameters_CanvasGroup_CR.name)
         { SecMenu_Title_Text_CR.text = "Phong Lighting Model Parameters"; }
+        else if (CG.name == SceneSettingsParameters_CanvasGroup_CR.name)
+        { SecMenu_Title_Text_CR.text = "Scene Settings Parameters"; }
         else
         { Debug.Log("You should not be here at all m8"); }
         CG.gameObject.SetActive(true);
@@ -374,6 +379,8 @@ public class ShaderEdition : MonoBehaviour {
         {   PhongLightingParameters_CanvasGroup_CR.gameObject.SetActive(false);       }
         if (ColorPicker_CanvasGroup_CR != null && ColorPicker_CanvasGroup_CR.gameObject.activeInHierarchy)
         {   ColorPicker_CanvasGroup_CR.gameObject.SetActive(false); }
+        if (SceneSettingsParameters_CanvasGroup_CR != null && SceneSettingsParameters_CanvasGroup_CR.gameObject.activeInHierarchy)
+        { SceneSettingsParameters_CanvasGroup_CR.gameObject.SetActive(false); } 
 
     }
 
@@ -702,6 +709,24 @@ public class ShaderEdition : MonoBehaviour {
                         Shader.SetGlobalColor("_LambertTintColor", _LambertTintColor);
                         break;
                     }
+                case "SkyTint":
+                    {
+                        Color dummyColor = colorPicker_CanvasReference_Script.CurrentColorSelected;
+                        SceneSettingsParameters_CanvasGroup_CR.GetComponent<SkyBoxPropertiesSetter>()._SkyTint = dummyColor;
+                        break;
+                    }
+                case "GroundColor":
+                    {
+                        Color dummyColor = colorPicker_CanvasReference_Script.CurrentColorSelected;
+                        SceneSettingsParameters_CanvasGroup_CR.GetComponent<SkyBoxPropertiesSetter>()._GroundColor = dummyColor;
+                        break;
+                    }
+                case "LightColor":
+                    {
+                        Color dummyColor = colorPicker_CanvasReference_Script.CurrentColorSelected;
+                        SceneSettingsParameters_CanvasGroup_CR.GetComponent<SkyBoxPropertiesSetter>()._LightColor = dummyColor;
+                        break;
+                    }
 
                 default:
                     {
@@ -751,6 +776,21 @@ public class ShaderEdition : MonoBehaviour {
                 {
                     _LambertTintColor = Color.white;
                     Dummy_Lambert_Tint_Image_CR.color = _LambertTintColor;
+                    break;
+                }
+            case "SkyTint":
+                {
+                    SceneSettingsParameters_CanvasGroup_CR.GetComponent<SkyBoxPropertiesSetter>()._SkyTint = Color.black;
+                    break;
+                }
+            case "GroundColor":
+                {
+                    SceneSettingsParameters_CanvasGroup_CR.GetComponent<SkyBoxPropertiesSetter>()._GroundColor = Color.black;
+                    break;
+                }
+            case "LightColor":
+                {
+                    SceneSettingsParameters_CanvasGroup_CR.GetComponent<SkyBoxPropertiesSetter>()._LightColor = Color.white;
                     break;
                 }
             default:
@@ -920,5 +960,10 @@ public class ShaderEdition : MonoBehaviour {
 
 
     #endregion
+
+    public void ExitApplication()
+    { Application.Quit();  }
+
+
 
 }

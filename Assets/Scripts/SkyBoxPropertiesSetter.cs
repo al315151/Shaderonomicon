@@ -30,6 +30,11 @@ public class SkyBoxPropertiesSetter : MonoBehaviour {
 
 	public Light Scene_Light_CR;
 
+    public RawImage Sky_Tint_Dummy_Image_CR;
+    public RawImage Ground_Color_Dummy_Image_CR;
+    public RawImage Scene_Light_Dummy_Image_CR;
+
+
 	#endregion
 
 
@@ -43,13 +48,17 @@ public class SkyBoxPropertiesSetter : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		
+        UpdateSkyboxVariables();
+        UpdateLightVariables();
 	}
 
 	public void UpdateSkyboxVariables()
 	{
 		_Exposure = Exposure_Slider_CR.value;
 		_AtmosphereThickness = Atmosphere_Thickness_Slider_CR.value;
+
+        Ground_Color_Dummy_Image_CR.color = _GroundColor;
+        Sky_Tint_Dummy_Image_CR.color = _SkyTint;
 
 		Shader.SetGlobalColor("_SkyTint", _SkyTint);
 		Shader.SetGlobalFloat("_AtmosphereThickness", _AtmosphereThickness);
@@ -58,7 +67,19 @@ public class SkyBoxPropertiesSetter : MonoBehaviour {
 	}
 
 	public void UpdateLightVariables()
-	{	Scene_Light_CR.color = _LightColor;	}
+	{
+        Scene_Light_CR.color = _LightColor;
+        Scene_Light_Dummy_Image_CR.color = _LightColor;
+    }
 
+    public void SetInitialSceneProperties()
+    {
+        Exposure_Slider_CR.value = 1.16f;
+        Atmosphere_Thickness_Slider_CR.value = 0.6f;
+        _SkyTint = Color.black;
+        _GroundColor = Color.black;
+        _LightColor = Color.white;
+
+    }
 
 }
