@@ -149,6 +149,7 @@ public class ShaderEdition : MonoBehaviour {
     public CanvasGroup LambertLightingParameters_CanvasGroup_CR;
     public CanvasGroup PhongLightingParameters_CanvasGroup_CR;
     public CanvasGroup SceneSettingsParameters_CanvasGroup_CR;
+    public CanvasGroup ExitMenu_CanvasGroup_CR;
 
     [Header("Canvas Buttons And Parameters References")]
 
@@ -345,7 +346,11 @@ public class ShaderEdition : MonoBehaviour {
     public void CloseCanvasGroup(CanvasGroup CG)
     { CG.gameObject.SetActive(false);     }
     public void OpenCanvasGroup(CanvasGroup CG)
-    { CG.gameObject.SetActive(true);      }
+    {
+        if (CG.name == ExitMenu_CanvasGroup_CR.name && ExitMenu_CanvasGroup_CR.gameObject.activeInHierarchy)
+        { CG.gameObject.SetActive(false); }
+        else { CG.gameObject.SetActive(true); }
+    }
 
     //Opening a secondary menu means closing the other ones...
     public void OpenSecMenu ( CanvasGroup CG)

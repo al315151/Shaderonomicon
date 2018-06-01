@@ -69,6 +69,10 @@ public class ShaderExport : MonoBehaviour {
         newShader.Write(shaderNecessaryFunctions + '\n');
         newShader.Write(shaderTextEnd);
         newShader.Close();
+
+        if (ShaderEdition.currentInstance.ExitMenu_CanvasGroup_CR.gameObject.activeInHierarchy)
+        {   ShaderEdition.currentInstance.ExitApplication();        }
+
         
     }
 
