@@ -13,7 +13,7 @@
 		Tags { "RenderType"= "Opaque" }
 		LOD 100
 
-		//ZWrite Off
+		ZWrite On
         Blend SrcAlpha OneMinusSrcAlpha
 
 		Pass

@@ -161,8 +161,9 @@ public class ShaderEdition : MonoBehaviour {
 
     public Button Sphere_Mesh_Button_CR;
     public Button Cube_Mesh_Button_CR;
-    public Button Capsule_Mesh_Button_CR;
+    public Button Torus_Mesh_Button_CR;
     public Button Cylinder_Mesh_Button_CR;
+    public Button LowPoly_Sphere_Mesh_Button_CR;
 
     public Button Base_Texture_Menu_Button_CR;
     public Button Normal_Map_Menu_Button_CR;
@@ -241,11 +242,14 @@ public class ShaderEdition : MonoBehaviour {
         ChangeToPixelLighting();
 
 
-        _Current_Lighting_Model = 4; //tHIS IS FOR INITIAL UPDATE ON THE TEXTS.
+        _Current_Lighting_Model = 0; //tHIS IS FOR INITIAL UPDATE ON THE TEXTS.
         UpdateLightingModel();
 
+        
+        OpenSecMenu(SceneSettingsParameters_CanvasGroup_CR);
         SceneSettingsParameters_CanvasGroup_CR.GetComponent<SkyBoxPropertiesSetter>().SetInitialSceneProperties();
-
+        CloseCurrentSecMenu();
+        Change_Shader_Name_InputField_CR.text = "New Shader";
         //print(_TextureTint.ToString());
     }
 	
@@ -480,7 +484,7 @@ public class ShaderEdition : MonoBehaviour {
     {
         switch (optionDropDown_CR.captionText.text)
         {
-            case "Sphere":
+            case "HighPolySphere":
                 {
                     if (availableMeshes[0] != null)
                     {
@@ -496,7 +500,7 @@ public class ShaderEdition : MonoBehaviour {
                     }
                     break;
                 }
-            case "Capsule":
+            case "Torus":
                 {
                     if (availableMeshes[2] != null)
                     {
@@ -509,6 +513,14 @@ public class ShaderEdition : MonoBehaviour {
                     if (availableMeshes[3] != null)
                     {
                         displayObject.GetComponent<MeshFilter>().mesh = availableMeshes[3];
+                    }
+                    break;
+                }
+            case "LowPolySphere":
+                {
+                    if (availableMeshes[4] != null)
+                    {
+                        displayObject.GetComponent<MeshFilter>().mesh = availableMeshes[4];
                     }
                     break;
                 }
@@ -534,8 +546,9 @@ public class ShaderEdition : MonoBehaviour {
                         displayObject.GetComponent<MeshFilter>().mesh = availableMeshes[0];
                         Sphere_Mesh_Button_CR.interactable = false;
                         Cube_Mesh_Button_CR.interactable = true;
-                        Capsule_Mesh_Button_CR.interactable = true;
+                        Torus_Mesh_Button_CR.interactable = true;
                         Cylinder_Mesh_Button_CR.interactable = true;
+                        LowPoly_Sphere_Mesh_Button_CR.interactable = true;
                     }
                     break;
                 }
@@ -546,20 +559,22 @@ public class ShaderEdition : MonoBehaviour {
                         displayObject.GetComponent<MeshFilter>().mesh = availableMeshes[1];
                         Sphere_Mesh_Button_CR.interactable = true;
                         Cube_Mesh_Button_CR.interactable = false;
-                        Capsule_Mesh_Button_CR.interactable = true;
+                        Torus_Mesh_Button_CR.interactable = true;
                         Cylinder_Mesh_Button_CR.interactable = true;
+                        LowPoly_Sphere_Mesh_Button_CR.interactable = true;
                     }
                     break;
                 }
-            case "Capsule":
+            case "Torus":
                 {
                     if (availableMeshes[2] != null)
                     {
                         displayObject.GetComponent<MeshFilter>().mesh = availableMeshes[2];
                         Sphere_Mesh_Button_CR.interactable = true;
                         Cube_Mesh_Button_CR.interactable = true;
-                        Capsule_Mesh_Button_CR.interactable = false;
+                        Torus_Mesh_Button_CR.interactable = false;
                         Cylinder_Mesh_Button_CR.interactable = true;
+                        LowPoly_Sphere_Mesh_Button_CR.interactable = true;
                     }
                     break;
                 }
@@ -570,8 +585,22 @@ public class ShaderEdition : MonoBehaviour {
                         displayObject.GetComponent<MeshFilter>().mesh = availableMeshes[3];
                         Sphere_Mesh_Button_CR.interactable = true;
                         Cube_Mesh_Button_CR.interactable = true;
-                        Capsule_Mesh_Button_CR.interactable = true;
+                        Torus_Mesh_Button_CR.interactable = true;
                         Cylinder_Mesh_Button_CR.interactable = false;
+                        LowPoly_Sphere_Mesh_Button_CR.interactable = true;
+                    }
+                    break;
+                }
+            case "LowPolySphere":
+                {
+                    if (availableMeshes[4] != null)
+                    {
+                        displayObject.GetComponent<MeshFilter>().mesh = availableMeshes[4];
+                        Sphere_Mesh_Button_CR.interactable = true;
+                        Cube_Mesh_Button_CR.interactable = true;
+                        Torus_Mesh_Button_CR.interactable = true;
+                        Cylinder_Mesh_Button_CR.interactable = true;
+                        LowPoly_Sphere_Mesh_Button_CR.interactable = false;
                     }
                     break;
                 }

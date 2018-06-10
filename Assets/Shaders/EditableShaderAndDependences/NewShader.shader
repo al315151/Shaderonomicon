@@ -5,6 +5,8 @@
 
 Shader "Custom/NewShader"
 {
+
+
 	Properties
 	{
 		//_MainTex ("Texture", 2D) = "white" {}
@@ -36,6 +38,7 @@ Shader "Custom/NewShader"
 			
 			#include "SpellBook.cginc"	
 
+			#pragma fullforwardshadows
 			#pragma vertex vert_AllPosibilities
 			
 			#pragma fragment frag_AllPosibilities

@@ -5,10 +5,16 @@ using UnityEngine;
 public class MainCameraScript : MonoBehaviour {
 
     public Camera cameraReference;
-
     public GameObject cameraObjectiveReference;
 
-   
+
+
+
+
+    public bool rotationEnabled = false;
+
+    [Range(0.0f, 10.0f)]
+    public float rotationSpeed = 5.0f;
 
 
     // Use this for initialization
@@ -30,7 +36,8 @@ public class MainCameraScript : MonoBehaviour {
         {
             cameraReference.transform.LookAt(cameraObjectiveReference.transform);
         }
-      
+  
 	}
+
 
 }

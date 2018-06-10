@@ -33,6 +33,17 @@
 		//===========================================
 		//=======SPECULAR_HIGHLIGHTS, from: https://en.wikibooks.org/wiki/Cg_Programming/Unity/Specular_Highlights =================
 
+		//====STRUCTS AND VARIABLES ONLY USED IN SHADER EDITING, THEY SHALL NOT BE USED AT THE FINAL SHADER ===================
+
+		uniform float _LightingModel;
+		uniform float _IsPixelLighting;
+		uniform float _IsNormalMapApplied;
+		uniform float _IsTextureApplied;
+
+		//==============================================================================================================
+
+
+
 		struct vertexInput_AllVariables
 		{
 			float4 vertex : POSITION;
@@ -113,12 +124,7 @@
 			float4 col : COLOR;
 		};
 		
-		//====STRUCTS AND VARIABLES ONLY USED IN SHADER EDITING, THEY SHALL NOT BE USED AT THE FINAL SHADER ===================
-
-		uniform float _LightingModel;
-		uniform float _IsPixelLighting;
-
-		//==============================================================================================================
+		
 
 		struct vertexOutput_AllVariables
 		{
@@ -941,7 +947,7 @@
 				output.normalDir = outputDummy.normalDir;
 				output.tex = outputDummy.tex;
 				output.tangent = outputDummy.tangent;
-				output.normal = outputDummy.normal;		
+				output.normal = outputDummy.normal;
 				
 				//If i do not put this one, unity cries, so xd
 				output.col = float4(0.0f, 0.0f, 0.0f, 0.0f);

@@ -50,8 +50,9 @@ public class ShaderExport : MonoBehaviour {
         string shaderTextTitle = " Shader" + '"' + "Shaderonomicon/" + shaderName + '"' + "  " + '\n';
 
         string folderPath = FileBrowser.OpenSingleFolder("Choose the folder to save shader...");
+        if (folderPath == "") { return; }
 
-        if (File.Exists(folderPath + '/' + shaderName + ".shader"))
+        else if (File.Exists(folderPath + '/' + shaderName + ".shader"))
         {
             //print("DELETE THIS");
             File.Delete(folderPath + '/' + shaderName + ".shader");
@@ -765,7 +766,7 @@ public class ShaderExport : MonoBehaviour {
     public string FromColorToShaderColor(Color input)
     {
         string resultBase = "float4(";
-        resultBase += input.r + " , " + input.g + " , " + input.b + " , " + input.a + " );";
+        resultBase += input.r + " , " + input.g + " , " + input.b + " , " + input.a + " )";
         return resultBase;
     }
 
@@ -779,8 +780,9 @@ public class ShaderExport : MonoBehaviour {
                 "{ " + '\n' +
                     " Tags { " + '"' + "LightMode" + '"' + " = " + '"' + LightModeType + '"' + " } " + "  " + '\n' +
                     " LOD 100 " + '\n' +
-                    "CGPROGRAM" + '\n' ;
-                  
+                    "CGPROGRAM" + '\n' +
+                    " #pragma fullforwardshadows " + '\n' ;
+
     static string shaderTextEnd =
           " ENDCG " + "  " + '\n' +
                 " } " +
