@@ -256,6 +256,7 @@ public class ShaderEdition : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
+        UpdateManagerVariablesShader();
         UpdateShaderNameInputField();
         UpdateScaleOffsetBaseTexture();
         UpdateScaleOffsetNormalMap();
@@ -990,6 +991,16 @@ public class ShaderEdition : MonoBehaviour {
         Shader.SetGlobalFloat("_NormalOffsetX", _Normal_Map_Offset_X);
         Shader.SetGlobalFloat("_NormalOffsetY", _Normal_Map_Offset_Y);
         Shader.SetGlobalFloat("_CustomAlpha", _CustomAlpha);
+    }
+
+    public void UpdateManagerVariablesShader()
+    {
+        if (IsNewTextureApplied)
+        {  Shader.SetGlobalFloat("_IsTextureApplied", 1.0f);  }
+        else {  Shader.SetGlobalFloat("_IsTextureApplied", 0.0f);      }
+        if (IsNormalMapApplied)
+        {   Shader.SetGlobalFloat("_IsNormalMapApplied", 1.0f);     }
+        else { Shader.SetGlobalFloat("_IsNormalMapApplied", 0.0f);       }
     }
 
 

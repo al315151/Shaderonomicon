@@ -940,17 +940,53 @@
 		
 			if (_IsPixelLighting == 1.0f) // Pixel
 			{
-				vertexOutput_PerPixelLighting outputDummy;
-				outputDummy = vert_PerPixelLighting(input);
-				output.posWorld = outputDummy.posWorld;
-				output.pos = outputDummy.pos;
-				output.normalDir = outputDummy.normalDir;
-				output.tex = outputDummy.tex;
-				output.tangent = outputDummy.tangent;
-				output.normal = outputDummy.normal;
 				
-				//If i do not put this one, unity cries, so xd
-				output.col = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+				if (_IsNormalMapApplied == 0.0f) // No normal map
+				{
+					if (_IsTextureApplied == 0.0f) // No texture
+					{
+						vertexOutput_NoTextureNoNormalMap_PerPixelLighting outputDummy;
+						vertexInput_NoTextureNoNormalMap inputDummy;
+						inputDummy.vertex = input.vertex;	
+						inputDummy.normal = input.normal;
+						outputDummy = vert_PerPixelLighting_NoTextureNoNormalMap(inputDummy);
+						output.posWorld = outputDummy.posWorld;
+						output.pos = outputDummy.pos;
+						output.normalDir = outputDummy.normalDir;
+						output.normal = outputDummy.normal;
+					}
+					else
+					{
+						vertexOutput_NoNormalMap_PerPixelLighting outputDummy;
+						vertexInput_NoNormalMap inputDummy;
+						inputDummy.vertex = input.vertex;
+						inputDummy.normal = input.normal;
+						inputDummy.texcoord = input.texcoord;
+						outputDummy = vert_PerPixelLighting_NoNormalMap(inputDummy);
+						output.posWorld = outputDummy.posWorld;
+						output.pos = outputDummy.pos;
+						output.normalDir = outputDummy.normalDir;
+						output.tex = outputDummy.tex;
+						output.normal = outputDummy.normal;
+					}
+				}
+				else
+				{
+
+					vertexOutput_PerPixelLighting outputDummy;
+					outputDummy = vert_PerPixelLighting(input);
+					output.posWorld = outputDummy.posWorld;
+					output.pos = outputDummy.pos;
+					output.normalDir = outputDummy.normalDir;
+					output.tex = outputDummy.tex;
+					output.tangent = outputDummy.tangent;
+					output.normal = outputDummy.normal;
+				
+					//If i do not put this one, unity cries, so xd
+					output.col = float4(0.0f, 0.0f, 0.0f, 0.0f);
+				}
+
 			}
 			else // Vertex
 			{
@@ -958,24 +994,94 @@
 				
 				if (_LightingModel == 1.0f) // Phong
 				{
-					outputDummy = vert_PerVertexLighting_Phong(input);							
+					if(_IsNormalMapApplied == 0.0f) // no normal map
+					{
+						vertexInput_NoTextureNoNormalMap inputDummy;
+						inputDummy.vertex = input.vertex;	
+						inputDummy.normal = input.normal;
+						vertexOutput_NoTextureNoNormalMap_PerVertexLighting outputTemp;
+						outputTemp = vert_PerVertexLighting_Phong_NoNormalMap(inputDummy);
+						output.col = outputTemp.col;
+						output.pos = outputTemp.pos;
+					}
+					else
+					{
+						outputDummy = vert_PerVertexLighting_Phong(input);
+						output.pos = outputDummy.pos;
+						output.col = outputDummy.col;
+						output.tex = outputDummy.tex;
+					}												
 				}			
 				if (_LightingModel == 2.0f) // Lambert
 				{
-					outputDummy = vert_PerVertexLighting_Lambert(input);				
+					if(_IsNormalMapApplied == 0.0f) // no normal map
+					{
+						vertexInput_NoTextureNoNormalMap inputDummy;
+						inputDummy.vertex = input.vertex;	
+						inputDummy.normal = input.normal;
+						vertexOutput_NoTextureNoNormalMap_PerVertexLighting outputTemp;
+						outputTemp = vert_PerVertexLighting_Lambert_NoNormalMap(inputDummy);
+						output.col = outputTemp.col;
+						output.pos = outputTemp.pos;
+					}
+					else
+					{
+						outputDummy = vert_PerVertexLighting_Lambert(input);
+						output.pos = outputDummy.pos;
+						output.col = outputDummy.col;
+						output.tex = outputDummy.tex;
+					}									
 				}
 				if (_LightingModel == 3.0f) // HalfLambert
 				{
-					outputDummy = vert_PerVertexLighting_HalfLambert(input);			
+					if(_IsNormalMapApplied == 0.0f) // no normal map
+					{
+						vertexInput_NoTextureNoNormalMap inputDummy;
+						inputDummy.vertex = input.vertex;	
+						inputDummy.normal = input.normal;
+						vertexOutput_NoTextureNoNormalMap_PerVertexLighting outputTemp;
+						outputTemp = vert_PerVertexLighting_HalfLambert_NoNormalMap(inputDummy);
+						output.col = outputTemp.col;
+						output.pos = outputTemp.pos;
+					}
+					else
+					{
+						outputDummy = vert_PerVertexLighting_HalfLambert(input);
+						output.pos = outputDummy.pos;
+						output.col = outputDummy.col;
+						output.tex = outputDummy.tex;
+					}
+								
 				}
 				if (_LightingModel == 0.0f) // No_Light
 				{
-					outputDummy = vert_PerVertexLighting_NoLight(input);							
-				}
-
-				output.pos = outputDummy.pos;
-				output.col = outputDummy.col;
-				output.tex = outputDummy.tex;	
+					if (_IsNormalMapApplied == 0.0f)
+					{
+						if (_IsTextureApplied == 0.0f)
+						{
+							vertexInput_NoLight_NoTextureNoNormalMap inputDummy;
+							inputDummy.vertex = input.vertex;	
+							vertexOutput_NoLight_NoTextureNoNormalMap outputTemp;
+							outputTemp = vert_PerVertexLighting_NoLight_NoTextureNoNormalMap(inputDummy);
+							output.col = outputTemp.col;
+							output.pos = outputTemp.pos;
+						}
+						else
+						{
+							outputDummy = vert_PerVertexLighting_NoLight(input);	
+							output.pos = outputDummy.pos;
+							output.col = outputDummy.col;
+							output.tex = outputDummy.tex;
+						}
+					}
+					else
+					{
+						outputDummy = vert_PerVertexLighting_NoLight(input);	
+						output.pos = outputDummy.pos;
+						output.col = outputDummy.col;
+						output.tex = outputDummy.tex;
+					}											
+				}			
 
 				//If i do not put this one, unity cries, so i will just insert null values
 				output.posWorld = float3(0.0f, 0.0f, 0.0f);
@@ -989,16 +1095,25 @@
 
 		float4 frag_AllPosibilities(vertexOutput_AllVariables input) : COLOR
 		{
-			float4 finalColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+			float4 finalColor;
 
 			if (_IsPixelLighting == 0.0f) //Vertex Lighting
 			{
-				vertexOutput_PerVertexLighting inputDummy;
-				inputDummy.tex = input.tex;
-				inputDummy.col = input.col;
-				inputDummy.pos = input.pos;
-
-				finalColor = frag_PerVertexLighting(inputDummy);
+				if(_IsTextureApplied == 0.0f)
+				{
+					vertexOutput_NoTextureNoNormalMap_PerVertexLighting inputDummy;
+					inputDummy.pos = input.pos;
+					inputDummy.col = input.col;
+					finalColor = frag_PerVertexLighting_NoTextureMap(inputDummy);
+				}
+				else
+				{
+					vertexOutput_PerVertexLighting inputDummy;
+					inputDummy.tex = input.tex;
+					inputDummy.col = input.col;
+					inputDummy.pos = input.pos;
+					finalColor = frag_PerVertexLighting(inputDummy);
+				}			
 				return finalColor;
 			}
 			else // Pixel Lighting
@@ -1012,13 +1127,203 @@
 				inputDummy.normal = input.normal;
 
 				if (_LightingModel == 1.0f) // Phong
-				{	 finalColor = frag_PerPixelLighting_Phong(inputDummy);	}	
+				{
+					if (_IsNormalMapApplied == 0.0f)
+					{
+						if (_IsTextureApplied == 0.0f)
+						{
+							vertexOutput_NoTextureNoNormalMap_PerPixelLighting inputDummy;
+							inputDummy.posWorld = input.posWorld;
+							inputDummy.pos = input.pos;
+							inputDummy.normalDir = input.normalDir;
+							inputDummy.normal = input.normal;
+							finalColor = frag_PerPixelLighting_Phong_NoTextureNoNormalMap(inputDummy);
+						}
+						else
+						{
+							vertexOutput_NoNormalMap_PerPixelLighting inputDummy;
+							inputDummy.posWorld = input.posWorld;
+							inputDummy.pos = input.pos;
+							inputDummy.normalDir = input.normalDir;
+							inputDummy.tex = input.tex;
+							inputDummy.normal = input.normal;
+							finalColor = frag_PerPixelLighting_Phong_NoNormalMap(inputDummy);
+						}
+					}
+					else
+					{
+						if (_IsTextureApplied == 0.0f)
+						{
+							vertexOutput_PerPixelLighting inputDummy;
+							inputDummy.posWorld = input.posWorld;
+							inputDummy.pos = input.pos;
+							inputDummy.normalDir = input.normalDir;
+							inputDummy.tex = input.tex;
+							inputDummy.tangent = input.tangent;
+							inputDummy.normal = input.normal;
+							finalColor = frag_PerPixelLighting_Phong_NoTexture(inputDummy);
+						}
+						else
+						{
+							vertexOutput_PerPixelLighting inputDummy;
+							inputDummy.posWorld = input.posWorld;
+							inputDummy.pos = input.pos;
+							inputDummy.normalDir = input.normalDir;
+							inputDummy.tex = input.tex;
+							inputDummy.tangent = input.tangent;
+							inputDummy.normal = input.normal;
+							finalColor = frag_PerPixelLighting_Phong(inputDummy);
+						}
+					}
+				}	
 				if (_LightingModel == 2.0f) // Lambert
-				{	 finalColor = frag_PerPixelLighting_Lambert(inputDummy);	}
+				{
+					if (_IsNormalMapApplied == 0.0f)
+					{
+						if (_IsTextureApplied == 0.0f)
+						{
+							vertexOutput_NoTextureNoNormalMap_PerPixelLighting inputDummy;
+							inputDummy.posWorld = input.posWorld;
+							inputDummy.pos = input.pos;
+							inputDummy.normalDir = input.normalDir;
+							inputDummy.normal = input.normal;
+							finalColor = frag_PerPixelLighting_Lambert_NoTextureNoNormalMap(inputDummy);
+						}
+						else
+						{
+							vertexOutput_NoNormalMap_PerPixelLighting inputDummy;
+							inputDummy.posWorld = input.posWorld;
+							inputDummy.pos = input.pos;
+							inputDummy.normalDir = input.normalDir;
+							inputDummy.tex = input.tex;
+							inputDummy.normal = input.normal;
+							finalColor = frag_PerPixelLighting_Lambert_NoNormalMap(inputDummy);
+						}
+					}
+					else
+					{
+						if (_IsTextureApplied == 0.0f)
+						{
+							vertexOutput_PerPixelLighting inputDummy;
+							inputDummy.posWorld = input.posWorld;
+							inputDummy.pos = input.pos;
+							inputDummy.normalDir = input.normalDir;
+							inputDummy.tex = input.tex;
+							inputDummy.tangent = input.tangent;
+							inputDummy.normal = input.normal;
+							finalColor = frag_PerPixelLighting_Lambert_NoTextureMap(inputDummy);
+						}
+						else
+						{
+							vertexOutput_PerPixelLighting inputDummy;
+							inputDummy.posWorld = input.posWorld;
+							inputDummy.pos = input.pos;
+							inputDummy.normalDir = input.normalDir;
+							inputDummy.tex = input.tex;
+							inputDummy.tangent = input.tangent;
+							inputDummy.normal = input.normal;
+							finalColor = frag_PerPixelLighting_Lambert(inputDummy);
+						}
+					}
+				}
 				if (_LightingModel == 3.0f) // HalfLambert
-				{	 finalColor = frag_PerPixelLighting_HalfLambert(inputDummy);	}
+				{
+					if (_IsNormalMapApplied == 0.0f)
+					{
+						if (_IsTextureApplied == 0.0f)
+						{
+							vertexOutput_NoTextureNoNormalMap_PerPixelLighting inputDummy;
+							inputDummy.posWorld = input.posWorld;
+							inputDummy.pos = input.pos;
+							inputDummy.normalDir = input.normalDir;
+							inputDummy.normal = input.normal;
+							finalColor = frag_PerPixelLighting_HalfLambert_NoTextureMapNoNormalMap(inputDummy);
+						}
+						else
+						{
+							vertexOutput_NoNormalMap_PerPixelLighting inputDummy;
+							inputDummy.posWorld = input.posWorld;
+							inputDummy.pos = input.pos;
+							inputDummy.normalDir = input.normalDir;
+							inputDummy.tex = input.tex;
+							inputDummy.normal = input.normal;
+							finalColor = frag_PerPixelLighting_HalfLambert_NoNormalMap(inputDummy);
+						}
+					}
+					else
+					{
+						if (_IsTextureApplied == 0.0f)
+						{
+							vertexOutput_PerPixelLighting inputDummy;
+							inputDummy.posWorld = input.posWorld;
+							inputDummy.pos = input.pos;
+							inputDummy.normalDir = input.normalDir;
+							inputDummy.tex = input.tex;
+							inputDummy.tangent = input.tangent;
+							inputDummy.normal = input.normal;
+							finalColor = frag_PerPixelLighting_HalfLambert_NoTextureMap(inputDummy);
+						}
+						else
+						{
+							vertexOutput_PerPixelLighting inputDummy;
+							inputDummy.posWorld = input.posWorld;
+							inputDummy.pos = input.pos;
+							inputDummy.normalDir = input.normalDir;
+							inputDummy.tex = input.tex;
+							inputDummy.tangent = input.tangent;
+							inputDummy.normal = input.normal;
+							finalColor = frag_PerPixelLighting_HalfLambert(inputDummy);
+						}
+					}
+				}
 				if (_LightingModel == 0.0f) // NoLight
-				{	 finalColor = frag_PerPixelLighting_NoLight(inputDummy);	}
+				{
+					if (_IsNormalMapApplied == 0.0f)
+					{
+						if (_IsTextureApplied == 0.0f)
+						{
+							vertexOutput_NoTextureNoNormalMap_PerPixelLighting inputDummy;
+							inputDummy.posWorld = input.posWorld;
+							inputDummy.pos = input.pos;
+							inputDummy.normalDir = input.normalDir;
+							inputDummy.normal = input.normal;
+							finalColor = frag_PerPixelLighting_NoLight_NoTextureMap(inputDummy);
+						}
+						else
+						{
+							vertexOutput_NoNormalMap_PerPixelLighting inputDummy;
+							inputDummy.posWorld = input.posWorld;
+							inputDummy.pos = input.pos;
+							inputDummy.normalDir = input.normalDir;
+							inputDummy.tex = input.tex;
+							inputDummy.normal = input.normal;
+							finalColor = frag_PerPixelLighting_NoLight_NoNormalMap(inputDummy);
+						}
+					}
+					else
+					{
+						if (_IsTextureApplied == 0.0f)
+						{
+							vertexOutput_NoTextureNoNormalMap_PerPixelLighting inputDummy;
+							inputDummy.posWorld = input.posWorld;
+							inputDummy.pos = input.pos;
+							inputDummy.normalDir = input.normalDir;
+							inputDummy.normal = input.normal;
+							finalColor = frag_PerPixelLighting_NoLight_NoTextureMap(inputDummy);
+						}
+						else
+						{
+							vertexOutput_PerPixelLighting inputDummy;
+							inputDummy.posWorld = input.posWorld;
+							inputDummy.pos = input.pos;
+							inputDummy.normalDir = input.normalDir;
+							inputDummy.tex = input.tex;
+							inputDummy.tangent = input.tangent;
+							inputDummy.normal = input.normal;
+							finalColor = frag_PerPixelLighting_NoLight(inputDummy);
+						}
+					}
+				}
 
 				return finalColor;
 			}

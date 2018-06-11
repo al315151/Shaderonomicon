@@ -731,8 +731,8 @@ public class ShaderExport : MonoBehaviour {
         " uniform fixed4 _TextureTint =  " + FromColorToShaderColor(ShaderEdition.currentInstance._TextureTint) + " ; " +
         " uniform float _TextureTileX = " + ShaderEdition.currentInstance._Base_Texture_Scale_X + " ; " +
         " uniform float _TextureTileY = " + ShaderEdition.currentInstance._Base_Texture_Scale_Y + " ; " +
-        " uniform float _OffsetTileX; = " + ShaderEdition.currentInstance.Base_Texture_Offset_X + " ; " +
-        " uniform float _OffsetTileY = " + ShaderEdition.currentInstance.Base_Texture_Offset_Y + " ; "+ '\n';
+        " uniform float _OffsetTileX; = " + ShaderEdition.currentInstance._Base_Texture_Offset_X + " ; " +
+        " uniform float _OffsetTileY = " + ShaderEdition.currentInstance._Base_Texture_Offset_Y + " ; "+ '\n';
 
         Normal_Handling_Variables =
         " uniform sampler2D _NormalMap; " +
