@@ -10,10 +10,10 @@
 	}
 	SubShader
 	{
-		Tags { "RenderType"= "Opaque" }
+		Tags { "Queue"= "Transparent" }
 		LOD 100
 
-		ZWrite On
+		ZWrite Off
         Blend SrcAlpha OneMinusSrcAlpha
 
 		Pass
@@ -67,7 +67,8 @@
 				if (frac(_GridCoordX) < 0.05f || frac(_GridCoordX) > 0.95f ||
 					frac(_GridCoordY) < 0.05f || frac(_GridCoordY) > 0.95f)
 					{	_GridColor.a = clamp(0.0f, _AlphaFactor, _AlphaFactor - distanceFromCenter * _GridFadeFactor);	}
-				else {_GridColor.a = 0.0f;}
+				else 
+				{_GridColor.a = 0.0f; }
 
 				return _GridColor;
 			}
