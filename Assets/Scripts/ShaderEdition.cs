@@ -50,11 +50,6 @@ public class ShaderEdition : MonoBehaviour {
     [HideInInspector]
     public Texture2D _CustomTexture;
 
-    float _RTextureTint = 1.0f;
-    float _GTextureTint = 1.0f;
-    float _BTextureTint = 1.0f;
-    float _ATextureTint = 1.0f;
-
     [HideInInspector]
     public Color _TextureTint = Color.white;
 
@@ -185,7 +180,6 @@ public class ShaderEdition : MonoBehaviour {
 
     #region CHANGE_MESH_VARIABLES
 
-    public Camera ActiveCamera;
     public Mesh[] availableMeshes;
     public Dropdown optionDropDown_CR;
     #endregion
@@ -245,8 +239,6 @@ public class ShaderEdition : MonoBehaviour {
         _Current_Lighting_Model = 0; //tHIS IS FOR INITIAL UPDATE ON THE TEXTS.
         UpdateLightingModel();
 
-        
-        OpenSecMenu(SceneSettingsParameters_CanvasGroup_CR);
         SceneSettingsParameters_CanvasGroup_CR.GetComponent<SkyBoxPropertiesSetter>().SetInitialSceneProperties();
         CloseCurrentSecMenu();
         Change_Shader_Name_InputField_CR.text = "New Shader";
@@ -379,7 +371,8 @@ public class ShaderEdition : MonoBehaviour {
 
     public void CloseCurrentSecMenu()
     {
-        if(NormalMapParameters_CanvasGroup_CR != null && NormalMapParameters_CanvasGroup_CR.gameObject.activeInHierarchy)
+        SecMenu_Title_Text_CR.text = "Secondary Menu Parameters";
+        if (NormalMapParameters_CanvasGroup_CR != null && NormalMapParameters_CanvasGroup_CR.gameObject.activeInHierarchy)
         {   NormalMapParameters_CanvasGroup_CR.gameObject.SetActive(false);        }
         if (BaseTextureParameters_CanvasGroup_CR != null && BaseTextureParameters_CanvasGroup_CR.gameObject.activeInHierarchy)
         {   BaseTextureParameters_CanvasGroup_CR.gameObject.SetActive(false);        }
@@ -431,52 +424,6 @@ public class ShaderEdition : MonoBehaviour {
                 }
         }
     }
-
-    //[This function is deprecated, as we do not use this kind of reference for now.]
-    public void ChangeValueInputField(GameObject reference)
-    {
-        switch (reference.name)
-        {
-            case ("RTextureBase"):
-                {
-                    float value = float.Parse(reference.GetComponent<InputField>().text);
-                    print("Value Obtained: " + value);
-                    if (value >= 0f && value <= 1f) { _RTextureTint = value; }
-                    break;
-                }
-            case ("GTextureBase"):
-                {
-                    float value = float.Parse(reference.GetComponent<InputField>().text);
-                    print("Value Obtained: " + value);
-                    if (value >= 0f && value <= 1f) { _GTextureTint = value; }
-                    break;
-                }
-            case ("BTextureBase"):
-                {
-                    float value = float.Parse(reference.GetComponent<InputField>().text);
-                    print("Value Obtained: " + value);
-                    if (value >= 0f && value <= 1f) { _BTextureTint = value; }
-                    break;
-                }
-            case ("ATextureBase"):
-                {
-                    float value = float.Parse(reference.GetComponent<InputField>().text);
-                    print("Value Obtained: " + value);
-                    if (value >= 0f && value <= 1f) { _ATextureTint = value; }
-                    break;
-                }
-            default:
-                {
-                    print("YOU SHOULD NOT BE HERE");
-                    break;
-                }
-
-        }
-        _TextureTint = new Color(_RTextureTint, _GTextureTint, _BTextureTint, _ATextureTint);
-
-
-    }
-    
 
     #endregion
 
@@ -665,9 +612,17 @@ public class ShaderEdition : MonoBehaviour {
     public void UpdateScaleOffsetBaseTexture()
     {
         if (Base_Texture_Scale_X_InputField_CR.text != "")
-        { _Base_Texture_Scale_X = float.Parse(Base_Texture_Scale_X_InputField_CR.text); }
+        {
+            float obtainedValue_X;
+            if (float.TryParse(Base_Texture_Scale_X_InputField_CR.text, out obtainedValue_X))
+            {   _Base_Texture_Scale_X = obtainedValue_X;            }           
+        }
         if (Base_Texture_Scale_Y_inputField_CR.text != "")
-        { _Base_Texture_Scale_Y = float.Parse(Base_Texture_Scale_Y_inputField_CR.text); }
+        {
+            float obtainedValue_Y;
+            if (float.TryParse(Base_Texture_Scale_Y_inputField_CR.text, out obtainedValue_Y))
+            { _Base_Texture_Scale_Y = obtainedValue_Y; }            
+        }
 
         _Base_Texture_Offset_X = Base_Texture_Offset_X.value;
         _Base_Texture_Offset_Y = Base_Texture_Offset_Y.value;
@@ -681,9 +636,17 @@ public class ShaderEdition : MonoBehaviour {
     public void UpdateScaleOffsetNormalMap()
     {
         if (Normal_Map_Scale_X.text != "")
-        { _Normal_Map_Scale_X = float.Parse(Normal_Map_Scale_X.text); }
+        {
+            float obtainedValue_X;
+            if (float.TryParse(Normal_Map_Scale_X.text, out obtainedValue_X))
+            { _Normal_Map_Scale_X = obtainedValue_X; }
+        }
         if (Normal_Map_Scale_Y.text != "")
-        { _Normal_Map_Scale_Y = float.Parse(Normal_Map_Scale_Y.text); }
+        {
+            float obtainedValue_Y;
+            if (float.TryParse(Normal_Map_Scale_Y.text, out obtainedValue_Y))
+            { _Normal_Map_Scale_Y = obtainedValue_Y; }
+        }
 
         _Normal_Map_Offset_X = Normal_Map_Offset_X.value;
         _Normal_Map_Offset_Y = Normal_Map_Offset_Y.value;
@@ -868,7 +831,11 @@ public class ShaderEdition : MonoBehaviour {
     public void UpdateNormalMapScale()
     {
         if (_NormalMapScale_InputField_CR.text != "")
-        { _CustomNormalMapScale = float.Parse(_NormalMapScale_InputField_CR.text); }
+        {
+            float obtainedValue;
+            if (float.TryParse(_NormalMapScale_InputField_CR.text, out obtainedValue))
+            { _CustomNormalMapScale = obtainedValue; }
+        }
         Shader.SetGlobalFloat("_NormalMapScale", _CustomNormalMapScale);
     }
 
@@ -907,8 +874,18 @@ public class ShaderEdition : MonoBehaviour {
 
         #region SHININESS_SLIDER
         _CustomShininess = Shininess_Slider_CR.value;
-        Max_Range_Shininess = float.Parse(Max_Range_Shininess_InputField_CR.text);
-        Min_Range_Shininess = float.Parse(Min_Range_Shininess_InputField_CR.text);
+        if (Max_Range_Shininess_InputField_CR.text != "")
+        {
+            float maxRange;
+            if (float.TryParse(Max_Range_Shininess_InputField_CR.text, out maxRange))
+            { Max_Range_Shininess = maxRange;  }
+        }
+        if (Min_Range_Shininess_InputField_CR.text != "")
+        {
+            float minRange;
+            if (float.TryParse(Min_Range_Shininess_InputField_CR.text, out minRange))
+            { Min_Range_Shininess = minRange; }
+        }      
 
         Shininess_Slider_CR.maxValue = Max_Range_Shininess;
         Shininess_Slider_CR.minValue = Min_Range_Shininess;

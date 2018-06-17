@@ -34,6 +34,8 @@ public class SkyBoxPropertiesSetter : MonoBehaviour {
     public RawImage Ground_Color_Dummy_Image_CR;
     public RawImage Scene_Light_Dummy_Image_CR;
 
+    public Image Light_Color_Canvas_Image_CR;
+
 
 	#endregion
 
@@ -43,6 +45,7 @@ public class SkyBoxPropertiesSetter : MonoBehaviour {
 	{
 		Exposure_Slider_CR.value = 1.16f;
 		Atmosphere_Thickness_Slider_CR.value = 0.6f;
+        SetInitialSceneProperties();
 	}
 	
 	// Update is called once per frame
@@ -69,6 +72,7 @@ public class SkyBoxPropertiesSetter : MonoBehaviour {
 	public void UpdateLightVariables()
 	{
         Scene_Light_CR.color = _LightColor;
+        Light_Color_Canvas_Image_CR.color = _LightColor;
         Scene_Light_Dummy_Image_CR.color = _LightColor;
     }
 
@@ -79,6 +83,11 @@ public class SkyBoxPropertiesSetter : MonoBehaviour {
         _SkyTint = Color.black;
         _GroundColor = Color.black;
         _LightColor = Color.white;
+
+        Shader.SetGlobalColor("_SkyTint", _SkyTint);
+        Shader.SetGlobalFloat("_AtmosphereThickness", _AtmosphereThickness);
+        Shader.SetGlobalFloat("_Exposure", _Exposure);
+        Shader.SetGlobalColor("_GroundColor", _GroundColor);
 
     }
 
