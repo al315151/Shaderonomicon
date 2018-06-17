@@ -248,6 +248,9 @@ public class ShaderEdition : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
+        print("Current lighting model: " + _Current_Lighting_Model);
+        print("Is pixel lighting applied? " + _Is_Pixel_Lighting);
+
         UpdateManagerVariablesShader();
         UpdateShaderNameInputField();
         UpdateScaleOffsetBaseTexture();
@@ -807,12 +810,14 @@ public class ShaderEdition : MonoBehaviour {
                 {
                     _CustomNormalMap = BaseNormalMap_Sprite.texture;
                     Dummy_Normal_Map_Image_CR.texture = _CustomNormalMap;
+                    IsNormalMapApplied = false;
                     break;
                 }
             case "BaseTexture":
                 {
                     _CustomTexture = BaseTexture_Sprite.texture;
                     Dummy_Texture_Image_CR.texture = _CustomTexture;
+                    IsNewTextureApplied = false;
                     break;
                 }
             default:
@@ -978,6 +983,9 @@ public class ShaderEdition : MonoBehaviour {
         if (IsNormalMapApplied)
         {   Shader.SetGlobalFloat("_IsNormalMapApplied", 1.0f);     }
         else { Shader.SetGlobalFloat("_IsNormalMapApplied", 0.0f);       }
+
+        print("Normal map applied variable: " + IsNormalMapApplied);
+        print("Texture applied variable: " + IsNewTextureApplied);
     }
 
 
