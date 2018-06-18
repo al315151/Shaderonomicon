@@ -1,5 +1,6 @@
 #include "UnityCG.cginc"
 #include "UnityLightingCommon.cginc"
+//#include "SpellBookReWork.cginc"
 
 		//variables
 		//=================================
@@ -18,6 +19,7 @@
 		uniform float _NormalOffsetY;
 
 		uniform half _NormalMapScale = 1.0f;
+		uniform float3 vert_NormalMap_NormalDir = float3 (0, 0, 0);
 
 		uniform float _CustomShininess;		
 		uniform float4 _PhongAmbientColor;
@@ -145,8 +147,8 @@
 		{
 			float2 texCoordsScale = float2 (_TextureTileX, _TextureTileY);
 			texCoordsScale *= input.tex.xy;
-
-			float4 textureColor  = tex2D(_CustomTexture, texCoordsScale + float2(_OffsetTileX, _OffsetTileY));
+			texCoordsScale += float2(_OffsetTileX, _OffsetTileY);
+			float4 textureColor  = tex2Dlod(_CustomTexture, float4(texCoordsScale.xy, 0,0));
 			textureColor = textureColor * _TextureTint;
 			return textureColor;
 		}
@@ -188,7 +190,8 @@
 
 			float2 normalCoordsScaled = float2 (_NormalTileX, _NormalTileY);
 			normalCoordsScaled *= input.texcoord.xy;
-			float4 encodedNormal = tex2Dlod(_NormalMap, float4(normalCoordsScaled, float2(_NormalOffsetX, _NormalOffsetY)));
+			normalCoordsScaled += float2(_NormalOffsetX, _NormalOffsetY);
+			float4 encodedNormal = tex2Dlod(_NormalMap, float4(normalCoordsScaled.xy,0, 0));
 
 			float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0);
 			localCoords.z = 1.0 - 0.5 * dot (localCoords, localCoords);
@@ -238,7 +241,7 @@
 		{
 			float4x4 modelMatrix = unity_ObjectToWorld;
 			float3x3 modelMatrixInverse = unity_WorldToObject;
-			 normalDirection += normalize(mul(input.normal, modelMatrixInverse));
+			// normalDirection += normalize(mul(input.normal, modelMatrixInverse));
 			float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(modelMatrix, input.vertex).xyz);
 			
 			float3 lightDirection;
@@ -363,7 +366,8 @@
 			float3 posWorld = mul(modelMatrix, input.vertex);
 			float3 normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz);
 
-			float3 normalDirection = normalize(normalDir);
+			//float3 normalDirection = normalize(normalDir);
+			float3 normalDirection = normalize(mul(input.normal, modelMatrixInverse));
 			float3 viewDirection = normalize(_WorldSpaceCameraPos - posWorld.xyz);
 
 			float3 lightDirection;
@@ -433,7 +437,8 @@
 			float3 posWorld = mul(modelMatrix, input.vertex);
 			float3 normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz);
 
-			float3 normalDirection = normalize(normalDir);
+			//float3 normalDirection = normalize(normalDir);
+			float3 normalDirection = normalize(mul(input.normal, modelMatrixInverse));
 			float3 viewDirection = normalize(_WorldSpaceCameraPos - posWorld.xyz);
 		
 			float3 lightDirection;
@@ -764,8 +769,8 @@
 		float4 frag_PerVertexLighting(vertexOutput_PerVertexLighting input) : COLOR
 		{	
 			float4 TextureColor = Texture_Handling_Vertex(input);
-		
-			return float4(input.col.xyz * TextureColor.xyz, 1.0f);		
+			TextureColor *= input.col;
+			return float4(TextureColor.xyz, 1.0f);
 		}
 
 		float4 frag_PerVertexLighting_NoTextureMap (vertexOutput_NoTextureNoNormalMap_PerVertexLighting input) : COLOR
@@ -836,7 +841,7 @@
 		{
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input);
 
-			return float4(Phong_Lighting_Pixel(input, normalDirection), 1.0f);
+			return float4(Phong_Lighting_Pixel(input, normalDirection) * _TextureTint.xyz, 1.0f);
 		}
 
 		float4 frag_PerPixelLighting_Phong_NoTextureNoNormalMap(vertexOutput_NoTextureNoNormalMap_PerPixelLighting input) : COLOR
@@ -848,7 +853,7 @@
 			dummyOutput.normal = input.normal;
 			dummyOutput.pos = input.pos;
 
-			return float4 (Phong_Lighting_Pixel_NoNormalMap(dummyOutput), 1.0f);
+			return float4 (Phong_Lighting_Pixel_NoNormalMap(dummyOutput)* _TextureTint.xyz, 1.0f);
 		}
 
 		float4 frag_PerPixelLighting_Lambert(vertexOutput_PerPixelLighting input) : COLOR
@@ -867,7 +872,7 @@
 		{
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input);
 
-			return float4(Lambert_Lighting_Pixel(input, normalDirection).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0);		
+			return float4(Lambert_Lighting_Pixel(input, normalDirection).xyz * (_LambertTintColor * _LambertTintForce).xyz * _TextureTint.xyz, 1.0);
 		}
 
 		float4 frag_PerPixelLighting_Lambert_NoTextureNoNormalMap(vertexOutput_NoTextureNoNormalMap_PerPixelLighting input) : COLOR
@@ -879,7 +884,7 @@
 			dummyOutput.normal = input.normal;
 			dummyOutput.pos = input.pos;
 
-			return float4 (Lambert_Lighting_Pixel_NoNormalMap(dummyOutput).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0);
+			return float4 (Lambert_Lighting_Pixel_NoNormalMap(dummyOutput).xyz * (_LambertTintColor * _LambertTintForce).xyz * _TextureTint.xyz, 1.0);
 		}
 
 		float4 frag_PerPixelLighting_HalfLambert(vertexOutput_PerPixelLighting input) : COLOR
@@ -898,7 +903,7 @@
 		{
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input);
 
-			return float4(HalfLambert_Lighting_Pixel(input, normalDirection).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0);
+			return float4(HalfLambert_Lighting_Pixel(input, normalDirection).xyz * (_LambertTintColor * _LambertTintForce).xyz * _TextureTint.xyz, 1.0);
 		}
 
 		float4 frag_PerPixelLighting_HalfLambert_NoTextureMapNoNormalMap(vertexOutput_NoTextureNoNormalMap_PerPixelLighting input) : COLOR
@@ -910,7 +915,7 @@
 			dummyOutput.normal = input.normal;
 			dummyOutput.pos = input.pos;
 
-			return float4 (HalfLambert_Lighting_Pixel_NoNormalMap(dummyOutput).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0);		
+			return float4 (HalfLambert_Lighting_Pixel_NoNormalMap(dummyOutput).xyz * (_LambertTintColor * _LambertTintForce).xyz * _TextureTint.xyz, 1.0);
 		}
 
 		float4 frag_PerPixelLighting_NoLight(vertexOutput_PerPixelLighting input) : COLOR

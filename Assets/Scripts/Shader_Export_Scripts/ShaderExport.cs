@@ -174,6 +174,7 @@ public class ShaderExport : MonoBehaviour {
                             //print("Entramos en phong, Pixel, no normal map, no texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //Phong, Pixel, no texture, no normal map
                             {
+                                temporalSpellBook += NoTextureMap_Variables;
                                 temporalSpellBook += Phong_Variables;
                                 //temporalSpellBook += SpellBookFunctions.Phong_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoTextureNoNormalMap;
@@ -206,6 +207,7 @@ public class ShaderExport : MonoBehaviour {
                             //print("Entramos en lambert, Pixel, no normal map, no texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //Lambert, Pixel, no texture, no normal
                             {
+                                temporalSpellBook += NoTextureMap_Variables;
                                 temporalSpellBook += Lambert_Variables;
                                 //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoTextureNoNormalMap;
@@ -238,6 +240,7 @@ public class ShaderExport : MonoBehaviour {
                             //print("Entramos en HalfLambert, Pixel, no normal map, no texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //HalfLambert, Pixel, no texture, no normal map
                             {
+                                temporalSpellBook += NoTextureMap_Variables;
                                 temporalSpellBook += Lambert_Variables;
                                 //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
                                 temporalSpellBook += SpellBookFunctions.vertexInput_NoTextureNoNormalMap;
@@ -304,6 +307,7 @@ public class ShaderExport : MonoBehaviour {
                             //print("Entramos en Phong, Pixel, normal map, no texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //Phong, Pixel, no texture, normal map
                             {
+                                temporalSpellBook += NoTextureMap_Variables;
                                 temporalSpellBook += Phong_Variables;
                                 temporalSpellBook += Normal_Handling_Variables;
                                 //temporalSpellBook += SpellBookFunctions.Phong_Variables;
@@ -342,6 +346,7 @@ public class ShaderExport : MonoBehaviour {
                             //print("Entramos en Lambert, Pixel, normal map, no texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //Lambert, Pixel
                             {
+                                temporalSpellBook += NoTextureMap_Variables;
                                 temporalSpellBook += Lambert_Variables;
                                 temporalSpellBook += Normal_Handling_Variables;
                                 //temporalSpellBook += SpellBookFunctions.Lambert_Variables;
@@ -378,6 +383,7 @@ public class ShaderExport : MonoBehaviour {
                             //print("Entramos en Half Lambert, Pixel, normal map, no texture?");
                             if (ShaderEdition.currentInstance._Is_Pixel_Lighting == 1) //HalfLambert, Pixel
                             {
+                                temporalSpellBook += NoTextureMap_Variables;
                                 temporalSpellBook += Lambert_Variables;
                                 temporalSpellBook += Normal_Handling_Variables;
                                 //temporalSpellBook += SpellBookFunctions.Lambert_Variables;

@@ -38,7 +38,7 @@ Shader "Custom/NewShader"
 			
 			#include "SpellBook.cginc"	
 
-			#pragma fullforwardshadows
+			//#pragma fullforwardshadows
 			#pragma vertex vert_AllPosibilities
 			
 			#pragma fragment frag_AllPosibilities
