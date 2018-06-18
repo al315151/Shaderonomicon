@@ -1,11 +1,16 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class CameraMovement_V2 : MonoBehaviour {
+
+  
+    public Transform displayMesh_Transform_CR;
 
     //This code is from: https://www.youtube.com/watch?v=bVo0YLLO43s
 
     protected Transform _xForm_Camera;
     protected Transform _XForm_Parent;
+    protected Vector3 _XForm_displayMesh_Pos;
 
     protected Vector3 _LocalRotation;
     //Initial distance between camera and point of interest.
@@ -23,15 +28,16 @@ public class CameraMovement_V2 : MonoBehaviour {
         _xForm_Camera = transform;
         _XForm_Parent = transform.parent;
         CameraDisabled = true;
+        _XForm_displayMesh_Pos = displayMesh_Transform_CR.position;
 	}
 	
 	// Update is called once per frame
 	void LateUpdate ()
     {
-	    /*if (Input.GetKeyDown(KeyCode.LeftShift))
+
+        /*if (Input.GetKeyDown(KeyCode.LeftShift))
         {   CameraDisabled = !CameraDisabled;        }
         */
-
 
         if (!CameraDisabled)
         {
@@ -43,7 +49,7 @@ public class CameraMovement_V2 : MonoBehaviour {
                 _LocalRotation.y -= Input.GetAxis("Mouse Y") * MouseSensitivity;
 
 
-                _LocalRotation.y = Mathf.Clamp(_LocalRotation.y, 0, 90f);
+               // _LocalRotation.y = Mathf.Clamp(_LocalRotation.y, 0, 90f);
             }
 
             //Scrolling Input
@@ -57,7 +63,6 @@ public class CameraMovement_V2 : MonoBehaviour {
 
                 _CameraDistance = Mathf.Clamp(_CameraDistance, 1.5f, 100f);
             }
-
 
             //camera rig transformation
 
@@ -73,9 +78,13 @@ public class CameraMovement_V2 : MonoBehaviour {
 
         }
 
+        //else if (Input.GetAxis("Mouse ScrollWheel") != 0f)
+        //{ EnableMovement(); }
 
+        displayMesh_Transform_CR.rotation = Quaternion.Euler(90f, -90f, 90f);
+        //displayMesh_Transform_CR.position = _XForm_displayMesh_Pos;
 
-	}
+    }
 
     public void DisableMovement()
     {
