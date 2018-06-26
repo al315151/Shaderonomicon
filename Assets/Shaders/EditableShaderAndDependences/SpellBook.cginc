@@ -125,8 +125,6 @@
 			float4 pos : SV_POSITION;
 			float4 col : COLOR;
 		};
-		
-		
 
 		struct vertexOutput_AllVariables
 		{
@@ -147,8 +145,8 @@
 		{
 			float2 texCoordsScale = float2 (_TextureTileX, _TextureTileY);
 			texCoordsScale *= input.tex.xy;
-			texCoordsScale += float2(_OffsetTileX, _OffsetTileY);
-			float4 textureColor  = tex2Dlod(_CustomTexture, float4(texCoordsScale.xy, 0,0));
+
+			float4 textureColor = tex2D(_CustomTexture, texCoordsScale + float2(_OffsetTileX, _OffsetTileY));
 			textureColor = textureColor * _TextureTint;
 			return textureColor;
 		}
@@ -237,7 +235,7 @@
 
 		//========================================================================================================
 
-		float4 Phong_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection)
+		float3 Phong_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection)
 		{
 			float4x4 modelMatrix = unity_ObjectToWorld;
 			float3x3 modelMatrixInverse = unity_WorldToObject;
@@ -268,19 +266,21 @@
 			float3 specularReflection;
 
 			if (dot(normalDirection, lightDirection) < 0.0)
-			{	specularReflection = float3 (0.0, 0.0, 0.0);	}
+			{	specularReflection = float3 (0.00001, 0.00001, 0.00001);	}
 			else
-			{		specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * 
-										 pow(max(0.0, dot(reflect(-lightDirection, normalDirection),
-														  viewDirection)), _CustomShininess);
+			{
+					specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb *
+											max(0.0, dot(reflect(-lightDirection, normalDirection),
+																				viewDirection));					
+					specularReflection = specularReflection * _CustomShininess;
 			}
 
-			  return float4(ambientLighting * _PhongAmbientForce + diffuseReflection * _PhongDiffuseForce 
-						  + specularReflection * _PhongSpecularForce, 1.0f);
+			  return (ambientLighting * _PhongAmbientForce) + (diffuseReflection * _PhongDiffuseForce) 
+						  + (specularReflection * _PhongSpecularForce);
 		}
 
 
-		float4 Phong_Lighting_Vertex_NoNormalMap(vertexInput_NoTextureNoNormalMap input)
+		float3 Phong_Lighting_Vertex_NoNormalMap(vertexInput_NoTextureNoNormalMap input)
 		{
 			float4x4 modelMatrix = unity_ObjectToWorld;
 			float3x3 modelMatrixInverse = unity_WorldToObject;
@@ -311,15 +311,17 @@
 			float3 specularReflection;
 
 			if (dot(normalDirection, lightDirection) < 0.0)
-			{	specularReflection = float3 (0.0, 0.0, 0.0);	}
+			{	specularReflection = float3 (0.00001, 0.00001, 0.00001);	}
 			else
-			{		specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * 
-										 pow(max(0.0, dot(reflect(-lightDirection, normalDirection),
-														  viewDirection)), _CustomShininess);
+			{
+				specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb *
+									max(0.0, dot(reflect(-lightDirection, normalDirection),
+									viewDirection));
+				specularReflection = specularReflection * _CustomShininess;
 			}
 
-			  return float4(ambientLighting * _PhongAmbientForce + diffuseReflection * _PhongDiffuseForce 
-						  + specularReflection * _PhongSpecularForce, 1.0f);
+			  return (ambientLighting * _PhongAmbientForce) + (diffuseReflection * _PhongDiffuseForce) 
+						  + (specularReflection * _PhongSpecularForce);
 		}
 		
 
@@ -496,7 +498,7 @@
 				
 			float3 specularReflection;
 			if (dot(normalDirection, lightDirection) < 0.0)
-			{	specularReflection = float3(0.0, 0.0, 0.0);		}
+			{	specularReflection = float3(0.00001, 0.00001, 0.00001);		}
 			else 
 			{
 				specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * 
@@ -686,7 +688,7 @@
 			
 			float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input);
 
-			output.col = Phong_Lighting_Vertex(input, normalDirection);
+			output.col = float4(Phong_Lighting_Vertex(input, normalDirection), 1.0f);
 			output.pos = UnityObjectToClipPos(input.vertex);
 			output.tex = input.texcoord;
 			return output;
@@ -696,7 +698,7 @@
 		{
 			vertexOutput_NoTextureNoNormalMap_PerVertexLighting output;
 
-			output.col = Phong_Lighting_Vertex_NoNormalMap(input);
+			output.col = float4(Phong_Lighting_Vertex_NoNormalMap(input), 1.0f);
 			output.pos = UnityObjectToClipPos(input.vertex);
 			return output;
 		}
@@ -944,8 +946,7 @@
 			vertexOutput_AllVariables output;
 		
 			if (_IsPixelLighting == 1.0f) // Pixel
-			{
-				
+			{				
 
 				if (_IsNormalMapApplied == 0.0f) // No normal map
 				{
@@ -989,7 +990,7 @@
 					output.normal = outputDummy.normal;
 				
 					//If i do not put this one, unity cries, so xd
-					output.col = float4(0.0f, 0.0f, 0.0f, 0.0f);
+					output.col = float4(1.0f, 1.0f, 1.0f, 1.0f);
 				}
 
 			}

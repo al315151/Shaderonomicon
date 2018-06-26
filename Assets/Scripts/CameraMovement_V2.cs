@@ -72,14 +72,13 @@ public class CameraMovement_V2 : MonoBehaviour {
 
             if (_xForm_Camera.localPosition.z != _CameraDistance * -1f)
             {
-                _xForm_Camera.localPosition = new Vector3(0f, 0f, Mathf.Lerp(_xForm_Camera.localPosition.z, _CameraDistance * -1f, Time.deltaTime * ScrollDampening));
+                Vector3 newPosition = new Vector3(0f, 0f, Mathf.Lerp(_xForm_Camera.localPosition.z, _CameraDistance * -1f, Time.deltaTime * ScrollDampening));
+                _xForm_Camera.localPosition = newPosition;
+                _XForm_displayMesh_Pos = -1 * newPosition;
             }
 
 
         }
-
-        //else if (Input.GetAxis("Mouse ScrollWheel") != 0f)
-        //{ EnableMovement(); }
 
         displayMesh_Transform_CR.rotation = Quaternion.Euler(90f, -90f, 90f);
         //displayMesh_Transform_CR.position = _XForm_displayMesh_Pos;
