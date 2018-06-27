@@ -1105,21 +1105,13 @@
 
 			if (_IsPixelLighting == 0.0f) //Vertex Lighting
 			{
-				if(_IsTextureApplied == 0.0f)
-				{
-					vertexOutput_NoTextureNoNormalMap_PerVertexLighting inputDummy;
-					inputDummy.pos = input.pos;
-					inputDummy.col = input.col;
-					finalColor = frag_PerVertexLighting_NoTextureMap(inputDummy);
-				}
-				else
-				{
+				
 					vertexOutput_PerVertexLighting inputDummy;
 					inputDummy.tex = input.tex;
 					inputDummy.col = input.col;
 					inputDummy.pos = input.pos;
 					finalColor = frag_PerVertexLighting(inputDummy);
-				}			
+
 				return finalColor;
 			}
 			else // Pixel Lighting

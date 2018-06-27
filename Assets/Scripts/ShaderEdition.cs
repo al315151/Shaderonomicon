@@ -164,6 +164,16 @@ public class ShaderEdition : MonoBehaviour {
     public Button Normal_Map_Menu_Button_CR;
     public Button Open_Current_Lighting_Menu_Button_CR;
 
+    public Material ActiveButton_Material;
+   
+    public Button ExitMenu_Button_CR;
+    public Button OpenTextureMenu_Button_CR;
+    public Button OpenNormalMapMenu_Button_CR;
+    public Button OpenLightingModelMenu_Button_CR;
+
+    Material previousSelected_Button_Material;
+    string previousButton_String = "";
+
     [HideInInspector]
     public string ShaderName;
 
@@ -350,6 +360,8 @@ public class ShaderEdition : MonoBehaviour {
         if (CG.name == ExitMenu_CanvasGroup_CR.name && ExitMenu_CanvasGroup_CR.gameObject.activeInHierarchy)
         { CG.gameObject.SetActive(false); }
         else { CG.gameObject.SetActive(true); }
+
+        UpdateButtonMaterials(CG);
     }
 
     //Opening a secondary menu means closing the other ones...
@@ -369,7 +381,7 @@ public class ShaderEdition : MonoBehaviour {
         else
         { Debug.Log("You should not be here at all m8"); }
         CG.gameObject.SetActive(true);
-
+        UpdateButtonMaterials(CG);
     }
 
     public void CloseCurrentSecMenu()
@@ -426,6 +438,156 @@ public class ShaderEdition : MonoBehaviour {
                     break;
                 }
         }
+        UpdateButtonMaterialsLightingMenu();
+    }
+
+    public void UpdateButtonMaterials(CanvasGroup CG)
+    {
+        if (CG.gameObject.activeInHierarchy) // queremos sustituir el material existente por otro, pero...
+        {
+            if (previousButton_String != "") //no habiamos seleccionado otro boton antes: perfecto.
+            {
+                RestorePreviousMaterialByControlString();
+                previousButton_String = "";
+            }
+            if (CG.name == ExitMenu_CanvasGroup_CR.name)
+            {
+                previousSelected_Button_Material = ExitMenu_Button_CR.gameObject.GetComponent<Image>().material;
+                previousButton_String = "Exit Menu";
+                ExitMenu_Button_CR.gameObject.GetComponent<Image>().material = ActiveButton_Material;
+            }
+            else if (CG.name == BaseTextureParameters_CanvasGroup_CR.name)
+            {
+                previousSelected_Button_Material = Base_Texture_Menu_Button_CR.gameObject.GetComponent<Image>().material;
+                previousButton_String = "Base Texture";
+                Base_Texture_Menu_Button_CR.gameObject.GetComponent<Image>().material = ActiveButton_Material;
+            }
+            else if (CG.name == NormalMapParameters_CanvasGroup_CR.name)
+            {
+                previousSelected_Button_Material = Normal_Map_Menu_Button_CR.gameObject.GetComponent<Image>().material;
+                previousButton_String = "Normal Map";
+                Normal_Map_Menu_Button_CR.gameObject.GetComponent<Image>().material = ActiveButton_Material;
+            }
+        }
+        else // queremos reponer el anterior material.
+        {
+            RestorePreviousMaterialByControlString();
+            previousButton_String = "";
+        }       
+    }
+
+    void RestorePreviousMaterialByControlString()
+    {
+        if (previousButton_String == "Exit Menu")
+        { ExitMenu_Button_CR.gameObject.GetComponent<Image>().material = previousSelected_Button_Material; }
+
+        else if (previousButton_String == "Lighting Model")
+        { OpenLightingModelMenu_Button_CR.gameObject.GetComponent<Image>().material = previousSelected_Button_Material; }
+
+        else if (previousButton_String == "Base Texture")
+        { Base_Texture_Menu_Button_CR.GetComponent<Image>().material = previousSelected_Button_Material; }
+
+        else if (previousButton_String == "Normal Map")
+        { Normal_Map_Menu_Button_CR.gameObject.GetComponent<Image>().material = previousSelected_Button_Material; }
+
+        else if (previousButton_String == "Sphere")
+        {
+            Sphere_Mesh_Button_CR.gameObject.GetComponent<Image>().material = previousSelected_Button_Material;
+            Sphere_Mesh_Button_CR.GetComponentInChildren<Text>().color = Color.black;
+        }
+
+        else if (previousButton_String == "LowPolySphere")
+        {
+            LowPoly_Sphere_Mesh_Button_CR.gameObject.GetComponent<Image>().material = previousSelected_Button_Material;
+            LowPoly_Sphere_Mesh_Button_CR.GetComponentInChildren<Text>().color = Color.black;
+        }
+
+        else if (previousButton_String == "Cube")
+        {
+            Cube_Mesh_Button_CR.gameObject.GetComponent<Image>().material = previousSelected_Button_Material;
+            Cube_Mesh_Button_CR.GetComponentInChildren<Text>().color = Color.black;
+        }
+
+        else if (previousButton_String == "Torus")
+        {
+            Torus_Mesh_Button_CR.gameObject.GetComponent<Image>().material = previousSelected_Button_Material;
+            Torus_Mesh_Button_CR.GetComponentInChildren<Text>().color = Color.black;
+        }
+
+        else if (previousButton_String == "Cylinder")
+        {
+            Cylinder_Mesh_Button_CR.gameObject.GetComponent<Image>().material = previousSelected_Button_Material;
+            Cylinder_Mesh_Button_CR.GetComponentInChildren<Text>().color = Color.black;
+        }
+
+        else
+        { print("No deberias estar aqui, revisa las strings"); }
+    }
+
+    public void UpdateButtonMaterialsMeshDisplay(string meshID)
+    {
+        if (previousButton_String != "") //no habiamos seleccionado otro boton antes: perfecto.
+        {
+            RestorePreviousMaterialByControlString();
+            previousButton_String = "";
+        }
+        switch(meshID)
+        {
+            case "Sphere":
+                {
+                    previousSelected_Button_Material = Sphere_Mesh_Button_CR.gameObject.GetComponent<Image>().material;
+                    previousButton_String = "Sphere";
+                    Sphere_Mesh_Button_CR.gameObject.GetComponent<Image>().material = ActiveButton_Material;
+                    Sphere_Mesh_Button_CR.GetComponentInChildren<Text>().color = Color.white;
+                    break;
+                }
+            case "Cube":
+                {
+                    previousSelected_Button_Material = Cube_Mesh_Button_CR.gameObject.GetComponent<Image>().material;
+                    previousButton_String = "Cube";
+                    Cube_Mesh_Button_CR.gameObject.GetComponent<Image>().material = ActiveButton_Material;
+                    Cube_Mesh_Button_CR.GetComponentInChildren<Text>().color = Color.white;
+                    break;
+                }
+            case "Torus":
+                {
+                    previousSelected_Button_Material = Torus_Mesh_Button_CR.gameObject.GetComponent<Image>().material;
+                    previousButton_String = "Torus";
+                    Torus_Mesh_Button_CR.gameObject.GetComponent<Image>().material = ActiveButton_Material;
+                    Torus_Mesh_Button_CR.GetComponentInChildren<Text>().color = Color.white;
+                    break;
+                }
+            case "Cylinder":
+                {
+                    previousSelected_Button_Material = Cylinder_Mesh_Button_CR.gameObject.GetComponent<Image>().material;
+                    previousButton_String = "Cylinder";
+                    Cylinder_Mesh_Button_CR.gameObject.GetComponent<Image>().material = ActiveButton_Material;
+                    Cylinder_Mesh_Button_CR.GetComponentInChildren<Text>().color = Color.white;
+                    break;
+                }
+            case "LowPolySphere":
+                {
+                    previousSelected_Button_Material = LowPoly_Sphere_Mesh_Button_CR.gameObject.GetComponent<Image>().material;
+                    previousButton_String = "LowPolySphere";
+                    LowPoly_Sphere_Mesh_Button_CR.gameObject.GetComponent<Image>().material = ActiveButton_Material;
+                    LowPoly_Sphere_Mesh_Button_CR.GetComponentInChildren<Text>().color = Color.white;
+                    break;
+                }
+        }
+    }
+
+    public void UpdateButtonMaterialsLightingMenu()
+    {
+        if (previousButton_String != "") //no habiamos seleccionado otro boton antes: perfecto.
+        {
+            RestorePreviousMaterialByControlString();
+            previousButton_String = "";
+        }
+
+        previousSelected_Button_Material = OpenLightingModelMenu_Button_CR.gameObject.GetComponent<Image>().material;
+        previousButton_String = "Lighting Model";
+        OpenLightingModelMenu_Button_CR.gameObject.GetComponent<Image>().material = ActiveButton_Material;
+
     }
 
     #endregion
@@ -562,7 +724,7 @@ public class ShaderEdition : MonoBehaviour {
                 }
         }
 
-
+        UpdateButtonMaterialsMeshDisplay(meshID);
     }
 
     #endregion

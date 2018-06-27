@@ -2499,7 +2499,7 @@ GameObject:
   - component: {fileID: 114578256747840080}
   - component: {fileID: 114061299421787210}
   m_Layer: 5
-  m_Name: Quit_Shaderonomicon
+  m_Name: Quit_Shaderonomicon_Button_CR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11969,6 +11969,12 @@ MonoBehaviour:
   Base_Texture_Menu_Button_CR: {fileID: 114998317708025772}
   Normal_Map_Menu_Button_CR: {fileID: 114293846094042762}
   Open_Current_Lighting_Menu_Button_CR: {fileID: 114815922243009704}
+  ActiveButton_Material: {fileID: 2100000, guid: 365e2373ecacdc242a321676a9ac6169,
+    type: 2}
+  ExitMenu_Button_CR: {fileID: 114061299421787210}
+  OpenTextureMenu_Button_CR: {fileID: 114998317708025772}
+  OpenNormalMapMenu_Button_CR: {fileID: 114293846094042762}
+  OpenLightingModelMenu_Button_CR: {fileID: 114815922243009704}
   ShaderName: 
   Transparency_Slider_CR: {fileID: 114262408157608050}
   _CustomAlpha: 0
