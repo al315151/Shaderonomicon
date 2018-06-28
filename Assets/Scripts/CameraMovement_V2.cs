@@ -10,7 +10,7 @@ public class CameraMovement_V2 : MonoBehaviour {
 
     protected Transform _xForm_Camera;
     protected Transform _XForm_Parent;
-    protected Vector3 _XForm_displayMesh_Pos;
+    protected Transform _XForm_displayMesh_Transform;
 
     protected Vector3 _LocalRotation;
     //Initial distance between camera and point of interest.
@@ -23,16 +23,32 @@ public class CameraMovement_V2 : MonoBehaviour {
 
     public bool CameraDisabled = true;
 
+    public RectTransform centerImage_GameObject_CR;
+
+    Vector2 dummyPos;
+    Camera cameraComponent;
+
 	// Use this for initialization
 	void Start () {
         _xForm_Camera = transform;
         _XForm_Parent = transform.parent;
         CameraDisabled = true;
-        _XForm_displayMesh_Pos = displayMesh_Transform_CR.position;
+        _XForm_displayMesh_Transform = displayMesh_Transform_CR;
+        cameraComponent = GetComponent<Camera>();
 	}
-	
-	// Update is called once per frame
-	void LateUpdate ()
+
+    private void FixedUpdate()
+    {
+       //dummyPos = RectTransformUtility.WorldToScreenPoint(cameraComponent, displayMesh_Transform_CR.position);
+        print(dummyPos);
+
+
+
+    }
+
+
+    // Update is called once per frame
+    void LateUpdate ()
     {
 
         /*if (Input.GetKeyDown(KeyCode.LeftShift))
@@ -74,14 +90,13 @@ public class CameraMovement_V2 : MonoBehaviour {
             {
                 Vector3 newPosition = new Vector3(0f, 0f, Mathf.Lerp(_xForm_Camera.localPosition.z, _CameraDistance * -1f, Time.deltaTime * ScrollDampening));
                 _xForm_Camera.localPosition = newPosition;
-                _XForm_displayMesh_Pos = -1 * newPosition;
             }
 
 
         }
 
         displayMesh_Transform_CR.rotation = Quaternion.Euler(90f, -90f, 90f);
-        //displayMesh_Transform_CR.position = _XForm_displayMesh_Pos;
+        //displayMesh_Transform_CR.position = _XForm_displayMesh_Transform;
 
     }
 

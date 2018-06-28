@@ -768,7 +768,6 @@ public class ShaderEdition : MonoBehaviour {
         }
 
         Shader.SetGlobalInt("_LightingModel", _Current_Lighting_Model);
-
     }
     
     #endregion
