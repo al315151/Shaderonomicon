@@ -14,98 +14,98 @@ public class SpellBookFunctions : MonoBehaviour
 
 
     public static string Texture_Handling_Variables =
-        " uniform sampler2D _CustomTexture; " +
-        " uniform fixed4 _TextureTint; " +
-        " uniform float _TextureTileX; " +
-        " uniform float _TextureTileY; " +
-        " uniform float _OffsetTileX; " +
+        " uniform sampler2D _CustomTexture; " + '\n' +
+        " uniform fixed4 _TextureTint; " + '\n' +
+        " uniform float _TextureTileX; " + '\n' +
+        " uniform float _TextureTileY; " + '\n' +
+        " uniform float _OffsetTileX; " + '\n' +
         " uniform float _OffsetTileY; " + '\n'
         ;
 
     public static string Normal_Handling_Variables =
-        " uniform sampler2D _NormalMap; " +
-        " uniform float _NormalTileX; " +
-        " uniform float _NormalTileY; " +
-        " uniform float _NormalOffsetX; " +
-        " uniform float _NormalOffsetY; " +
+        " uniform sampler2D _NormalMap; " + '\n' +
+        " uniform float _NormalTileX; " + '\n' +
+        " uniform float _NormalTileY; " + '\n' +
+        " uniform float _NormalOffsetX; " + '\n' +
+        " uniform float _NormalOffsetY; " + '\n' +
         " uniform half _NormalMapScale = 1.0f; " + '\n'
         ;
 
     public static string Phong_Variables =
 
-        " uniform float _CustomShininess; " +
-        " uniform float4 _PhongAmbientColor; " +
-        " uniform float _PhongAmbientForce; " +
-        " uniform float4 _PhongSpecularColor; " +
-        " uniform float _PhongSpecularForce; " +
-        " uniform float4 _PhongDiffuseColor; " +
+        " uniform float _CustomShininess; " + '\n' +
+        " uniform float4 _PhongAmbientColor; " + '\n' +
+        " uniform float _PhongAmbientForce; " + '\n' +
+        " uniform float4 _PhongSpecularColor; " + '\n' +
+        " uniform float _PhongSpecularForce; " + '\n' +
+        " uniform float4 _PhongDiffuseColor; " + '\n' +
         " uniform float _PhongDiffuseForce; " + '\n'
         ;
 
     public static string Lambert_Variables =
 
-        " uniform float _LambertTintForce; " +
+        " uniform float _LambertTintForce; " + '\n' +
         " uniform float4 _LambertTintColor; " + '\n';
 
     public static string NoTextureMap_Variables =
         " uniform fixed4 _TextureTint; " + '\n';
 
-    //============FUNCTIONS ===================================================
+    //============STRUCTS ===================================================
 
     public static string vertexInput_AllVariables =
         "struct vertexInput_AllVariables " +
         " { " +
-        " float4 vertex : POSITION; " +
-        " float3 normal : NORMAL; " +
-        " float2 texcoord : TEXCOORD0; " +
+        " float4 vertex : POSITION; " + '\n' +
+        " float3 normal : NORMAL; " + '\n' +
+        " float2 texcoord : TEXCOORD0; " + '\n' +
         " float4 tangent : TANGENT; " + " };" + '\n'
         ;
 
     public static string vertexInput_NoTextureNoNormalMap =
         " struct vertexInput_NoTextureNoNormalMap " +
         " { " +
-            " float4 vertex : POSITION; " +
-            " float3 normal : NORMAL; " +
+            " float4 vertex : POSITION; " + '\n' +
+            " float3 normal : NORMAL; " + '\n' +
         " }; " + '\n';
 
     public static string vertexInput_NoNormalMap =
-        " struct vertexInput_NoNormalMap " +
+        " struct vertexInput_NoNormalMap " + '\n' +
         " { " +
-            " float4 vertex : POSITION; " +
-            " float3 normal : NORMAL; " +
-            " float2 texcoord : TEXCOORD0; " +
+            " float4 vertex : POSITION; " + '\n' +
+            " float3 normal : NORMAL; " + '\n' +
+            " float2 texcoord : TEXCOORD0; " + '\n' +
         " }; " + '\n';
 
     public static string vertexInput_NoLight =
-        " struct vertexInput_NoLight " +
+        " struct vertexInput_NoLight " + '\n' +
         " { " +
-            " float4 vertex : POSITION; " +
-            " float3 normal : NORMAL; " +
-            " float2 texcoord : TEXCOORD0; " +
-            " float4 tangent : TANGENT; " +
+            " float4 vertex : POSITION; " + '\n' +
+            " float3 normal : NORMAL; " + '\n' +
+            " float2 texcoord : TEXCOORD0; " + '\n' +
+            " float4 tangent : TANGENT; " + '\n' +
         " }; " + '\n';
 
     public static string vertexInput_NoLight_NoTextureNoNormalMap =
-       "  struct vertexInput_NoLight_NoTextureNoNormalMap " +
+       "  struct vertexInput_NoLight_NoTextureNoNormalMap " + '\n' +
         " { " +
-            " float4 vertex : POSITION; " +
+            " float4 vertex : POSITION; " + '\n' +
         " }; " + '\n';
 
     public static string vertexOutput_NoTextureNoNormalMap_PerVertexLighting =
-        " struct vertexOutput_NoTextureNoNormalMap_PerVertexLighting " +
+        " struct vertexOutput_NoTextureNoNormalMap_PerVertexLighting " + '\n' +
         " { " +
-            " float4 pos : SV_POSITION; " +
-            " float4 col : COLOR; " +
+            " float4 pos : SV_POSITION; " + '\n' +
+            " float4 col : COLOR; " + '\n' +
         " }; " + '\n';
 
     public static string vertexOutput_NoNormalMap_PerPixelLighting =
-        " struct vertexOutput_NoNormalMap_PerPixelLighting " +
+        " struct vertexOutput_NoNormalMap_PerPixelLighting " + '\n' +
         " { " +
-            " float4 pos : SV_POSITION; " +
-            " float3 posWorld : TEXCOORD0; " +
-            " float3 normalDir : TEXCOORD1; " +
-            " float3 normal : NORMAL; " +
-            " float2 tex : TEXCOORD2; " +
+            " float4 pos : SV_POSITION; " + '\n' +
+            " float3 posWorld : TEXCOORD0; " + '\n' +
+            " float3 normalDir : TEXCOORD1; " + '\n' +
+            " float3 normal : NORMAL; " + '\n' +
+            " float2 tex : TEXCOORD2; " + '\n' +
         " }; " + '\n';
 
     public static string vertexOutput_NoTextureNoNormalMap_PerPixelLighting =
@@ -118,10 +118,10 @@ public class SpellBookFunctions : MonoBehaviour
         " }; " + '\n';
 
     public static string vertexOutput_NoLight_NoTextureNoNormalMap =
-        " struct vertexOutput_NoLight_NoTextureNoNormalMap " +
+        " struct vertexOutput_NoLight_NoTextureNoNormalMap " + '\n' +
         " { " +
-            " float4 pos : SV_POSITION; " +
-            " float4 col : COLOR; " +
+            " float4 pos : SV_POSITION; " + '\n' +
+            " float4 col : COLOR; " + '\n' +
         " }; " + '\n';
 
     public static string vertexOutput_PerVertexLighting =
@@ -133,85 +133,92 @@ public class SpellBookFunctions : MonoBehaviour
         ;
 
     public static string vertexOutput_PerPixelLighting =
-        " struct vertexOutput_PerPixelLighting " +
+        " struct vertexOutput_PerPixelLighting " + '\n' +
         " { " +
-        " float4 pos : SV_POSITION; " +
-        " float3 posWorld : TEXCOORD0; " +
-        " float3 normalDir : TEXCOORD1; " +
-        " float2 tex : TEXCOORD2; " +
-        " float4 tangent : TANGENT; " +
+        " float4 pos : SV_POSITION; " + '\n' +
+        " float3 posWorld : TEXCOORD0; " + '\n' +
+        " float3 normalDir : TEXCOORD1; " + '\n' +
+        " float2 tex : TEXCOORD2; " + '\n' +
+        " float4 tangent : TANGENT; " + '\n' +
         " float3 normal : NORMAL; " + "};" + '\n'
         ;
 
+    //===============================================================================================
+    //===============================================================================================
+
     public static string Texture_Handling_Pixel =
-        " float4 Texture_Handling_Pixel(vertexOutput_PerPixelLighting input) " +
+        " float4 Texture_Handling_Pixel(vertexOutput_PerPixelLighting input) " + '\n' +
         " { " +
-        " float2 texCoordsScale = float2 (_TextureTileX, _TextureTileY); " +
-        " texCoordsScale *= input.tex.xy; " +
-        " float4 textureColor = tex2D(_CustomTexture, texCoordsScale + float2(_OffsetTileX, _OffsetTileY)); " +
-        " textureColor = textureColor * _TextureTint; " +
+        " float2 texCoordsScale = float2 (_TextureTileX, _TextureTileY); " + '\n' +
+        " texCoordsScale *= input.tex.xy; " + '\n' +
+        " texCoordsScale += float2(_OffsetTileX, _OffsetTileY); " + '\n' +
+        " float4 textureColor = tex2Dlod(_CustomTexture, float4(texCoordsScale, 0, 0)); " + '\n' +
+        " textureColor = textureColor * _TextureTint; " + '\n' +
         " return textureColor; " + "}" + '\n'
         ;
 
     public static string Texture_Handling_Vertex =
-        " float4 Texture_Handling_Vertex(vertexOutput_PerVertexLighting input) " +
+        " float4 Texture_Handling_Vertex(vertexOutput_PerVertexLighting input) " + '\n' +
          " { " +
-        " float2 texCoordsScale = float2 (_TextureTileX, _TextureTileY); " +
-        " texCoordsScale *= input.tex.xy; " +
-        " float4 textureColor = tex2D(_CustomTexture, texCoordsScale + float2(_OffsetTileX, _OffsetTileY)); " +
-        " textureColor = textureColor * _TextureTint; " +
+        " float2 texCoordsScale = float2 (_TextureTileX, _TextureTileY); " + '\n' +
+        " texCoordsScale *= input.tex.xy; " + '\n' +
+        " float4 textureColor = tex2D(_CustomTexture, texCoordsScale + float2(_OffsetTileX, _OffsetTileY)); " + '\n' +
+        " textureColor = textureColor * _TextureTint; " + '\n' +
         " return textureColor; " + "}" + '\n'
         ;
 
     public static string Texture_Handling_Pixel_NoNormalMap =
-        " float4 Texture_Handling_Pixel_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) " +
+        " float4 Texture_Handling_Pixel_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) " + '\n' +
         " { " +
-            " float2 texCoordsScale = float2(_TextureTileX, _TextureTileY); " +
-            " texCoordsScale *= input.tex.xy; " +
-            " float4 textureColor = tex2D(_CustomTexture, texCoordsScale + float2(_OffsetTileX, _OffsetTileY)); " +
-            " textureColor = textureColor * _TextureTint; " +
+            " float2 texCoordsScale = float2(_TextureTileX, _TextureTileY); " + '\n' +
+            " texCoordsScale *= input.tex.xy; " + '\n' +
+            " float4 textureColor = tex2D(_CustomTexture, texCoordsScale + float2(_OffsetTileX, _OffsetTileY)); " + '\n' +
+            " textureColor = textureColor * _TextureTint; " + '\n' +
             " return textureColor; " +
         " } " + '\n';
 
     public static string Normal_Direction_With_Normal_Map_Handling_Vertex =
-       " float3 Normal_Direction_With_Normal_Map_Handling_Vertex(vertexInput_AllVariables input) " +
+       " float3 Normal_Direction_With_Normal_Map_Handling_Vertex(vertexInput_AllVariables input) " + '\n' +
         " { " +
-        " float4x4 modelMatrix = unity_ObjectToWorld; " +
-        " float4x4 modelMatrixInverse = unity_WorldToObject; " +
-        " float3 tangentWorld = normalize(mul(modelMatrix, float4(input.tangent.xyz, 0.0)).xyz); " +
-        " float3 normalWorld = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " +
-        " float3 BitangentWorld = normalize(cross(normalWorld, tangentWorld) * input.tangent.w); " +
-        " float3 biNormal = cross(input.normal, input.tangent.xyz) * input.tangent.w; " +
-        " float2 normalCoordsScaled = float2(_NormalTileX, _NormalTileY); " +
-        " normalCoordsScaled *= input.texcoord.xy; " +
-        " float4 encodedNormal = tex2Dlod(_NormalMap, float4(normalCoordsScaled, float2(_NormalOffsetX, _NormalOffsetY))); " +
-        " float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0); " +
-        " localCoords.z = 1.0 - 0.5 * dot(localCoords, localCoords); " +
-        " float3x3 local2WorldTranspose = float3x3(tangentWorld, BitangentWorld, normalWorld); " +
-        " float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose)); " +
-        " normalDirection = float3(_NormalMapScale, _NormalMapScale, 1.0f) * normalDirection; " +
+        " float4x4 modelMatrix = unity_ObjectToWorld; " + '\n' +
+        " float4x4 modelMatrixInverse = unity_WorldToObject; " + '\n' +
+        " float3 tangentWorld = normalize(mul(modelMatrix, float4(input.tangent.xyz, 0.0)).xyz); " + '\n' +
+        " float3 normalWorld = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " + '\n' +
+        " float3 BitangentWorld = normalize(cross(normalWorld, tangentWorld) * input.tangent.w); " + '\n' +
+        " float3 biNormal = cross(input.normal, input.tangent.xyz) * input.tangent.w; " + '\n' +
+        " float2 normalCoordsScaled = float2(_NormalTileX, _NormalTileY); " + '\n' +
+        " normalCoordsScaled *= input.texcoord.xy; " + '\n' +
+        " normalCoordsScaled += float2(_NormalOffsetX, _NormalOffsetY); " + '\n' +
+        " float4 encodedNormal = float4 encodedNormal = tex2Dlod(_NormalMap, float4(normalCoordsScaled.xy,0, 0)); " + '\n' +
+        " float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0); " + '\n' +
+        " localCoords.z = 1.0 - 0.5 * dot(localCoords, localCoords); " + '\n' +
+        " float3x3 local2WorldTranspose = float3x3(tangentWorld, BitangentWorld, normalWorld); " + '\n' +
+        " float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose)); " + '\n' +
+        " normalDirection = float3(_NormalMapScale, _NormalMapScale, 1.0f) * normalDirection; " + '\n' +
         " return normalDirection; " + "}" + '\n'
         ;
 
     public static string Normal_Direction_With_Normal_Map_Handling_Pixel =
-        " float3 Normal_Direction_With_Normal_Map_Handling_Pixel(vertexOutput_PerPixelLighting input) " +
+        " float3 Normal_Direction_With_Normal_Map_Handling_Pixel(vertexOutput_PerPixelLighting input) " + '\n' +
           " { " +
-        " float4x4 modelMatrix = unity_ObjectToWorld; " +
-        " float4x4 modelMatrixInverse = unity_WorldToObject; " +
-        " float3 tangentWorld = normalize(mul(modelMatrix, float4(input.tangent.xyz, 0.0)).xyz); " +
-        " float3 normalWorld = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " +
-        " float3 BitangentWorld = normalize(cross(normalWorld, tangentWorld) * input.tangent.w); " +
-        " float3 biNormal = cross(input.normal, input.tangent.xyz) * input.tangent.w; " +
-        " float2 normalCoordsScaled = float2(_NormalTileX, _NormalTileY); " +
-        " normalCoordsScaled *= input.tex.xy; " +
-        " float4 encodedNormal = tex2D(_NormalMap, normalCoordsScaled + float2(_NormalOffsetX, _NormalOffsetY)); " +
-        " float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0); " +
-        " localCoords.z = 1.0 - 0.5 * dot(localCoords, localCoords); " +
-        " float3x3 local2WorldTranspose = float3x3(tangentWorld, BitangentWorld, normalWorld); " +
-        " float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose)); " +
-        " normalDirection = float3(_NormalMapScale, _NormalMapScale, 1.0f) * normalDirection; " +
+        " float4x4 modelMatrix = unity_ObjectToWorld; " + '\n' +
+        " float4x4 modelMatrixInverse = unity_WorldToObject; " + '\n' +
+        " float3 tangentWorld = normalize(mul(modelMatrix, float4(input.tangent.xyz, 0.0)).xyz); " + '\n' +
+        " float3 normalWorld = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " + '\n' +
+        " float3 BitangentWorld = normalize(cross(normalWorld, tangentWorld) * input.tangent.w); " + '\n' +
+        " float3 biNormal = cross(input.normal, input.tangent.xyz) * input.tangent.w; " + '\n' +
+        " float2 normalCoordsScaled = float2(_NormalTileX, _NormalTileY); " + '\n' +
+        " normalCoordsScaled *= input.tex.xy; " + '\n' +
+        " float4 encodedNormal = tex2D(_NormalMap, (normalCoordsScaled + float2(_NormalOffsetX, _NormalOffsetY)).xy); " + '\n' +
+        " float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0); " + '\n' +
+        " localCoords.z = 1.0 - 0.5 * dot(localCoords, localCoords); " + '\n' +
+        " float3x3 local2WorldTranspose = float3x3(tangentWorld, BitangentWorld, normalWorld); " + '\n' +
+        " float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose)); " + '\n' +
+        " normalDirection = float3(_NormalMapScale, _NormalMapScale, 1.0f) * normalDirection; " + '\n' +
         " return normalDirection; " + "}" + '\n'
         ;
+
+    //======================================VAMOS POR AQUI, HAY QUE ACTUALIZAR DE AQUI PARA ABAJO =================
 
     public static string Phong_Lighting_Vertex =
         " float4 Phong_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection) " +

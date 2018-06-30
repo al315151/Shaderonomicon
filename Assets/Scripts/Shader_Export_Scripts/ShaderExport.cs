@@ -27,7 +27,6 @@ public class ShaderExport : MonoBehaviour {
     string Phong_Variables;
     string Lambert_Variables;
     string NoTextureMap_Variables;
-    string transparency; // TO DO
 
     // Use this for initialization
     void Start()

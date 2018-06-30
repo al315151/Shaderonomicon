@@ -19,7 +19,6 @@
 		uniform float _NormalOffsetY;
 
 		uniform half _NormalMapScale = 1.0f;
-		uniform float3 vert_NormalMap_NormalDir = float3 (0, 0, 0);
 
 		uniform float _CustomShininess;		
 		uniform float4 _PhongAmbientColor;
@@ -145,8 +144,8 @@
 		{
 			float2 texCoordsScale = float2 (_TextureTileX, _TextureTileY);
 			texCoordsScale *= input.tex.xy;
-
-			float4 textureColor = tex2D(_CustomTexture, texCoordsScale + float2(_OffsetTileX, _OffsetTileY));
+			texCoordsScale += float2(_OffsetTileX, _OffsetTileY);
+			float4 textureColor = tex2Dlod(_CustomTexture, float4(texCoordsScale, 0, 0));
 			textureColor = textureColor * _TextureTint;
 			return textureColor;
 		}
@@ -279,7 +278,6 @@
 						  + (specularReflection * _PhongSpecularForce);
 		}
 
-
 		float3 Phong_Lighting_Vertex_NoNormalMap(vertexInput_NoTextureNoNormalMap input)
 		{
 			float4x4 modelMatrix = unity_ObjectToWorld;
@@ -324,7 +322,6 @@
 						  + (specularReflection * _PhongSpecularForce);
 		}
 		
-
 		float4 Lambert_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection)
 		{
 			float4x4 modelMatrix = unity_ObjectToWorld;
@@ -680,8 +677,6 @@
 
 		//======================================================================================================
 
-
-
 		vertexOutput_PerVertexLighting vert_PerVertexLighting_Phong (vertexInput_AllVariables input)
 		{
 			vertexOutput_PerVertexLighting output;			
@@ -691,6 +686,10 @@
 			output.col = float4(Phong_Lighting_Vertex(input, normalDirection), 1.0f);
 			output.pos = UnityObjectToClipPos(input.vertex);
 			output.tex = input.texcoord;
+
+			/*float4 textureOutput = Texture_Handling_Vertex(output);
+			output.col *= textureOutput;
+			*/
 			return output;
 		}
 
@@ -700,6 +699,7 @@
 
 			output.col = float4(Phong_Lighting_Vertex_NoNormalMap(input), 1.0f);
 			output.pos = UnityObjectToClipPos(input.vertex);
+
 			return output;
 		}
 
@@ -712,6 +712,10 @@
 			output.col = float4(Lambert_Lighting_Vertex(input, normalDirection).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0);
 			output.pos = UnityObjectToClipPos(input.vertex);
 			output.tex = input.texcoord;
+
+			/*float4 textureOutput = Texture_Handling_Vertex(output);
+			output.col *= textureOutput;
+			*/
 			return output;
 
 		}
@@ -735,6 +739,10 @@
 			output.col = float4(HalfLambert_Lighting_Vertex(input, normalDirection).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0);
 			output.pos = UnityObjectToClipPos(input.vertex);
 			output.tex = input.texcoord;
+
+			/*float4 textureOutput = Texture_Handling_Vertex(output);
+			output.col *= textureOutput;
+			*/
 			return output;
 		
 		}
@@ -756,6 +764,10 @@
 			output.col = float4 (1.0f, 1.0f, 1.0f, 1.0f);
 			output.pos = UnityObjectToClipPos(input.vertex);
 			output.tex = input.texcoord;
+
+			/*float4 textureOutput = Texture_Handling_Vertex(output);
+			output.col *= textureOutput;
+			*/
 			return output;
 		}
 
@@ -771,8 +783,7 @@
 		float4 frag_PerVertexLighting(vertexOutput_PerVertexLighting input) : COLOR
 		{	
 			float4 TextureColor = Texture_Handling_Vertex(input);
-			TextureColor *= input.col;
-			return float4(TextureColor.xyz, 1.0f);
+			return float4(input.col.xyz * TextureColor.xyz , 1.0f);
 		}
 
 		float4 frag_PerVertexLighting_NoTextureMap (vertexOutput_NoTextureNoNormalMap_PerVertexLighting input) : COLOR
@@ -1002,13 +1013,23 @@
 				{
 					if(_IsNormalMapApplied == 0.0f) // no normal map
 					{
-						vertexInput_NoTextureNoNormalMap inputDummy;
-						inputDummy.vertex = input.vertex;	
-						inputDummy.normal = input.normal;
-						vertexOutput_NoTextureNoNormalMap_PerVertexLighting outputTemp;
-						outputTemp = vert_PerVertexLighting_Phong_NoNormalMap(inputDummy);
-						output.col = outputTemp.col;
-						output.pos = outputTemp.pos;
+						if (_IsTextureApplied == 0.0f)
+						{
+							vertexInput_NoTextureNoNormalMap inputDummy;
+							inputDummy.vertex = input.vertex;
+							inputDummy.normal = input.normal;
+							vertexOutput_NoTextureNoNormalMap_PerVertexLighting outputTemp;
+							outputTemp = vert_PerVertexLighting_Phong_NoNormalMap(inputDummy);
+							output.col = outputTemp.col;
+							output.pos = outputTemp.pos;
+						}
+						else
+						{
+							outputDummy = vert_PerVertexLighting_Phong(input);
+							output.pos = outputDummy.pos;
+							output.col = outputDummy.col;
+							output.tex = outputDummy.tex;
+						}						
 					}
 					else
 					{
@@ -1022,13 +1043,23 @@
 				{
 					if(_IsNormalMapApplied == 0.0f) // no normal map
 					{
-						vertexInput_NoTextureNoNormalMap inputDummy;
-						inputDummy.vertex = input.vertex;	
-						inputDummy.normal = input.normal;
-						vertexOutput_NoTextureNoNormalMap_PerVertexLighting outputTemp;
-						outputTemp = vert_PerVertexLighting_Lambert_NoNormalMap(inputDummy);
-						output.col = outputTemp.col;
-						output.pos = outputTemp.pos;
+						if (_IsTextureApplied == 0.0f)
+						{
+							vertexInput_NoTextureNoNormalMap inputDummy;
+							inputDummy.vertex = input.vertex;
+							inputDummy.normal = input.normal;
+							vertexOutput_NoTextureNoNormalMap_PerVertexLighting outputTemp;
+							outputTemp = vert_PerVertexLighting_Lambert_NoNormalMap(inputDummy);
+							output.col = outputTemp.col;
+							output.pos = outputTemp.pos;
+						}
+						else
+						{
+							outputDummy = vert_PerVertexLighting_Lambert(input);
+							output.pos = outputDummy.pos;
+							output.col = outputDummy.col;
+							output.tex = outputDummy.tex;
+						}						
 					}
 					else
 					{
@@ -1042,13 +1073,23 @@
 				{
 					if(_IsNormalMapApplied == 0.0f) // no normal map
 					{
-						vertexInput_NoTextureNoNormalMap inputDummy;
-						inputDummy.vertex = input.vertex;	
-						inputDummy.normal = input.normal;
-						vertexOutput_NoTextureNoNormalMap_PerVertexLighting outputTemp;
-						outputTemp = vert_PerVertexLighting_HalfLambert_NoNormalMap(inputDummy);
-						output.col = outputTemp.col;
-						output.pos = outputTemp.pos;
+						if (_IsTextureApplied == 0.0f)
+						{
+							vertexInput_NoTextureNoNormalMap inputDummy;
+							inputDummy.vertex = input.vertex;
+							inputDummy.normal = input.normal;
+							vertexOutput_NoTextureNoNormalMap_PerVertexLighting outputTemp;
+							outputTemp = vert_PerVertexLighting_HalfLambert_NoNormalMap(inputDummy);
+							output.col = outputTemp.col;
+							output.pos = outputTemp.pos;
+						}
+						else
+						{
+							outputDummy = vert_PerVertexLighting_HalfLambert(input);
+							output.pos = outputDummy.pos;
+							output.col = outputDummy.col;
+							output.tex = outputDummy.tex;
+						}						
 					}
 					else
 					{

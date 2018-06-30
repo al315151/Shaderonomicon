@@ -26,35 +26,19 @@ public class CameraMovement_V2 : MonoBehaviour {
     public RectTransform centerImage_GameObject_CR;
 
     Vector2 dummyPos;
-    Camera cameraComponent;
-
+    
 	// Use this for initialization
 	void Start () {
         _xForm_Camera = transform;
         _XForm_Parent = transform.parent;
         CameraDisabled = true;
         _XForm_displayMesh_Transform = displayMesh_Transform_CR;
-        cameraComponent = GetComponent<Camera>();
 	}
 
-    private void FixedUpdate()
-    {
-       //dummyPos = RectTransformUtility.WorldToScreenPoint(cameraComponent, displayMesh_Transform_CR.position);
-        print(dummyPos);
-
-
-
-    }
-
-
+  
     // Update is called once per frame
     void LateUpdate ()
     {
-
-        /*if (Input.GetKeyDown(KeyCode.LeftShift))
-        {   CameraDisabled = !CameraDisabled;        }
-        */
-
         if (!CameraDisabled)
         {
             //Rotation of the camera

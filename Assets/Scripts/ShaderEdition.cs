@@ -242,6 +242,7 @@ public class ShaderEdition : MonoBehaviour {
         Normal_Map_Scale_X.text = 1.0f + "";
         Normal_Map_Scale_Y.text = 1.0f + "";
         _NormalMapScale_InputField_CR.text = 1.0f + "";
+        _TextureTint = Color.white;
 
         ChangeToPixelLighting();
 
@@ -252,14 +253,13 @@ public class ShaderEdition : MonoBehaviour {
         SceneSettingsParameters_CanvasGroup_CR.GetComponent<SkyBoxPropertiesSetter>().SetInitialSceneProperties();
         CloseCurrentSecMenu();
         Change_Shader_Name_InputField_CR.text = "New Shader";
-        //print(_TextureTint.ToString());
     }
 	
 	// Update is called once per frame
 	void Update () 
 	{
-        print("Current lighting model: " + _Current_Lighting_Model);
-        print("Is pixel lighting applied? " + _Is_Pixel_Lighting);
+        //print("Current lighting model: " + _Current_Lighting_Model);
+        //print("Is pixel lighting applied? " + _Is_Pixel_Lighting);
 
         UpdateManagerVariablesShader();
         UpdateShaderNameInputField();
