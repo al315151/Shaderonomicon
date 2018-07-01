@@ -22,6 +22,7 @@ public class ShaderExport : MonoBehaviour {
 
     private string temporalSpellBook;
 
+    string externalProperties_Variables;
     string texture_Variables;
     string Normal_Handling_Variables;
     string Phong_Variables;
@@ -46,7 +47,7 @@ public class ShaderExport : MonoBehaviour {
         string PixelFunction = "  #pragma fragment " + currentFragmentFunction + "  " + '\n';
 
         shaderName = ShaderEdition.currentInstance.ShaderName;
-        string shaderTextTitle = " Shader" + '"' + "Shaderonomicon/" + shaderName + '"' + "  " + '\n';
+        string shaderTextTitle = " Shader" + '"' + "Shaderonomicon/" + shaderName + '"' + "  " + '\n' + "{";
 
         string folderPath = FileBrowser.OpenSingleFolder("Choose the folder to save shader...");
         if (folderPath == "") { return; }
@@ -63,6 +64,7 @@ public class ShaderExport : MonoBehaviour {
 
         StreamWriter newShader = new StreamWriter(folderPath + '/' + shaderName + ".shader", true, System.Text.Encoding.UTF8);
         newShader.Write(shaderTextTitle);
+        newShader.Write(externalProperties_Variables);
         newShader.Write(shaderTextStart);
         newShader.Write(vertexFunction);
         newShader.Write(PixelFunction);
@@ -76,58 +78,7 @@ public class ShaderExport : MonoBehaviour {
         
     }
 
-    //For now, we will not use this function, as we will only create one document.
-    public void CreateTemporalSpellBook()
-    {
-        // Variables parts
-
-        temporalSpellBook = SpellBookFunctions.necessaryIncludes + 
-                            SpellBookFunctions.Texture_Handling_Variables +
-                            SpellBookFunctions.Normal_Handling_Variables +
-                            SpellBookFunctions.Phong_Variables +
-                            SpellBookFunctions.vertexInput_AllVariables +
-                            SpellBookFunctions.vertexOutput_PerVertexLighting +
-                            SpellBookFunctions.vertexOutput_PerPixelLighting;
-
-        //Functions parts
-
-        temporalSpellBook += SpellBookFunctions.Texture_Handling_Pixel +
-                             SpellBookFunctions.Texture_Handling_Vertex +
-                             SpellBookFunctions.Normal_Direction_With_Normal_Map_Handling_Pixel +
-                             SpellBookFunctions.Normal_Direction_With_Normal_Map_Handling_Vertex +
-                             SpellBookFunctions.Phong_Lighting_Vertex +
-                             SpellBookFunctions.Lambert_Lighting_Vertex +
-                             SpellBookFunctions.HalfLambert_Lighting_Vertex +
-                             SpellBookFunctions.Phong_Lighting_Pixel +
-                             SpellBookFunctions.Lambert_Lighting_Pixel +
-                             SpellBookFunctions.HalfLambert_Lighting_Pixel;
-
-        //Vert and frag functions
-
-        temporalSpellBook += SpellBookFunctions.vert_PerVertexLighting_Phong +
-                             SpellBookFunctions.vert_PerVertexLighting_Lambert +
-                             SpellBookFunctions.vert_PerVertexLighting_HalfLambert +
-                             SpellBookFunctions.vert_PerPixelLighting +
-                             SpellBookFunctions.frag_PerVertexLighting +
-                             SpellBookFunctions.frag_PerPixelLighting_Phong +
-                             SpellBookFunctions.frag_PerPixelLighting_Lambert +
-                             SpellBookFunctions.frag_PerPixelLighting_HalfLambert + 
-                             SpellBookFunctions.frag_PerPixelLighting_NoLight;
-
-        string spellBookRoute = Application.dataPath + "/SpellBook.cginc";
-        //print(spellBookRoute);
-        if (File.Exists(spellBookRoute) != true)
-        {
-            StreamWriter customSpellBook = new StreamWriter(spellBookRoute, true, System.Text.Encoding.UTF8);
-
-            customSpellBook.Write(temporalSpellBook);
-            customSpellBook.Close();
-        }
-        
-
-
-
-    }
+    
 
     public void PrepareSpellBook()
     {
@@ -482,7 +433,7 @@ public class ShaderExport : MonoBehaviour {
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Vertex;
-                                temporalSpellBook += SpellBookFunctions.Phong_Lighting_Pixel_NoNormalMap;
+                                temporalSpellBook += SpellBookFunctions.Phong_Lighting_Vertex_NoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vert_PerVertexLighting_Phong_NoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.frag_PerVertexLighting;
                                 currentVertexFunction = "vert_PerVertexLighting_Phong_NoNormalMap";
@@ -517,7 +468,7 @@ public class ShaderExport : MonoBehaviour {
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Vertex;
-                                temporalSpellBook += SpellBookFunctions.Lambert_Lighting_Pixel_NoNormalMap;
+                                temporalSpellBook += SpellBookFunctions.Lambert_Lighting_Vertex_NoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vert_PerVertexLighting_Lambert_NoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.frag_PerVertexLighting;
                                 currentVertexFunction = "vert_PerVertexLighting_Lambert_NoNormalMap";
@@ -553,7 +504,7 @@ public class ShaderExport : MonoBehaviour {
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Vertex;
-                                temporalSpellBook += SpellBookFunctions.HalfLambert_Lighting_Pixel_NoNormalMap;
+                                temporalSpellBook += SpellBookFunctions.HalfLambert_Lighting_Vertex_NoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.vert_PerVertexLighting_HalfLambert_NoNormalMap;
                                 temporalSpellBook += SpellBookFunctions.frag_PerVertexLighting;
                                 currentVertexFunction = "vert_PerVertexLighting_HalfLambert_NoNormalMap";
@@ -716,7 +667,7 @@ public class ShaderExport : MonoBehaviour {
                                 temporalSpellBook += SpellBookFunctions.vertexInput_AllVariables;
                                 temporalSpellBook += SpellBookFunctions.vertexOutput_PerVertexLighting;
                                 temporalSpellBook += SpellBookFunctions.Texture_Handling_Vertex;
-                                temporalSpellBook += SpellBookFunctions.HalfLambert_Lighting_Pixel;
+                                temporalSpellBook += SpellBookFunctions.HalfLambert_Lighting_Vertex;
                                 temporalSpellBook += SpellBookFunctions.Normal_Direction_With_Normal_Map_Handling_Vertex;
                                 temporalSpellBook += SpellBookFunctions.vert_PerVertexLighting_HalfLambert;
                                 temporalSpellBook += SpellBookFunctions.frag_PerVertexLighting;
@@ -732,40 +683,62 @@ public class ShaderExport : MonoBehaviour {
 
     public void StoreDesiredVariables()
     {
-        texture_Variables = " uniform sampler2D _CustomTexture; " +
-        " uniform fixed4 _TextureTint =  " + FromColorToShaderColor(ShaderEdition.currentInstance._TextureTint) + " ; " +
-        " uniform float _TextureTileX = " + ShaderEdition.currentInstance._Base_Texture_Scale_X + " ; " +
-        " uniform float _TextureTileY = " + ShaderEdition.currentInstance._Base_Texture_Scale_Y + " ; " +
-        " uniform float _OffsetTileX; = " + ShaderEdition.currentInstance._Base_Texture_Offset_X + " ; " +
+        texture_Variables = " uniform sampler2D _CustomTexture; " + '\n' +
+        " uniform fixed4 _TextureTint =  " + FromColorToShaderColor(ShaderEdition.currentInstance._TextureTint) + " ; " + '\n' +
+        " uniform float _TextureTileX = " + ShaderEdition.currentInstance._Base_Texture_Scale_X + " ; " + '\n' +
+        " uniform float _TextureTileY = " + ShaderEdition.currentInstance._Base_Texture_Scale_Y + " ; " + '\n' +
+        " uniform float _OffsetTileX = " + ShaderEdition.currentInstance._Base_Texture_Offset_X + " ; " + '\n' +
         " uniform float _OffsetTileY = " + ShaderEdition.currentInstance._Base_Texture_Offset_Y + " ; "+ '\n';
 
         Normal_Handling_Variables =
-        " uniform sampler2D _NormalMap; " +
-        " uniform float _NormalTileX = " + ShaderEdition.currentInstance.Normal_Map_Scale_X + " ; " +
-        " uniform float _NormalTileY = " + ShaderEdition.currentInstance.Normal_Map_Scale_Y + " ; " +
-        " uniform float _NormalOffsetX = " + ShaderEdition.currentInstance.Normal_Map_Offset_X + " ; " +
-        " uniform float _NormalOffsetY = " + ShaderEdition.currentInstance.Normal_Map_Offset_X + " ; " +
+        " uniform sampler2D _NormalMap; " + '\n' +
+        " uniform float _NormalTileX = " + ShaderEdition.currentInstance._Normal_Map_Scale_X + " ; " + '\n' +
+        " uniform float _NormalTileY = " + ShaderEdition.currentInstance._Normal_Map_Scale_Y + " ; " + '\n' +
+        " uniform float _NormalOffsetX = " + ShaderEdition.currentInstance._Normal_Map_Offset_X + " ; " + '\n' +
+        " uniform float _NormalOffsetY = " + ShaderEdition.currentInstance._Normal_Map_Offset_X + " ; " + '\n' +
         " uniform half _NormalMapScale  = " + ShaderEdition.currentInstance._CustomNormalMapScale + " ; " + '\n'
         ;
 
         Phong_Variables =
-        " uniform float _CustomShininess = " + ShaderEdition.currentInstance._CustomShininess + " ; " +
-        " uniform float4 _PhongAmbientColor =  " + FromColorToShaderColor(ShaderEdition.currentInstance._PhongAmbientColor) + " ; " +
-        " uniform float _PhongAmbientForce = " + ShaderEdition.currentInstance._PhongAmbientForce + " ; " +
-        " uniform float4 _PhongSpecularColor =  " + FromColorToShaderColor(ShaderEdition.currentInstance._PhongSpecularColor) + " ; " +
-        " uniform float _PhongSpecularForce = " + ShaderEdition.currentInstance._PhongSpecularForce + " ; " +
-        " uniform float4 _PhongDiffuseColor =  " + FromColorToShaderColor(ShaderEdition.currentInstance._PhongDiffuseColor) + " ; " +
+        " uniform float _CustomShininess = " + ShaderEdition.currentInstance._CustomShininess + " ; " + '\n' +
+        " uniform float4 _PhongAmbientColor =  " + FromColorToShaderColor(ShaderEdition.currentInstance._PhongAmbientColor) + " ; " + '\n' +
+        " uniform float _PhongAmbientForce = " + ShaderEdition.currentInstance._PhongAmbientForce + " ; " + '\n' +
+        " uniform float4 _PhongSpecularColor =  " + FromColorToShaderColor(ShaderEdition.currentInstance._PhongSpecularColor) + " ; " + '\n' +
+        " uniform float _PhongSpecularForce = " + ShaderEdition.currentInstance._PhongSpecularForce + " ; " + '\n' +
+        " uniform float4 _PhongDiffuseColor =  " + FromColorToShaderColor(ShaderEdition.currentInstance._PhongDiffuseColor) + " ; " + '\n' +
         " uniform float _PhongDiffuseForce = " + ShaderEdition.currentInstance._PhongDiffuseForce + " ; " + '\n'
         ;
 
         Lambert_Variables =
 
-        " uniform float _LambertTintForce = " + ShaderEdition.currentInstance._LambertTintForce + " ; " +
-        " uniform float4 _LambertTintColor;  = " + FromColorToShaderColor(ShaderEdition.currentInstance._LambertTintColor) + " ; " + '\n';
+        " uniform float _LambertTintForce = " + ShaderEdition.currentInstance._LambertTintForce + " ; " + '\n' +
+        " uniform float4 _LambertTintColor  = " + FromColorToShaderColor(ShaderEdition.currentInstance._LambertTintColor) + " ; " + '\n';
 
         NoTextureMap_Variables =
         " uniform fixed4 _TextureTint = " + FromColorToShaderColor(ShaderEdition.currentInstance._TextureTint) + " ; " + '\n';
         
+        if (ShaderEdition.currentInstance.IsNormalMapApplied == false && ShaderEdition.currentInstance.IsNewTextureApplied == false)
+        { externalProperties_Variables = "\n"; }
+        else if (ShaderEdition.currentInstance.IsNormalMapApplied && ShaderEdition.currentInstance.IsNewTextureApplied == false)
+        {
+            externalProperties_Variables = " Properties " + " { " + '\n' +
+                                           " [NoScaleOffset] _NormalMap(" + '"' + " Normal Map " + '"' + ", 2D) = " + '"' + "bump" + '"' + " {} " + '\n' +
+                                           " } " + '\n';
+        }
+        else if (ShaderEdition.currentInstance.IsNewTextureApplied && ShaderEdition.currentInstance.IsNormalMapApplied == false)
+        {
+            externalProperties_Variables = " Properties " + " { " + '\n' +
+                                           " [NoScaleOffset] _CustomTexture ( " + '"' + " Texture " + '"' + ", 2D) = " + '"' + " white " + '"' + " {} " + '\n' +
+                                           " } " + '\n';
+        }
+        else
+        {
+            externalProperties_Variables = " Properties " + " { " + '\n' +
+                                           " [NoScaleOffset] _CustomTexture ( " + '"' + " Texture " + '"' + ", 2D) = " + '"' + " white " + '"' + " {} " + '\n' +
+                                           " [NoScaleOffset] _NormalMap(" + '"' + " Normal Map " + '"' + ", 2D) = " + '"' + "bump" + '"' + " {} " + '\n' +
+                                           " } " + '\n';
+        }
+
     }
 
     public string FromColorToShaderColor(Color input)
@@ -776,8 +749,7 @@ public class ShaderExport : MonoBehaviour {
     }
 
 
-    static string shaderTextStart =       
-        " { " + '\n' +
+    static string shaderTextStart =
             " SubShader " + '\n' +
             " { " + '\n' +
                 "  Blend SrcAlpha OneMinusSrcAlpha  " + '\n' +
@@ -785,15 +757,14 @@ public class ShaderExport : MonoBehaviour {
                 "{ " + '\n' +
                     " Tags { " + '"' + "LightMode" + '"' + " = " + '"' + LightModeType + '"' + " } " + "  " + '\n' +
                     " LOD 100 " + '\n' +
-                    "CGPROGRAM" + '\n' +
-                    " #pragma fullforwardshadows " + '\n' ;
+                    "CGPROGRAM" + '\n' ;
 
     static string shaderTextEnd =
           " ENDCG " + "  " + '\n' +
                 " } " +
 
-            " } " +
-        " } ";
+            " } " + // final del subshader
+        " } "; // final del shader
 
 
 }

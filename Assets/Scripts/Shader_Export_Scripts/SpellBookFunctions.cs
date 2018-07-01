@@ -189,7 +189,7 @@ public class SpellBookFunctions : MonoBehaviour
         " float2 normalCoordsScaled = float2(_NormalTileX, _NormalTileY); " + '\n' +
         " normalCoordsScaled *= input.texcoord.xy; " + '\n' +
         " normalCoordsScaled += float2(_NormalOffsetX, _NormalOffsetY); " + '\n' +
-        " float4 encodedNormal = float4 encodedNormal = tex2Dlod(_NormalMap, float4(normalCoordsScaled.xy,0, 0)); " + '\n' +
+        " float4 encodedNormal = tex2Dlod(_NormalMap, float4(normalCoordsScaled.xy,0, 0)); " + '\n' +
         " float3 localCoords = float3(2.0 * encodedNormal.ag - float2(1.0, 1.0), 0.0); " + '\n' +
         " localCoords.z = 1.0 - 0.5 * dot(localCoords, localCoords); " + '\n' +
         " float3x3 local2WorldTranspose = float3x3(tangentWorld, BitangentWorld, normalWorld); " + '\n' +
@@ -218,605 +218,607 @@ public class SpellBookFunctions : MonoBehaviour
         " return normalDirection; " + "}" + '\n'
         ;
 
-    //======================================VAMOS POR AQUI, HAY QUE ACTUALIZAR DE AQUI PARA ABAJO =================
 
     public static string Phong_Lighting_Vertex =
-        " float4 Phong_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection) " +
+        " float3 Phong_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection) " + '\n' +
         " { " +
-        " float4x4 modelMatrix = unity_ObjectToWorld; " +
-        " float3x3 modelMatrixInverse = unity_WorldToObject; " +
-        " normalDirection += normalize(mul(input.normal, modelMatrixInverse)); " +
-        " float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(modelMatrix, input.vertex).xyz); " +
-        " float3 lightDirection; " +
-        " float attenuation; " +
-        " if (0.0 == _WorldSpaceLightPos0.w) " +
+        " float4x4 modelMatrix = unity_ObjectToWorld; " + '\n' +
+        " float3x3 modelMatrixInverse = unity_WorldToObject; " + '\n' +
+        " float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(modelMatrix, input.vertex).xyz); " + '\n' +
+        " float3 lightDirection; " + '\n' +
+        " float attenuation; " + '\n' +
+        " if (0.0 == _WorldSpaceLightPos0.w) " + '\n' +
         " { " +
-            " attenuation = 1.0; " +
-            " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " +
-        " } " +
-        " else " +
+            " attenuation = 1.0; " + '\n' +
+            " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " + '\n' +
+        " } " + '\n' +
+        " else " + '\n' +
         " { " +
-            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - mul(modelMatrix, input.vertex).xyz; " +
-            " float3 distance = length(vertexToLightSource); " +
-            " attenuation = 1.0 / distance; " +
-            " lightDirection = normalize(vertexToLightSource); " +
+            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - mul(modelMatrix, input.vertex).xyz; " + '\n' +
+            " float3 distance = length(vertexToLightSource); " + '\n' +
+            " attenuation = 1.0 / distance; " + '\n' +
+            " lightDirection = normalize(vertexToLightSource); " + '\n' +
         " } " +
 
-        " float3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT.rgb * _PhongAmbientColor.rgb; " +
-        " float3 diffuseReflection = attenuation * _LightColor0.rgb * _PhongDiffuseColor.rgb * max(0.0, dot(normalDirection, lightDirection)); " +
-        " float3 specularReflection; " +
-        " if (dot(normalDirection, lightDirection) < 0.0) " +
-        " { specularReflection = float3(0.0, 0.0, 0.0); } " +
-        " else " +
+        " float3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT.rgb * _PhongAmbientColor.rgb; " + '\n' +
+        " float3 diffuseReflection = attenuation * _LightColor0.rgb * _PhongDiffuseColor.rgb * max(0.0, dot(normalDirection, lightDirection)); " + '\n' +
+        " float3 specularReflection; " + '\n' +
+        " if (dot(normalDirection, lightDirection) < 0.0) " + '\n' +
+        " { specularReflection = float3 (0.00001, 0.00001, 0.00001); } " + '\n' +
+        " else " + '\n' +
         " { " +
-            " specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * pow(max(0.0, dot(reflect(-lightDirection, normalDirection),viewDirection)), _CustomShininess); " +
+            " specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * max(0.0, dot(reflect(-lightDirection, normalDirection),viewDirection)); " + '\n' +
+            " specularReflection = specularReflection * _CustomShininess; " + '\n' +
         " } " +
-        "return float4(ambientLighting * _PhongAmbientForce + diffuseReflection * _PhongDiffuseForce  + specularReflection * _PhongSpecularForce, 1.0f) " + " } " + '\n'
+        "return (ambientLighting * _PhongAmbientForce) + (diffuseReflection * _PhongDiffuseForce) + (specularReflection * _PhongSpecularForce); } " + '\n' 
         ;
 
     public static string Phong_Lighting_Vertex_NoNormalMap =
-        " float4 Phong_Lighting_Vertex_NoNormalMap(vertexInput_NoTextureNoNormalMap input) " +
+        " float3 Phong_Lighting_Vertex_NoNormalMap(vertexInput_NoTextureNoNormalMap input) " + '\n' +
         " { " +
-        " float4x4 modelMatrix = unity_ObjectToWorld; " +
-        " float3x3 modelMatrixInverse = unity_WorldToObject; " +
-        " float3 normalDirection = normalize(mul(input.normal, modelMatrixInverse)); " +
-        " float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(modelMatrix, input.vertex).xyz); " +
-        " float3 lightDirection; " +
-        " float attenuation; " +
-        " if (0.0 == _WorldSpaceLightPos0.w) " +
+        " float4x4 modelMatrix = unity_ObjectToWorld; " + '\n' +
+        " float3x3 modelMatrixInverse = unity_WorldToObject; " + '\n' +
+        " float3 normalDirection = normalize(mul(input.normal, modelMatrixInverse)); " + '\n' +
+        " float3 viewDirection = normalize(_WorldSpaceCameraPos - mul(modelMatrix, input.vertex).xyz); " + '\n' +
+        " float3 lightDirection; " + '\n' +
+        " float attenuation; " + '\n' +
+        " if (0.0 == _WorldSpaceLightPos0.w) " + '\n' +
         " { " +
-            " attenuation = 1.0; " +
-            " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " +
+            " attenuation = 1.0; " + '\n' +
+            " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " + '\n' +
         " } " +
-        " else " +
+        " else " + '\n' +
         " { " +
-            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - mul(modelMatrix, input.vertex).xyz; " +
-            " float3 distance = length(vertexToLightSource); " +
-            " attenuation = 1.0 / distance; " +
-            " lightDirection = normalize(vertexToLightSource); " +
+            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - mul(modelMatrix, input.vertex).xyz; " + '\n' +
+            " float3 distance = length(vertexToLightSource); " + '\n' +
+            " attenuation = 1.0 / distance; " + '\n' +
+            " lightDirection = normalize(vertexToLightSource); " + '\n' +
         " } " +
 
-        " float3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT.rgb * _PhongAmbientColor.rgb; " +
-        " float3 diffuseReflection = attenuation * _LightColor0.rgb * _PhongDiffuseColor.rgb * max(0.0, dot(normalDirection, lightDirection)); " +
-        " float3 specularReflection; " +
-        " if (dot(normalDirection, lightDirection) < 0.0) " +
-        " { specularReflection = float3(0.0, 0.0, 0.0); } " +
-        " else " +
+        " float3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT.rgb * _PhongAmbientColor.rgb; " + '\n' +
+        " float3 diffuseReflection = attenuation * _LightColor0.rgb * _PhongDiffuseColor.rgb * max(0.0, dot(normalDirection, lightDirection)); " + '\n' +
+        " float3 specularReflection; " + '\n' +
+        " if (dot(normalDirection, lightDirection) < 0.0) " + '\n' +
+        " { specularReflection = float3(0.00001, 0.00001, 0.00001); } " + '\n' +
+        " else " + '\n' +
         " { " +
-            " specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * pow(max(0.0, dot(reflect(-lightDirection, normalDirection),viewDirection)), _CustomShininess); " +
+            " specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * max(0.0, dot(reflect(-lightDirection, normalDirection),viewDirection)); " + '\n' +
+            " specularReflection = specularReflection * _CustomShininess; " + '\n' +
         " } " +
-        "return float4(ambientLighting * _PhongAmbientForce + diffuseReflection * _PhongDiffuseForce + specularReflection * _PhongSpecularForce, 1.0f); " + " } " + '\n'
+        "return (ambientLighting * _PhongAmbientForce) + (diffuseReflection * _PhongDiffuseForce) + (specularReflection * _PhongSpecularForce); } " + '\n'
         ;
 
     public static string Lambert_Lighting_Vertex =
        " float4 Lambert_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection) " +
         " { " +
-        " float4x4 modelMatrix = unity_ObjectToWorld; " +
-        " float4x4 modelMatrixInverse = unity_WorldToObject; " +
-        " float3 posWorld = mul(modelMatrix, input.vertex); " +
-        " float3 normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " +
-        " normalDirection += normalize(normalDir); " +
-        " float3 viewDirection = normalize(_WorldSpaceCameraPos - posWorld.xyz); " +
-        " float3 lightDirection; " +
-        " float attenuation; " +
-        " if (0.0 == _WorldSpaceLightPos0.w) " +
+        " float4x4 modelMatrix = unity_ObjectToWorld; " + '\n' +
+        " float4x4 modelMatrixInverse = unity_WorldToObject; " + '\n' +
+        " float3 posWorld = mul(modelMatrix, input.vertex); " + '\n' +
+        " float3 normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " + '\n' +
+        " normalDirection += normalize(normalDir); " + '\n' +
+        " float3 viewDirection = normalize(_WorldSpaceCameraPos - posWorld.xyz); " + '\n' +
+        " float3 lightDirection; " + '\n' +
+        " float attenuation; " + '\n' +
+        " if (0.0 == _WorldSpaceLightPos0.w) " + '\n' +
         " { " +
-           " attenuation = 1.0f; " +
-            " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " +
+           " attenuation = 1.0f; " + '\n' +
+            " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " + '\n' +
         " } " +
-        " else " +
+        " else " + '\n' +
         " { " +
-            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - posWorld.xyz; " +
-            " float distance = length(vertexToLightSource); " +
-            " attenuation = 1.0 / distance; " +
-            " lightDirection = normalize(vertexToLightSource); " +
+            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - posWorld.xyz; " + '\n' +
+            " float distance = length(vertexToLightSource); " + '\n' +
+            " attenuation = 1.0 / distance; " + '\n' +
+            " lightDirection = normalize(vertexToLightSource); " + '\n' +
          " } " +
-        " float NDotL = max(0.0, dot(normalDirection, lightDirection)); " +
-        " float LambertDiffuse = NDotL; " +
-        " float3 finalColor = LambertDiffuse * attenuation * _LightColor0.rgb; " +
+        " float NDotL = max(0.0, dot(normalDirection, lightDirection)); " + '\n' +
+        " float LambertDiffuse = NDotL; " + '\n' +
+        " float3 finalColor = LambertDiffuse * attenuation * _LightColor0.rgb; " + '\n' +
         " return float4 (finalColor, 1.0f); " + " } " + '\n'
         ;
 
     public static string Lambert_Lighting_Vertex_NoNormalMap =
-       " float4 Lambert_Lighting_Vertex_NoNormalMap(vertexInput_NoTextureNoNormalMap input) " +
+       " float4 Lambert_Lighting_Vertex_NoNormalMap(vertexInput_NoTextureNoNormalMap input) " + '\n' +
         " { " +
-        " float4x4 modelMatrix = unity_ObjectToWorld; " +
-        " float4x4 modelMatrixInverse = unity_WorldToObject; " +
-        " float3 posWorld = mul(modelMatrix, input.vertex); " +
-        " float3 normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " +
-        " float3 normalDirection = normalize(normalDir); " +
-        " float3 viewDirection = normalize(_WorldSpaceCameraPos - posWorld.xyz); " +
-        " float3 lightDirection; " +
-        " float attenuation; " +
-        " if (0.0 == _WorldSpaceLightPos0.w) " +
+        " float4x4 modelMatrix = unity_ObjectToWorld; " + '\n' +
+        " float4x4 modelMatrixInverse = unity_WorldToObject; " + '\n' +
+        " float3 posWorld = mul(modelMatrix, input.vertex); " + '\n' +
+        " float3 normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " + '\n' +
+        " float3 normalDirection = normalize(mul(input.normal, modelMatrixInverse)); " + '\n' +
+        " float3 viewDirection = normalize(_WorldSpaceCameraPos - posWorld.xyz); " + '\n' +
+        " float3 lightDirection; " + '\n' +
+        " float attenuation; " + '\n' +
+        " if (0.0 == _WorldSpaceLightPos0.w) " + '\n' +
         " { " +
-           " attenuation = 1.0f; " +
-            " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " +
+           " attenuation = 1.0f; " + '\n' +
+            " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " + '\n' +
         " } " +
-        " else " +
+        " else " + '\n' +
         " { " +
-            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - posWorld.xyz; " +
-            " float distance = length(vertexToLightSource); " +
-            " attenuation = 1.0 / distance; " +
-            " lightDirection = normalize(vertexToLightSource); " +
+            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - posWorld.xyz; " + '\n' +
+            " float distance = length(vertexToLightSource); " + '\n' +
+            " attenuation = 1.0 / distance; " + '\n' +
+            " lightDirection = normalize(vertexToLightSource); " + '\n' +
          " } " +
-        " float NDotL = max(0.0, dot(normalDirection, lightDirection)); " +
-        " float LambertDiffuse = NDotL; " +
-        " float3 finalColor = LambertDiffuse * attenuation * _LightColor0.rgb; " +
+        " float NDotL = max(0.0, dot(normalDirection, lightDirection)); " + '\n' +
+        " float LambertDiffuse = NDotL; " + '\n' +
+        " float3 finalColor = LambertDiffuse * attenuation * _LightColor0.rgb; " + '\n' +
         " return float4 (finalColor, 1.0f); " + " } " + '\n'
         ;
 
     public static string HalfLambert_Lighting_Vertex =
-        " float4 HalfLambert_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection) " +
+        " float4 HalfLambert_Lighting_Vertex(vertexInput_AllVariables input, float3 normalDirection) " + '\n' +
         " { " +
-        " float4x4 modelMatrix = unity_ObjectToWorld; " +
-        " float4x4 modelMatrixInverse = unity_WorldToObject; " +
-        " float3 posWorld = mul(modelMatrix, input.vertex); " +
-        " float3 normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " +
-        " normalDirection += normalize(normalDir); " +
-        " float3 viewDirection = normalize(_WorldSpaceCameraPos - posWorld.xyz); " +
-        " float3 lightDirection; " +
-        " float attenuation; " +
-        " if (0.0 == _WorldSpaceLightPos0.w) " +
+        " float4x4 modelMatrix = unity_ObjectToWorld; " + '\n' +
+        " float4x4 modelMatrixInverse = unity_WorldToObject; " + '\n' +
+        " float3 posWorld = mul(modelMatrix, input.vertex); " + '\n' +
+        " float3 normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " + '\n' +
+        " normalDirection += normalize(normalDir); " + '\n' +
+        " float3 viewDirection = normalize(_WorldSpaceCameraPos - posWorld.xyz); " + '\n' +
+        " float3 lightDirection; " + '\n' +
+        " float attenuation; " + '\n' +
+        " if (0.0 == _WorldSpaceLightPos0.w) " + '\n' +
         " { " +
-          " attenuation = 1.0f; " +
-          " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " +
+          " attenuation = 1.0f; " + '\n' +
+          " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " + '\n' +
         " } " +
-        " else " +
+        " else " + '\n' +
         " { " +
-            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - posWorld.xyz; " +
-            " float distance = length(vertexToLightSource); " +
-            " attenuation = 1.0 / distance; " +
-            " lightDirection = normalize(vertexToLightSource); " +
+            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - posWorld.xyz; " + '\n' +
+            " float distance = length(vertexToLightSource); " + '\n' +
+            " attenuation = 1.0 / distance; " + '\n' +
+            " lightDirection = normalize(vertexToLightSource); " + '\n' +
         " } " +
-        " float3 NDotL = max(0.0, dot(normalDirection, lightDirection)); " +
-        " float HalfLambertDiffuse = pow(NDotL * 0.5 + 0.5, 2.0); " +
-        " float3 finalColor = HalfLambertDiffuse * attenuation * _LightColor0.rgb; " +
+        " float3 NDotL = max(0.0, dot(normalDirection, lightDirection)); " + '\n' +
+        " float HalfLambertDiffuse = pow(NDotL * 0.5 + 0.5, 2.0); " + '\n' +
+        " float3 finalColor = HalfLambertDiffuse * attenuation * _LightColor0.rgb; " + '\n' +
         " return float4 (finalColor, 1.0f); " + " } " + '\n'
         ;
 
     public static string HalfLambert_Lighting_Vertex_NoNormalMap =
-        " float4 HalfLambert_Lighting_Vertex_NoNormalMap(vertexInput_NoTextureNoNormalMap input) " +
+        " float4 HalfLambert_Lighting_Vertex_NoNormalMap(vertexInput_NoTextureNoNormalMap input) " + '\n' +
         " { " +
-        " float4x4 modelMatrix = unity_ObjectToWorld; " +
-        " float4x4 modelMatrixInverse = unity_WorldToObject; " +
-        " float3 posWorld = mul(modelMatrix, input.vertex); " +
-        " float3 normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " +
-        " float3 normalDirection = normalize(normalDir); " +
-        " float3 viewDirection = normalize(_WorldSpaceCameraPos - posWorld.xyz); " +
-        " float3 lightDirection; " +
-        " float attenuation; " +
-        " if (0.0 == _WorldSpaceLightPos0.w) " +
+        " float4x4 modelMatrix = unity_ObjectToWorld; " + '\n' +
+        " float4x4 modelMatrixInverse = unity_WorldToObject; " + '\n' +
+        " float3 posWorld = mul(modelMatrix, input.vertex); " + '\n' +
+        " float3 normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " + '\n' +
+        " float3 normalDirection = normalize(mul(input.normal, modelMatrixInverse)); " + '\n' +
+        " float3 viewDirection = normalize(_WorldSpaceCameraPos - posWorld.xyz); " + '\n' +
+        " float3 lightDirection; " + '\n' +
+        " float attenuation; " + '\n' +
+        " if (0.0 == _WorldSpaceLightPos0.w) " + '\n' +
         " { " +
-          " attenuation = 1.0f; " +
-          " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " +
+          " attenuation = 1.0f; " + '\n' +
+          " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " + '\n' +
         " } " +
-        " else " +
+        " else " + '\n' +
         " { " +
-            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - posWorld.xyz; " +
-            " float distance = length(vertexToLightSource); " +
-            " attenuation = 1.0 / distance; " +
-            " lightDirection = normalize(vertexToLightSource); " +
+            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - posWorld.xyz; " + '\n' +
+            " float distance = length(vertexToLightSource); " + '\n' +
+            " attenuation = 1.0 / distance; " + '\n' +
+            " lightDirection = normalize(vertexToLightSource); " + '\n' +
         " } " +
-        " float3 NDotL = max(0.0, dot(normalDirection, lightDirection)); " +
-        " float HalfLambertDiffuse = pow(NDotL * 0.5 + 0.5, 2.0); " +
-        " float3 finalColor = HalfLambertDiffuse * attenuation * _LightColor0.rgb; " +
+        " float3 NDotL = max(0.0, dot(normalDirection, lightDirection)); " + '\n' +
+        " float HalfLambertDiffuse = pow(NDotL * 0.5 + 0.5, 2.0); " + '\n' +
+        " float3 finalColor = HalfLambertDiffuse * attenuation * _LightColor0.rgb; " + '\n' +
         " return float4 (finalColor, 1.0f); " + " } " + '\n'
         ;
 
     public static string Phong_Lighting_Pixel =
-        " float3 Phong_Lighting_Pixel(vertexOutput_PerPixelLighting input, float3 normalDirection) " +
+        " float3 Phong_Lighting_Pixel(vertexOutput_PerPixelLighting input, float3 normalDirection) " + '\n' +
         " { " +
-        " normalDirection += normalize(input.normalDir); " +
-        " float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz); " +
-        " float3 lightDirection; " +
-        " float attenuation; " +
-        " if (0.0 == _WorldSpaceLightPos0.w) " +
+        " normalDirection += normalize(input.normalDir); " + '\n' +
+        " float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz); " + '\n' +
+        " float3 lightDirection; " + '\n' +
+        " float attenuation; " + '\n' +
+        " if (0.0 == _WorldSpaceLightPos0.w) " + '\n' +
         " { " +
-          " attenuation = 1.0f; " +
-          " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " +
+          " attenuation = 1.0f; " + '\n' +
+          " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " + '\n' +
         " } " +
-        " else " +
+        " else " + '\n' +
         " { " +
-            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - input.posWorld.xyz; " +
-            " float distance = length(vertexToLightSource); " +
-            " attenuation = 1.0 / distance; " +
-            " lightDirection = normalize(vertexToLightSource); " +
+            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - input.posWorld.xyz; " + '\n' +
+            " float distance = length(vertexToLightSource); " + '\n' +
+            " attenuation = 1.0 / distance; " + '\n' +
+            " lightDirection = normalize(vertexToLightSource); " + '\n' +
         " } " +
-        " float3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT.rgb * _PhongAmbientColor.rgb; " +
-        " float3 diffuseReflection = attenuation * _LightColor0.rgb * _PhongDiffuseColor.rgb * max(0.0, dot(normalDirection, lightDirection)); " +
-        " float3 specularReflection; " +
-        " if (dot(normalDirection, lightDirection) < 0.0) " +
-        " { specularReflection = float3(0.0, 0.0, 0.0); } " +
-        " else " +
+        " float3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT.rgb * _PhongAmbientColor.rgb; " + '\n' +
+        " float3 diffuseReflection = attenuation * _LightColor0.rgb * _PhongDiffuseColor.rgb * max(0.0, dot(normalDirection, lightDirection)); " + '\n' +
+        " float3 specularReflection; " + '\n' +
+        " if (dot(normalDirection, lightDirection) < 0.0) " + '\n' +
+        " { specularReflection = float3(0.00001, 0.00001, 0.00001); } " + '\n' +
+        " else " + '\n' +
         " { " +
-            " specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * pow(max(0.0, dot(reflect(-lightDirection, normalDirection), viewDirection)), _CustomShininess); " +
+            " specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * max(0.0, dot(reflect(-lightDirection, normalDirection),viewDirection)); " + '\n' +
+            " specularReflection = specularReflection * _CustomShininess; " + '\n' +
         " } " +
-        " return float3(ambientLighting * _PhongAmbientForce + diffuseReflection * _PhongDiffuseForce  + specularReflection * _PhongSpecularForce); " + " } " + '\n'
+        " return (ambientLighting * _PhongAmbientForce) + (diffuseReflection * _PhongDiffuseForce) + (specularReflection * _PhongSpecularForce); }" + '\n'
         ;
 
     public static string Phong_Lighting_Pixel_NoNormalMap =
-       " float3 Phong_Lighting_Pixel_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) " +
+       " float3 Phong_Lighting_Pixel_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) " + '\n' +
        " { " +
-       " float3 normalDirection = normalize(input.normalDir); " +
-       " float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz); " +
-       " float3 lightDirection; " +
-       " float attenuation; " +
-       " if (0.0 == _WorldSpaceLightPos0.w) " +
+       " float3 normalDirection = normalize(input.normalDir); " + '\n' +
+       " float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz); " + '\n' +
+       " float3 lightDirection; " + '\n' +
+       " float attenuation; " + '\n' +
+       " if (0.0 == _WorldSpaceLightPos0.w) " + '\n' +
        " { " +
-         " attenuation = 1.0f; " +
-         " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " +
+         " attenuation = 1.0f; " + '\n' +
+         " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " + '\n' +
        " } " +
-       " else " +
+       " else " + '\n' +
        " { " +
-           " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - input.posWorld.xyz; " +
-           " float distance = length(vertexToLightSource); " +
-           " attenuation = 1.0 / distance; " +
-           " lightDirection = normalize(vertexToLightSource); " +
+           " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - input.posWorld.xyz; " + '\n' +
+           " float distance = length(vertexToLightSource); " + '\n' +
+           " attenuation = 1.0 / distance; " + '\n' +
+           " lightDirection = normalize(vertexToLightSource); " + '\n' +
        " } " +
-       " float3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT.rgb * _PhongAmbientColor.rgb; " +
+       " float3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT.rgb * _PhongAmbientColor.rgb; " + '\n' +
        " float3 diffuseReflection = attenuation * _LightColor0.rgb * _PhongDiffuseColor.rgb * max(0.0, dot(normalDirection, lightDirection)); " +
-       " float3 specularReflection; " +
-       " if (dot(normalDirection, lightDirection) < 0.0) " +
-       " { specularReflection = float3(0.0, 0.0, 0.0); } " +
-       " else " +
+       " float3 specularReflection; " + '\n' +
+       " if (dot(normalDirection, lightDirection) < 0.0) " + '\n' +
+       " { specularReflection = float3(0.00001, 0.00001, 0.00001); } " + '\n' +
+       " else " + '\n' +
        " { " +
-           " specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * pow(max(0.0, dot(reflect(-lightDirection, normalDirection), viewDirection)), _CustomShininess); " +
-       " } " +
-       " return float3(ambientLighting * _PhongAmbientForce + diffuseReflection * _PhongDiffuseForce  + specularReflection * _PhongSpecularForce); " + " } " + '\n'
-       ;
+           " specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * max(0.0, dot(reflect(-lightDirection, normalDirection),viewDirection)); " + '\n' +
+            " specularReflection = specularReflection * _CustomShininess; " + '\n' + 
+       " } " + '\n' +
+       " return (ambientLighting * _PhongAmbientForce) + (diffuseReflection * _PhongDiffuseForce) + (specularReflection * _PhongSpecularForce); } " + '\n'
+        ;
 
     public static string Lambert_Lighting_Pixel =
-        " float3 Lambert_Lighting_Pixel(vertexOutput_PerPixelLighting input, float3 normalDirection) " +
+        " float3 Lambert_Lighting_Pixel(vertexOutput_PerPixelLighting input, float3 normalDirection) " + '\n' +
         " { " +
-        " normalDirection += normalize(input.normalDir); " +
-        " float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz); " +
-        " float3 lightDirection; " +
-        " float attenuation; " +
-        " if (0.0 == _WorldSpaceLightPos0.w) " +
+        " normalDirection += normalize(input.normalDir); " + '\n' +
+        " float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz); " + '\n' +
+        " float3 lightDirection; " + '\n' +
+        " float attenuation; " + '\n' +
+        " if (0.0 == _WorldSpaceLightPos0.w) " + '\n' +
         " { " +
-          " attenuation = 1.0f; " +
-          " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " +
+          " attenuation = 1.0f; " + '\n' +
+          " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " + '\n' +
         " } " +
-        " else " +
+        " else " + '\n' +
         " { " +
-            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - input.posWorld.xyz; " +
-            " float distance = length(vertexToLightSource); " +
-            " attenuation = 1.0 / distance; " +
-            " lightDirection = normalize(vertexToLightSource); " +
+            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - input.posWorld.xyz; " + '\n' +
+            " float distance = length(vertexToLightSource); " + '\n' +
+            " attenuation = 1.0 / distance; " + '\n' +
+            " lightDirection = normalize(vertexToLightSource); " + '\n' +
         " } " +
-        " float NDotL = max(0.0, dot(normalDirection, lightDirection)); " +
-        " float LambertDiffuse = NDotL; " +
-        " float3 finalColor = LambertDiffuse * attenuation * _LightColor0.rgb; " +
+        " float NDotL = max(0.0, dot(normalDirection, lightDirection)); " + '\n' +
+        " float LambertDiffuse = NDotL; " + '\n' +
+        " float3 finalColor = LambertDiffuse * attenuation * _LightColor0.rgb; " + '\n' +
         " return finalColor; " + " } " + '\n'
         ;
 
     public static string Lambert_Lighting_Pixel_NoNormalMap =
-        " float3 Lambert_Lighting_Pixel_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) " +
+        " float3 Lambert_Lighting_Pixel_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) " + '\n' +
         " { " +
-        " float3 normalDirection = normalize(input.normalDir); " +
-        " float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz); " +
-        " float3 lightDirection; " +
-        " float attenuation; " +
-        " if (0.0 == _WorldSpaceLightPos0.w) " +
+        " float3 normalDirection = normalize(input.normalDir); " + '\n' +
+        " float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz); " + '\n' +
+        " float3 lightDirection; " + '\n' +
+        " float attenuation; " + '\n' +
+        " if (0.0 == _WorldSpaceLightPos0.w) " + '\n' +
         " { " +
-          " attenuation = 1.0f; " +
-          " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " +
+          " attenuation = 1.0f; " + '\n' +
+          " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " + '\n' +
         " } " +
-        " else " +
+        " else " + '\n' +
         " { " +
-            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - input.posWorld.xyz; " +
-            " float distance = length(vertexToLightSource); " +
-            " attenuation = 1.0 / distance; " +
-            " lightDirection = normalize(vertexToLightSource); " +
+            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - input.posWorld.xyz; " + '\n' +
+            " float distance = length(vertexToLightSource); " + '\n' +
+            " attenuation = 1.0 / distance; " + '\n' +
+            " lightDirection = normalize(vertexToLightSource); " + '\n' +
         " } " +
-        " float NDotL = max(0.0, dot(normalDirection, lightDirection)); " +
-        " float LambertDiffuse = NDotL; " +
-        " float3 finalColor = LambertDiffuse * attenuation * _LightColor0.rgb; " +
+        " float NDotL = max(0.0, dot(normalDirection, lightDirection)); " + '\n' +
+        " float LambertDiffuse = NDotL; " + '\n' +
+        " float3 finalColor = LambertDiffuse * attenuation * _LightColor0.rgb; " + '\n' +
         " return finalColor; " + " } " + '\n'
         ;
 
     public static string HalfLambert_Lighting_Pixel =
-        " float3 HalfLambert_Lighting_Pixel(vertexOutput_PerPixelLighting input, float3 normalDirection) " +
+        " float3 HalfLambert_Lighting_Pixel(vertexOutput_PerPixelLighting input, float3 normalDirection) " + '\n' +
         " { " +
-        " normalDirection += normalize(input.normalDir); " +
-        " float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz); " +
-        " float3 lightDirection; " +
-        " float attenuation; " +
-        " if (0.0 == _WorldSpaceLightPos0.w) " +
+        " normalDirection += normalize(input.normalDir); " + '\n' +
+        " float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz); " + '\n' +
+        " float3 lightDirection; " + '\n' +
+        " float attenuation; " + '\n' +
+        " if (0.0 == _WorldSpaceLightPos0.w) " + '\n' +
         " { " +
-          " attenuation = 1.0f; " +
-          " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " +
+          " attenuation = 1.0f; " + '\n' +
+          " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " + '\n' +
         " } " +
-        " else " +
+        " else " + '\n' +
         " { " +
-            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - input.posWorld.xyz; " +
-            " float distance = length(vertexToLightSource); " +
-            " attenuation = 1.0 / distance; " +
-            " lightDirection = normalize(vertexToLightSource); " +
+            " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - input.posWorld.xyz; " + '\n' +
+            " float distance = length(vertexToLightSource); " + '\n' +
+            " attenuation = 1.0 / distance; " + '\n' +
+            " lightDirection = normalize(vertexToLightSource); " + '\n' +
         " } " +
-        " float3 NDotL = max(0.0, dot(normalDirection, lightDirection)); " +
-        " float HalfLambertDiffuse = pow(NDotL * 0.5 + 0.5, 2.0); " +
-        " float3 finalColor = HalfLambertDiffuse * attenuation * _LightColor0.rgb; " +
+        " float3 NDotL = max(0.0, dot(normalDirection, lightDirection)); " + '\n' +
+        " float HalfLambertDiffuse = pow(NDotL * 0.5 + 0.5, 2.0); " + '\n' +
+        " float3 finalColor = HalfLambertDiffuse * attenuation * _LightColor0.rgb; " + '\n' +
         " return finalColor; " + " } " + '\n'
         ;
 
     public static string HalfLambert_Lighting_Pixel_NoNormalMap =
-       " float3 HalfLambert_Lighting_Pixel_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) " +
+       " float3 HalfLambert_Lighting_Pixel_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) " + '\n' +
        " { " +
-       " float3 normalDirection = normalize(input.normalDir); " +
-       " float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz); " +
-       " float3 lightDirection; " +
-       " float attenuation; " +
-       " if (0.0 == _WorldSpaceLightPos0.w) " +
+       " float3 normalDirection = normalize(input.normalDir); " + '\n' +
+       " float3 viewDirection = normalize(_WorldSpaceCameraPos - input.posWorld.xyz); " + '\n' +
+       " float3 lightDirection; " + '\n' +
+       " float attenuation; " + '\n' +
+       " if (0.0 == _WorldSpaceLightPos0.w) " + '\n' +
        " { " +
-         " attenuation = 1.0f; " +
-         " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " +
+         " attenuation = 1.0f; " + '\n' +
+         " lightDirection = normalize(_WorldSpaceLightPos0.xyz); " + '\n' +
        " } " +
-       " else " +
+       " else " + '\n' +
        " { " +
-           " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - input.posWorld.xyz; " +
-           " float distance = length(vertexToLightSource); " +
-           " attenuation = 1.0 / distance; " +
-           " lightDirection = normalize(vertexToLightSource); " +
+           " float3 vertexToLightSource = _WorldSpaceLightPos0.xyz - input.posWorld.xyz; " + '\n' +
+           " float distance = length(vertexToLightSource); " + '\n' +
+           " attenuation = 1.0 / distance; " + '\n' +
+           " lightDirection = normalize(vertexToLightSource); " + '\n' +
        " } " +
-       " float3 NDotL = max(0.0, dot(normalDirection, lightDirection)); " +
-       " float HalfLambertDiffuse = pow(NDotL * 0.5 + 0.5, 2.0); " +
-       " float3 finalColor = HalfLambertDiffuse * attenuation * _LightColor0.rgb; " +
+       " float3 NDotL = max(0.0, dot(normalDirection, lightDirection)); " + '\n' +
+       " float HalfLambertDiffuse = pow(NDotL * 0.5 + 0.5, 2.0); " + '\n' +
+       " float3 finalColor = HalfLambertDiffuse * attenuation * _LightColor0.rgb; " + '\n' +
        " return finalColor; " + " } " + '\n'
        ;
 
     public static string vert_PerVertexLighting_Phong =
-       " vertexOutput_PerVertexLighting vert_PerVertexLighting_PhongBase(vertexInput_AllVariables input) " +
+       " vertexOutput_PerVertexLighting vert_PerVertexLighting_Phong(vertexInput_AllVariables input) " + '\n' +
         " { " +
-        " vertexOutput_PerVertexLighting output; " +
-        " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input); " +
-        " output.col = PhongBase_Lighting_Vertex(input, normalDirection); " +
-        " output.pos = UnityObjectToClipPos(input.vertex); " +
-        " output.tex = input.texcoord; " +
+        " vertexOutput_PerVertexLighting output; " + '\n' +
+        " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input); " + '\n' +
+        " output.col = float4(Phong_Lighting_Vertex(input, normalDirection), 1.0f); " + '\n' +
+        " output.pos = UnityObjectToClipPos(input.vertex); " + '\n' +
+        " output.tex = input.texcoord; " + '\n' +
         " return output; " + " } " + '\n'
         ;
 
     public static string vert_PerVertexLighting_Phong_NoNormalMap =
-       " vertexOutput_NoTextureNoNormalMap_PerVertexLighting vert_PerVertexLighting_Phong_NoNormalMap(vertexInput_NoTextureNoNormalMap input) " +
+       " vertexOutput_NoTextureNoNormalMap_PerVertexLighting vert_PerVertexLighting_Phong_NoNormalMap(vertexInput_NoTextureNoNormalMap input) " + '\n' +
         " { " +
-        " vertexOutput_NoTextureNoNormalMap_PerVertexLighting output; " +
-        " output.col = Phong_Lighting_Vertex_NoNormalMap(input); " +
-        " output.pos = UnityObjectToClipPos(input.vertex); " +
+        " vertexOutput_NoTextureNoNormalMap_PerVertexLighting output; " + '\n' +
+        " output.col = float4(Phong_Lighting_Vertex_NoNormalMap(input), 1.0f);" + '\n' +
+        " output.pos = UnityObjectToClipPos(input.vertex); " + '\n' +
         " return output; " + " } " + '\n'
         ;
 
     public static string vert_PerVertexLighting_Lambert =
-      " vertexOutput_PerVertexLighting vert_PerVertexLighting_Lambert(vertexInput_AllVariables input) " +
+      " vertexOutput_PerVertexLighting vert_PerVertexLighting_Lambert(vertexInput_AllVariables input) " + '\n' +
         " { " +
-        " vertexOutput_PerVertexLighting output; " +
-        " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input); " +
-        " output.col = float4(Lambert_Lighting_Vertex(input, normalDirection), 1.0); " +
-        " output.pos = UnityObjectToClipPos(input.vertex); " +
-        " output.tex = input.texcoord; " +
+        " vertexOutput_PerVertexLighting output; " + '\n' +
+        " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input); " + '\n' +
+        " output.col = float4(Lambert_Lighting_Vertex(input, normalDirection).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0); " + '\n' +
+        " output.pos = UnityObjectToClipPos(input.vertex); " + '\n' +
+        " output.tex = input.texcoord; " + '\n' +
         " return output; " + " } " + '\n'
         ;
 
     public static string vert_PerVertexLighting_Lambert_NoNormalMap =
-     " vertexOutput_NoTextureNoNormalMap_PerVertexLighting vert_PerVertexLighting_Lambert_NoNormalMap(vertexInput_NoTextureNoNormalMap input) " +
+     " vertexOutput_NoTextureNoNormalMap_PerVertexLighting vert_PerVertexLighting_Lambert_NoNormalMap(vertexInput_NoTextureNoNormalMap input) " + '\n' +
        " { " +
-       " vertexOutput_NoTextureNoNormalMap_PerVertexLighting output; " +
-       " output.col = float4(Lambert_Lighting_Vertex_NoNormalMap(input).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0); " +
-       " output.pos = UnityObjectToClipPos(input.vertex); " +
+       " vertexOutput_NoTextureNoNormalMap_PerVertexLighting output; " + '\n' +
+       " output.col = output.col = float4(Lambert_Lighting_Vertex_NoNormalMap(input).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0);" + '\n' +
+       " output.pos = UnityObjectToClipPos(input.vertex); " + '\n' +
        " return output; " + " } " + '\n'
        ;
 
     public static string vert_PerVertexLighting_HalfLambert =
-        " vertexOutput_PerVertexLighting vert_PerVertexLighting_HalfLambert(vertexInput_AllVariables input) " +
+        " vertexOutput_PerVertexLighting vert_PerVertexLighting_HalfLambert(vertexInput_AllVariables input) " + '\n' +
         " { " +
-        " vertexOutput_PerVertexLighting output; " +
-        " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input); " +
-        " output.col = float4(HalfLambert_Lighting_Vertex(input, normalDirection), 1.0); " +
-        " output.pos = UnityObjectToClipPos(input.vertex); " +
-        " output.tex = input.texcoord; " +
+        " vertexOutput_PerVertexLighting output; " + '\n' +
+        " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Vertex(input); " + '\n' +
+        " output.col = float4(HalfLambert_Lighting_Vertex(input, normalDirection).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0); " + '\n' +
+        " output.pos = UnityObjectToClipPos(input.vertex); " + '\n' +
+        " output.tex = input.texcoord; " + '\n' +
         " return output; " + " } " + '\n'
         ;
 
     public static string vert_PerVertexLighting_HalfLambert_NoNormalMap =
-        " vertexOutput_NoTextureNoNormalMap_PerVertexLighting vert_PerVertexLighting_HalfLambert_NoNormalMap(vertexInput_NoTextureNoNormalMap input) " +
+        " vertexOutput_NoTextureNoNormalMap_PerVertexLighting vert_PerVertexLighting_HalfLambert_NoNormalMap(vertexInput_NoTextureNoNormalMap input) " + '\n' +
         " { " +
-        " vertexOutput_NoTextureNoNormalMap_PerVertexLighting output; " +
-        " output.col = float4(HalfLambert_Lighting_Vertex_NoNormalMap(input).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0);" +
-        " output.pos = UnityObjectToClipPos(input.vertex); " +
+        " vertexOutput_NoTextureNoNormalMap_PerVertexLighting output; " + '\n' +
+        " output.col = float4(HalfLambert_Lighting_Vertex_NoNormalMap(input).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0);" + '\n' +
+        " output.pos = UnityObjectToClipPos(input.vertex); " + '\n' +
         " return output; " + " } " + '\n'
         ;
 
     public static string vert_PerVertexLighting_NoLight =
-        " vertexOutput_PerVertexLighting vert_PerVertexLighting_NoLight(vertexInput_AllVariables input) " +
+        " vertexOutput_PerVertexLighting vert_PerVertexLighting_NoLight(vertexInput_AllVariables input) " + '\n' +
         " { " +
-        " vertexOutput_PerVertexLighting output; " +
-        " output.col = float4 (1.0f, 1.0f, 1.0f, 1.0f); " +
-        " output.tex = input.texcoord; " +
+        " vertexOutput_PerVertexLighting output; " + '\n' +
+        " output.col = float4 (1.0f, 1.0f, 1.0f, 1.0f); " + '\n' +
+        " output.tex = input.texcoord; " + '\n' +
         " return output; " + " } " + '\n';
 
     public static string vert_PerVertexLighting_NoLight_NoTextureNoNormalMap =
         " vertexOutput_NoLight_NoTextureNoNormalMap vert_PerVertexLighting_NoLight_NoTextureNoNormalMap (vertexInput_NoLight_NoTextureNoNormalMap input) " +
         " { " +
-        " vertexOutput_NoLight_NoTextureNoNormalMap output; " +
-        " output.pos = UnityObjectToClipPos(input.vertex);" +
-        " output.col = float4 (1.0f, 1.0f, 1.0f, 1.0f); " +
+        " vertexOutput_NoLight_NoTextureNoNormalMap output; " + '\n' +
+        " output.pos = UnityObjectToClipPos(input.vertex);" + '\n' +
+        " output.col = float4 (1.0f, 1.0f, 1.0f, 1.0f); " + '\n' +
         " return output; " + " } " + '\n';
 
     public static string frag_PerVertexLighting =
         " float4 frag_PerVertexLighting(vertexOutput_PerVertexLighting input) : COLOR " +
         " {	" +
-        " float4 TextureColor = Texture_Handling_Vertex(input); " +
-        " return input.col* TextureColor; " +
+        " float4 TextureColor = Texture_Handling_Vertex(input); " + '\n' +
+        " return float4(input.col.xyz * TextureColor.xyz , 1.0f);" + '\n' +
         " } " + '\n'
         ;
 
     public static string frag_PerVertexLighting_NoTextureMap =
-       " float4 frag_PerVertexLighting_NoTextureMap (vertexOutput_NoTextureNoNormalMap_PerVertexLighting input): COLOR " +
+       " float4 frag_PerVertexLighting_NoTextureMap (vertexOutput_NoTextureNoNormalMap_PerVertexLighting input): COLOR " + '\n' +
        " {	" +
        " return float4(input.col.xyz * _TextureTint.xyz, 1.0f); " +
        " } " + '\n'
        ;
 
     public static string vert_PerPixelLighting =
-        " vertexOutput_PerPixelLighting vert_PerPixelLighting(vertexInput_AllVariables input) : COLOR " +
+        " vertexOutput_PerPixelLighting vert_PerPixelLighting(vertexInput_AllVariables input) " + '\n' +
         " { " +
-        " vertexOutput_PerPixelLighting output; " +
-        " float4x4 modelMatrix = unity_ObjectToWorld; " +
-        " float4x4 modelMatrixInverse = unity_WorldToObject; " +
-        " output.posWorld = mul(modelMatrix, input.vertex); " +
-        " output.normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " +
-        " output.tex = input.texcoord; " +
-        " output.tangent = input.tangent; " +
-        " output.normal = input.normal; " +
-        " output.pos = UnityObjectToClipPos(input.vertex); " +
+        " vertexOutput_PerPixelLighting output; " + '\n' +
+        " float4x4 modelMatrix = unity_ObjectToWorld; " + '\n' +
+        " float4x4 modelMatrixInverse = unity_WorldToObject; " + '\n' +
+        " output.posWorld = mul(modelMatrix, input.vertex); " + '\n' +
+        " output.normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " + '\n' +
+        " output.tex = input.texcoord; " + '\n' +
+        " output.tangent = input.tangent; " + '\n' +
+        " output.normal = input.normal; " + '\n' +
+        " output.pos = UnityObjectToClipPos(input.vertex); " + '\n' +
         " return output; " + " } " + '\n'
         ;
 
     public static string vert_PerPixelLighting_NoTextureNoNormalMap =
-       " vertexOutput_NoTextureNoNormalMap_PerPixelLighting vert_PerPixelLighting_NoTextureNoNormalMap(vertexInput_NoTextureNoNormalMap input) : COLOR " +
+       " vertexOutput_NoTextureNoNormalMap_PerPixelLighting vert_PerPixelLighting_NoTextureNoNormalMap(vertexInput_NoTextureNoNormalMap input)" + '\n' +
        " { " +
-       " vertexOutput_NoTextureNoNormalMap_PerPixelLighting output; " +
-       " float4x4 modelMatrix = unity_ObjectToWorld; " +
-       " float4x4 modelMatrixInverse = unity_WorldToObject; " +
-       " output.posWorld = mul(modelMatrix, input.vertex); " +
-       " output.normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " +
-       " output.normal = input.normal; " +
-       " output.pos = UnityObjectToClipPos(input.vertex); " +
+       " vertexOutput_NoTextureNoNormalMap_PerPixelLighting output; " + '\n' +
+       " float4x4 modelMatrix = unity_ObjectToWorld; " + '\n' +
+       " float4x4 modelMatrixInverse = unity_WorldToObject; " + '\n' +
+       " output.posWorld = mul(modelMatrix, input.vertex); " + '\n' +
+       " output.normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " + '\n' +
+       " output.normal = input.normal; " + '\n' +
+       " output.pos = UnityObjectToClipPos(input.vertex); " + '\n' +
        " return output; " + " } " + '\n'
        ;
 
     public static string vert_PerPixelLighting_NoNormalMap =
-       " vertexOutput_NoNormalMap_PerPixelLighting vert_PerPixelLighting_NoNormalMap (vertexInput_NoNormalMap input) : COLOR " +
+       " vertexOutput_NoNormalMap_PerPixelLighting vert_PerPixelLighting_NoNormalMap (vertexInput_NoNormalMap input) " + '\n' +
        " { " +
-       " vertexOutput_NoNormalMap_PerPixelLighting output; " +
-       " float4x4 modelMatrix = unity_ObjectToWorld; " +
-       " float4x4 modelMatrixInverse = unity_WorldToObject; " +
-       " output.posWorld = mul(modelMatrix, input.vertex); " +
-       " output.normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " +
-       " output.tex = input.texcoord; " +
-       " output.normal = input.normal; " +
-       " output.pos = UnityObjectToClipPos(input.vertex); " +
+       " vertexOutput_NoNormalMap_PerPixelLighting output; " + '\n' +
+       " float4x4 modelMatrix = unity_ObjectToWorld; " + '\n' +
+       " float4x4 modelMatrixInverse = unity_WorldToObject; " + '\n' +
+       " output.posWorld = mul(modelMatrix, input.vertex); " + '\n' +
+       " output.normalDir = normalize(mul(float4(input.normal, 0.0), modelMatrixInverse).xyz); " + '\n' +
+       " output.tex = input.texcoord; " + '\n' +
+       " output.normal = input.normal; " + '\n' +
+       " output.pos = UnityObjectToClipPos(input.vertex); " + '\n' +
        " return output; " + " } " + '\n'
        ;
 
     public static string frag_PerPixelLighting_Phong =
-        " float4 frag_PerPixelLighting_Phong(vertexOutput_PerPixelLighting input) : COLOR " +
+        " float4 frag_PerPixelLighting_Phong(vertexOutput_PerPixelLighting input) : COLOR " + '\n' +
         " {	 " +
-            " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input); " +
-            " return float4(Texture_Handling_Pixel(input) * Phong_Lighting_Pixel(input, normalDirection), 1.0f); " +
+            " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input); " + '\n' +
+            " return float4(Texture_Handling_Pixel(input).xyz * Phong_Lighting_Pixel(input, normalDirection), 1.0f); " + '\n' +
         " } " + '\n'
         ;
 
     public static string frag_PerPixelLighting_Phong_NoNormalMap =
-        " float4 frag_PerPixelLighting_Phong_NoNormalMap (vertexOutput_NoNormalMap_PerPixelLighting input) : COLOR " +
+        " float4 frag_PerPixelLighting_Phong_NoNormalMap (vertexOutput_NoNormalMap_PerPixelLighting input) : COLOR " + '\n' +
         " {	 " +
-            " return float4(Texture_Handling_Pixel_NoNormalMap(input).xyz * Phong_Lighting_Pixel_NoNormalMap(input), 1.0f); " +
+            " return float4(Texture_Handling_Pixel_NoNormalMap(input).xyz * Phong_Lighting_Pixel_NoNormalMap(input), 1.0f); " + '\n' +
         " } " + '\n'
         ;
     public static string frag_PerPixelLighting_Phong_NoTexture =
-        " float4 frag_PerPixelLighting_Phong_NoTexture(vertexOutput_PerPixelLighting input) : COLOR " +
+        " float4 frag_PerPixelLighting_Phong_NoTexture(vertexOutput_PerPixelLighting input) : COLOR " + '\n' +
         " {	 " +
-            " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input); " +
-            " return float4(Phong_Lighting_Pixel(input, normalDirection), 1.0f); " +
+            " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input); " + '\n' +
+            " return float4(Phong_Lighting_Pixel(input, normalDirection) * _TextureTint.xyz, 1.0f); " + '\n' +
         " } " + '\n'
         ;
 
     public static string frag_PerPixelLighting_Phong_NoTextureNoNormalMap =
-        " float4 frag_PerPixelLighting_Phong_NoTextureNoNormalMap(vertexOutput_NoTextureNoNormalMap_PerPixelLighting input) : COLOR " +
+        " float4 frag_PerPixelLighting_Phong_NoTextureNoNormalMap(vertexOutput_NoTextureNoNormalMap_PerPixelLighting input) : COLOR " + '\n' +
         " { " +
-             " vertexOutput_NoNormalMap_PerPixelLighting dummyOutput; " +
-            " dummyOutput.posWorld = input.posWorld; " +
-            " dummyOutput.normalDir = input.normalDir; " +
-            " dummyOutput.normal = input.normal; " +
-            " dummyOutput.pos = input.pos; " +
-            " return float4(Phong_Lighting_Pixel_NoNormalMap(dummyOutput), 1.0f); " +
+            " vertexOutput_NoNormalMap_PerPixelLighting dummyOutput; " + '\n' +
+            " dummyOutput.posWorld = input.posWorld; " + '\n' +
+            " dummyOutput.normalDir = input.normalDir; " + '\n' +
+            " dummyOutput.normal = input.normal; " + '\n' +
+            " dummyOutput.pos = input.pos; " + '\n' +
+            " return float4 (Phong_Lighting_Pixel_NoNormalMap(dummyOutput)* _TextureTint.xyz, 1.0f); " + '\n' +
         " } " + '\n';
 
 
     public static string frag_PerPixelLighting_Lambert =
-        " float4 frag_PerPixelLighting_Lambert(vertexOutput_PerPixelLighting input) : COLOR " +
+        " float4 frag_PerPixelLighting_Lambert(vertexOutput_PerPixelLighting input) : COLOR " + '\n' +
         " { " +
-            " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input); " +
-            " return float4(Texture_Handling_Pixel(input) * Lambert_Lighting_Pixel(input, normalDirection), 1.0f); " +
+            " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input); " + '\n' +
+            " return float4 (Texture_Handling_Pixel(input) * Lambert_Lighting_Pixel(input, normalDirection).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0); " + '\n' +
         " } " + '\n'
         ;
 
     public static string frag_PerPixelLighting_Lambert_NoNormalMap =
-        " float4 frag_PerPixelLighting_Lambert_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) : COLOR " +
+        " float4 frag_PerPixelLighting_Lambert_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) : COLOR " + '\n' +
         " { " +
-            " return float4(Texture_Handling_Pixel_NoNormalMap(input) * Lambert_Lighting_Pixel_NoNormalMap(input).xyz* (_LambertTintColor* _LambertTintForce).xyz, 1.0); " +
+            " return float4 (Texture_Handling_Pixel_NoNormalMap(input) * Lambert_Lighting_Pixel_NoNormalMap(input).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0); " + '\n' +
          " } " + '\n';
 
     public static string frag_PerPixelLighting_Lambert_NoTextureMap =
-        " float4 frag_PerPixelLighting_Lambert_NoTextureMap(vertexOutput_PerPixelLighting input) : COLOR " +
+        " float4 frag_PerPixelLighting_Lambert_NoTextureMap(vertexOutput_PerPixelLighting input) : COLOR " + '\n' +
         " { " +
-            " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input); " +
-            "return float4(Lambert_Lighting_Pixel(input, normalDirection).xyz* (_LambertTintColor* _LambertTintForce).xyz, 1.0); " +
+            " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input); " + '\n' +
+            " return float4(Lambert_Lighting_Pixel(input, normalDirection).xyz * (_LambertTintColor * _LambertTintForce).xyz * _TextureTint.xyz, 1.0); " + '\n' +
         " } " + '\n';
 
     public static string frag_PerPixelLighting_Lambert_NoTextureNoNormalMap =
-        " float4 frag_PerPixelLighting_Lambert_NoTextureNoNormalMap(vertexOutput_NoTextureNoNormalMap_PerPixelLighting input) : COLOR " +
+        " float4 frag_PerPixelLighting_Lambert_NoTextureNoNormalMap(vertexOutput_NoTextureNoNormalMap_PerPixelLighting input) : COLOR " + '\n' +
         " { " +
-            " vertexOutput_NoNormalMap_PerPixelLighting dummyOutput; " +
-            " dummyOutput.posWorld = input.posWorld; " +
-            " dummyOutput.normalDir = input.normalDir; " +
-            " dummyOutput.normal = input.normal; " +
-            " dummyOutput.pos = input.pos; " +
-            " return float4 (Lambert_Lighting_Pixel_NoNormalMap(dummyOutput).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0); " +
+            " vertexOutput_NoNormalMap_PerPixelLighting dummyOutput; " + '\n' +
+            " dummyOutput.posWorld = input.posWorld; " + '\n' +
+            " dummyOutput.normalDir = input.normalDir; " + '\n' +
+            " dummyOutput.normal = input.normal; " + '\n' +
+            " dummyOutput.pos = input.pos; " + '\n' +
+            " return float4 (Lambert_Lighting_Pixel_NoNormalMap(dummyOutput).xyz * (_LambertTintColor * _LambertTintForce).xyz * _TextureTint.xyz, 1.0); " + '\n' +
         " } " + '\n';
 
 
     public static string frag_PerPixelLighting_HalfLambert =
-        " float4 frag_PerPixelLighting_HalfLambert(vertexOutput_PerPixelLighting input) : COLOR " +
+        " float4 frag_PerPixelLighting_HalfLambert(vertexOutput_PerPixelLighting input) : COLOR " + '\n' +
         " { " +
-            " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input); " +
-            " return float4(Texture_Handling_Pixel(input) * HalfLambert_Lighting_Pixel(input, normalDirection), 1.0); " +
+            " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input); " + '\n' +
+            " return float4 (Texture_Handling_Pixel(input) * HalfLambert_Lighting_Pixel(input, normalDirection).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0); " + '\n' +
         " } " + '\n'
         ;
 
     public static string frag_PerPixelLighting_HalfLambert_NoNormalMap =
-        " float4 frag_PerPixelLighting_HalfLambert_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) : COLOR " +
+        " float4 frag_PerPixelLighting_HalfLambert_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) : COLOR " + '\n' +
         " { " +
-            " return float4(Texture_Handling_Pixel_NoNormalMap(input) * HalfLambert_Lighting_Pixel_NoNormalMap(input).xyz* (_LambertTintColor* _LambertTintForce).xyz, 1.0); " +
+            " return float4 (Texture_Handling_Pixel_NoNormalMap(input) * HalfLambert_Lighting_Pixel_NoNormalMap(input).xyz * (_LambertTintColor * _LambertTintForce).xyz, 1.0); " + '\n' +
         " } " + '\n';
 
     public static string frag_PerPixelLighting_HalfLambert_NoTextureMap =
-        " float4 frag_PerPixelLighting_HalfLambert_NoTextureMap(vertexOutput_PerPixelLighting input) : COLOR " +
+        " float4 frag_PerPixelLighting_HalfLambert_NoTextureMap(vertexOutput_PerPixelLighting input) : COLOR " + '\n' +
         " { " +
-            " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input); " +
-            " return float4(HalfLambert_Lighting_Pixel(input, normalDirection).xyz* (_LambertTintColor* _LambertTintForce).xyz, 1.0); " +
+            " float3 normalDirection = Normal_Direction_With_Normal_Map_Handling_Pixel(input); " + '\n' +
+            " return float4(HalfLambert_Lighting_Pixel(input, normalDirection).xyz * (_LambertTintColor * _LambertTintForce).xyz * _TextureTint.xyz, 1.0); " + '\n' +
          " } " + '\n';
 
     public static string frag_PerPixelLighting_HalfLambert_NoTextureMapNoNormalMap =
-        " float4 frag_PerPixelLighting_HalfLambert_NoTextureMapNoNormalMap(vertexOutput_NoTextureNoNormalMap_PerPixelLighting input) : COLOR " +
+        " float4 frag_PerPixelLighting_HalfLambert_NoTextureMapNoNormalMap(vertexOutput_NoTextureNoNormalMap_PerPixelLighting input) : COLOR " + '\n' +
         " { " +
-            " vertexOutput_NoNormalMap_PerPixelLighting dummyOutput; " +
-            " dummyOutput.posWorld = input.posWorld; " +
-            " dummyOutput.normalDir = input.normalDir; " +
-            " dummyOutput.normal = input.normal; " +
-            " dummyOutput.pos = input.pos; " +
-            " return float4(HalfLambert_Lighting_Pixel_NoNormalMap(dummyOutput).xyz* (_LambertTintColor* _LambertTintForce).xyz, 1.0); " +
+            " vertexOutput_NoNormalMap_PerPixelLighting dummyOutput; " + '\n' +
+            " dummyOutput.posWorld = input.posWorld; " + '\n' +
+            " dummyOutput.normalDir = input.normalDir; " + '\n' +
+            " dummyOutput.normal = input.normal; " + '\n' +
+            " dummyOutput.pos = input.pos; " + '\n' +
+            " return float4 (HalfLambert_Lighting_Pixel_NoNormalMap(dummyOutput).xyz * (_LambertTintColor * _LambertTintForce).xyz * _TextureTint.xyz, 1.0); " + '\n' +
          " } " + '\n';
 
     public static string frag_PerPixelLighting_NoLight =
-        " float4 frag_PerPixelLighting_NoLight(vertexOutput_PerPixelLighting input) : COLOR " +
+        " float4 frag_PerPixelLighting_NoLight(vertexOutput_PerPixelLighting input) : COLOR " + '\n' +
         " { " +
-            " float4 TextureColor = Texture_Handling_Pixel(input); " +
+            " float4 TextureColor = Texture_Handling_Pixel(input); " + '\n' +
             "return float4(TextureColor.xyz, 1.0f); " + " } " + '\n'
         ;
 
     public static string frag_PerPixelLighting_NoLight_NoNormalMap =
-       " float4 frag_PerPixelLighting_NoLight_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) : COLOR" +
+       " float4 frag_PerPixelLighting_NoLight_NoNormalMap(vertexOutput_NoNormalMap_PerPixelLighting input) : COLOR" + '\n' +
        " { " +
-           " float4 TextureColor = Texture_Handling_Pixel_NoNormalMap(input); " +
+           " float4 TextureColor = Texture_Handling_Pixel_NoNormalMap(input); " + '\n' +
            " return float4(TextureColor.xyz, 1.0f); " + " } " + '\n'
        ;
 
 
     public static string frag_PerPixelLighting_NoLight_NoTextureMap =
-        "  float4 frag_PerPixelLighting_NoLight_NoTextureMap(vertexOutput_NoTextureNoNormalMap_PerPixelLighting input) : COLOR " +
+        "  float4 frag_PerPixelLighting_NoLight_NoTextureMap(vertexOutput_NoTextureNoNormalMap_PerPixelLighting input) : COLOR " + '\n' +
         " { " +
-        " return float4(_TextureTint.xyz, 1.0f); " +
+        " return float4(_TextureTint.xyz, 1.0f); " + '\n' +
         " } " + '\n';
 
 

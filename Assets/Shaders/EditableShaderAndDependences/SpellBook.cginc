@@ -1,6 +1,5 @@
 #include "UnityCG.cginc"
 #include "UnityLightingCommon.cginc"
-//#include "SpellBookReWork.cginc"
 
 		//variables
 		//=================================
@@ -537,7 +536,7 @@
 				
 			float3 specularReflection;
 			if (dot(normalDirection, lightDirection) < 0.0)
-			{	specularReflection = float3(0.0, 0.0, 0.0);		}
+			{	specularReflection = float3(0.00001, 0.00001, 0.00001);		}
 			else 
 			{
 				specularReflection = attenuation * _LightColor0.rgb * _PhongSpecularColor.rgb * 
@@ -677,7 +676,7 @@
 
 		//======================================================================================================
 
-		vertexOutput_PerVertexLighting vert_PerVertexLighting_Phong (vertexInput_AllVariables input)
+		vertexOutput_PerVertexLighting vert_PerVertexLighting_Phong (vertexInput_AllVariables input) : COLOR
 		{
 			vertexOutput_PerVertexLighting output;			
 			
