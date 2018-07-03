@@ -905,6 +905,58 @@ public class ShaderEdition : MonoBehaviour {
     {
         colorPicker_CanvasReference_Script.ColorChangeID = newID;
         OpenCanvasGroup(ColorPicker_CanvasGroup_CR);
+
+        switch (newID)
+        {
+            case "PhongAmbientColor":
+                {
+                    colorPicker_CanvasReference_Script.CurrentColorSelected_Image.color = _PhongAmbientColor;
+                    break;
+                }
+            case "PhongDiffuseColor":
+                {
+                    colorPicker_CanvasReference_Script.CurrentColorSelected_Image.color = _PhongDiffuseColor;
+                    break;
+                }
+            case "PhongSpecularColor":
+                {
+                    colorPicker_CanvasReference_Script.CurrentColorSelected_Image.color = _PhongSpecularColor;
+                    break;
+                }
+            case "TextureTint":
+                {
+                    colorPicker_CanvasReference_Script.CurrentColorSelected_Image.color = _TextureTint;
+                    break;
+                }
+            case "LambertTint":
+                {
+                    colorPicker_CanvasReference_Script.CurrentColorSelected_Image.color = _LambertTintColor;
+                    break;
+                }
+            case "SkyTint":
+                {
+                    colorPicker_CanvasReference_Script.CurrentColorSelected_Image.color = SceneSettingsParameters_CanvasGroup_CR.GetComponent<SkyBoxPropertiesSetter>()._SkyTint;
+                    break;
+                }
+            case "GroundColor":
+                {
+                    colorPicker_CanvasReference_Script.CurrentColorSelected_Image.color = SceneSettingsParameters_CanvasGroup_CR.GetComponent<SkyBoxPropertiesSetter>()._GroundColor;
+                    break;
+                }
+            case "LightColor":
+                {
+                    colorPicker_CanvasReference_Script.CurrentColorSelected_Image.color = SceneSettingsParameters_CanvasGroup_CR.GetComponent<SkyBoxPropertiesSetter>()._LightColor;
+                    break;
+                }
+            default:
+                {
+                    print("You should not be here!!!");
+                    break;
+                }
+        }
+
+
+
     }
 
     public void ResetColorByID(string colorID)
