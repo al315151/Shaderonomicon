@@ -280,7 +280,7 @@ public class ShaderEdition : MonoBehaviour {
     public void GetImageFromFile(string imageType)
     {
         FilePath = FileBrowser.OpenSingleFile("Choose a PNG...", Application.dataPath, "png");
-        print(FilePath);
+        //print(FilePath);
         StartCoroutine(GetTextureFromPNG(imageType));
         
     }
@@ -1197,8 +1197,8 @@ public class ShaderEdition : MonoBehaviour {
         {   Shader.SetGlobalFloat("_IsNormalMapApplied", 1.0f);     }
         else { Shader.SetGlobalFloat("_IsNormalMapApplied", 0.0f);       }
 
-        print("Normal map applied variable: " + IsNormalMapApplied);
-        print("Texture applied variable: " + IsNewTextureApplied);
+       // print("Normal map applied variable: " + IsNormalMapApplied);
+       // print("Texture applied variable: " + IsNewTextureApplied);
     }
 
 
